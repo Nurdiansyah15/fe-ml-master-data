@@ -55,35 +55,22 @@ export default function Teams() {
   const handleFormSubmit = (data) => {
     setLoading(true);
 
-    if (editMode && teamToEdit) {
-      // Jika dalam mode edit, panggil updateTeam thunk
-      dispatch(updateTeam({ teamID: teamToEdit.id, ...data }))
-        .unwrap()
-        .then(() => {
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-          setModalOpen(false);
-        });
-    } else {
-      // Jika dalam mode create, panggil createTeam thunk
-      dispatch(createTeam(data))
-        .unwrap()
-        .then(() => {
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-          setModalOpen(false);
-        });
-    }
+    const action =
+      editMode && teamToEdit
+        ? updateTeam({ teamID: teamToEdit.id, ...data })
+        : createTeam(data);
+
+    dispatch(action)
+      .unwrap()
+      .then(() => {
+        setModalOpen(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleEdit = (teamData) => {

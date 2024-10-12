@@ -25,11 +25,13 @@ import {
   updatePlayerInTeam,
 } from "../../redux/features/playerTeamSlice";
 import MemberForm from "./components/MemberForm";
+import { getTeamByID } from "../../redux/features/teamSlice";
 
 export default function TeamDetail() {
   const { updatePage } = useContext(PageContext);
   const { teamID } = useParams();
   const { players } = useSelector((state) => state.playerTeam);
+  const { team } = useSelector((state) => state.team);
   const { coaches } = useSelector((state) => state.coachTeam);
   const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -43,6 +45,7 @@ export default function TeamDetail() {
   useEffect(() => {
     dispatch(getAllPlayersInTeam(teamID));
     dispatch(getAllCoachesInTeam(teamID));
+    dispatch(getTeamByID(teamID));
   }, [dispatch, teamID]);
 
   // Update page title
@@ -99,6 +102,14 @@ export default function TeamDetail() {
 
   return (
     <div className="text-white flex flex-col justify-start items-start w-full p-4">
+      <div className="flex items-center mb-10">
+        <img
+          src={team?.Logo}
+          alt={team?.Name}
+          className="w-16 h-16 object-cover rounded-lg mr-4"
+        />
+        <h1 className="text-xl font-bold">{team?.Name}</h1>
+      </div>
       {/* Players Section */}
       <div className="flex flex-col gap-4">
         <p className="text-xl font-bold">Players</p>

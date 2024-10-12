@@ -3,6 +3,7 @@ import authReducer from "./features/authSlice";
 import teamReducer from "./features/teamSlice";
 import playerTeamReducer from "./features/playerTeamSlice";
 import coachTeamReducer from "./features/coachTeamSlice";
+import heroReducer from "./features/heroSlice";
 
 export default configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
     team: teamReducer,
     playerTeam: playerTeamReducer,
     coachTeam: coachTeamReducer,
+    hero: heroReducer,
   },
 });

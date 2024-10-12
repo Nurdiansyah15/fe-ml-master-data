@@ -17,6 +17,18 @@ export const getAllTeams = createAsyncThunk(
   }
 );
 
+export const getTeamByID = createAsyncThunk(
+  "teams/getTeamByID",
+  async (teamID, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/api/teams/${teamID}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const createTeam = createAsyncThunk(
   "teams/createTeam",
   async ({ name, logo }, { rejectWithValue, dispatch }) => {
@@ -77,6 +89,7 @@ const teamsSlice = createSlice({
   name: "teams",
   initialState: {
     teams: [],
+    team: null,
     loading: false,
     error: null,
   },
@@ -114,6 +127,18 @@ const teamsSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateTeam.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getTeamByID.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getTeamByID.fulfilled, (state, action) => {
+        state.loading = false;
+        state.team = action.payload;
+      })
+      .addCase(getTeamByID.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
