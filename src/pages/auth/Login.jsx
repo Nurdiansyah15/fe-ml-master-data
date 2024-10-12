@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 import LoadingPage from "../../components/global/LoadingPage";
-import { loginUser } from "../../redux/thunks/authThunk";
+import { loginUser } from "../../redux/features/authSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const loginSchema = z.object({

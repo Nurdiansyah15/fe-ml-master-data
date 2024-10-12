@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getUserInfo } from "../../redux/thunks/authThunk";
+import { getUserInfo } from "../../redux/features/authSlice";
 
 const ProtectedPage = ({ children }) => {
   const token = useSelector((state) => state.auth.token);

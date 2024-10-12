@@ -1,53 +1,128 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PageContext } from "../../contexts/PageContext";
-import { useEffect } from "react";
 import {
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
-
-const teams = [
-  { id: 1, name: "Team Alpha", image: "https://via.placeholder.com/150" },
-  { id: 2, name: "Team Beta", image: "https://via.placeholder.com/150" },
-];
+import { useSelector, useDispatch } from "react-redux";
+import {
+  createTeam,
+  getAllTeams,
+  updateTeam,
+} from "../../redux/features/teamSlice"; // Tambahkan updateTeam thunk
+import TeamForm from "./components/TeamForm";
+import { useNavigate } from "react-router-dom";
 
 export default function Teams() {
   const { updatePage } = useContext(PageContext);
+  const { teams } = useSelector((state) => state.team);
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false); // Menentukan mode edit atau create
+  const [teamToEdit, setTeamToEdit] = useState(null); // Menyimpan data tim yang akan diedit
 
   useEffect(() => {
     updatePage(
       "Teams Master Data",
       <>
-        <Button color="primary">Create</Button>
+        <Button
+          onClick={() => {
+            setTeamToEdit(null); // Reset tim yang diedit
+            setEditMode(false); // Pastikan mode create
+            setModalOpen(true); // Buka modal
+          }}
+          color="primary"
+        >
+          Create
+        </Button>
       </>
     );
   }, [updatePage]);
+
+  useEffect(() => {
+    dispatch(getAllTeams());
+  }, [dispatch]);
+
+  const handleFormSubmit = (data) => {
+    setLoading(true);
+
+    if (editMode && teamToEdit) {
+      // Jika dalam mode edit, panggil updateTeam thunk
+      dispatch(updateTeam({ teamID: teamToEdit.id, ...data }))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+        })
+        .finally(() => {
+          setLoading(false);
+          setModalOpen(false);
+        });
+    } else {
+      // Jika dalam mode create, panggil createTeam thunk
+      dispatch(createTeam(data))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+        })
+        .finally(() => {
+          setLoading(false);
+          setModalOpen(false);
+        });
+    }
+  };
+
+  const handleEdit = (teamData) => {
+    const team = {
+      id: teamData.TeamID,
+      name: teamData.Name,
+      logo: teamData.Logo,
+    };
+    setTeamToEdit(team); // Simpan data tim yang ingin diedit
+    setEditMode(true); // Ubah ke mode edit
+    setModalOpen(true); // Buka modal untuk mengedit tim
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="text-white flex flex-col justify-start h-full w-full">
       <div className="flex flex-wrap gap-4 justify-start items-start w-full">
         {teams.map((team) => (
           <div
-            key={team.id}
+            key={team.TeamID}
             className="relative bg-gray-800 rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Image and Name */}
             <img
-              src={team.image}
-              alt={team.name}
+              src={team.Logo}
+              alt={team.Name}
               className="w-36 h-36 object-cover rounded-lg"
             />
             <h3 className="text-md font-semibold mt-1 text-center">
-              {team.name}
+              {team.Name}
             </h3>
 
             {/* Detail Button */}
             <Button
               onPress={() => {
-                nav("/competition/team");
+                nav("/teams/" + team.TeamID);
               }}
               color="primary"
               className="mt-2 w-full text-sm"
@@ -70,7 +145,12 @@ export default function Teams() {
                   <div className="p-2 flex flex-col gap-2">
                     {/* Edit Button */}
                     <div className="flex items-center gap-2">
-                      <Button color="warning" size="sm" className="text-white">
+                      <Button
+                        color="warning"
+                        size="sm"
+                        className="text-white"
+                        onClick={() => handleEdit(team)} // Aktifkan edit mode
+                      >
                         Edit
                       </Button>
                     </div>
@@ -88,6 +168,18 @@ export default function Teams() {
           </div>
         ))}
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+        <ModalContent className="bg-gray-800 text-white pb-4">
+          <ModalHeader>
+            {editMode ? "Edit Team" : "Create New Team"}
+          </ModalHeader>
+          <ModalBody>
+            <TeamForm onSubmit={handleFormSubmit} teamData={teamToEdit} />
+            {/* Kirim data tim jika edit */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

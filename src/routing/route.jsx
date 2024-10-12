@@ -8,6 +8,7 @@ import CompetitionDetail from "../pages/competition/TeamDetail";
 import Heroes from "../pages/heroes/Heroes";
 import Home from "../pages/home/Home";
 import Teams from "../pages/teams/Teams";
+import TeamDetail from "../pages/teams/TeamDetail";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -38,6 +39,7 @@ const routes = [
         element: <MatchDetail />,
       },
       { path: "teams", element: <Teams /> },
+      { path: "teams/:teamID", element: <TeamDetail /> },
       { path: "heroes", element: <Heroes /> },
     ],
   },
