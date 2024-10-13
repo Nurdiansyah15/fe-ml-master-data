@@ -3,27 +3,33 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
 } from "@nextui-org/react";
-import { ChevronRight, Copy } from "lucide-react";
-import { useContext, useEffect } from "react";
+import { ChevronRight, Copy, Edit } from "lucide-react"; // Import icon Edit
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
 import MatchForm from "./components/MatchForm";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { getTeamByID } from "../../redux/features/teamSlice";
+import { useParams } from "react-router-dom";
+import { getAllTeamMatches } from "../../redux/features/matchSlice";
 
 export default function TeamDetail() {
   const { updatePage } = useContext(PageContext);
+  const { teamID, tournamentID } = useParams();
   const nav = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+  const { team } = useSelector((state) => state.team);
+  const { matches } = useSelector((state) => state.match);
+  const dispatch = useDispatch();
 
-  // Static team data
-  const team = {
-    id: 1,
-    name: "Team Alpha",
-    image: "https://via.placeholder.com/150",
-  };
+  useEffect(() => {
+    dispatch(getTeamByID(teamID));
+    dispatch(getAllTeamMatches({ tournamentID, teamID }));
+  }, [dispatch]);
+
+  console.log(matches);
 
   // Sample weeks and days data
   const weeks = [
@@ -43,7 +49,7 @@ export default function TeamDetail() {
         <Button color="secondary">Export</Button>
       </>
     );
-  }, [updatePage, team.name]);
+  }, [updatePage, team?.name]);
 
   const handleFormSubmit = (data) => {
     console.log("New Match Created:", data);
@@ -55,11 +61,11 @@ export default function TeamDetail() {
       {/* Team Header */}
       <div className="flex items-center mb-6">
         <img
-          src={team.image}
-          alt={team.name}
+          src={team?.Logo}
+          alt={team?.Name}
           className="w-16 h-16 object-cover rounded-lg mr-4"
         />
-        <h1 className="text-xl font-bold">{team.name}</h1>
+        <h1 className="text-xl font-bold">{team?.Name}</h1>
       </div>
 
       {/* Weeks and Days */}
@@ -73,14 +79,17 @@ export default function TeamDetail() {
                 <div
                   key={dayIdx}
                   onClick={() => nav(`/competition/team/match`)}
-                  className="bg-gray-800 rounded-lg p-4 shadow-lg hover:scale-105 hover:bg-gray-700 hover:shadow-xl transition-shadow flex justify-between items-center cursor-pointer"
+                  className="bg-gray-800 rounded-lg p-4 shadow-lg hover:bg-gray-700 hover:shadow-xl transition-shadow flex justify-between items-center"
                 >
                   <div className="flex items-center gap-3">
                     {/* Day Label */}
                     <h3 className="text-md font-semibold mr-2">{day}</h3>
 
-                    {/* Duplicate Icon */}
-                    <Copy className="w-4 h-4 mr-2 text-gray-400 cursor-pointer" />
+                    {/* Copy Icon */}
+                    <Copy className="w-4 h-4 text-gray-400 cursor-pointer hover:text-white transition-colors" />
+
+                    {/* Edit Icon */}
+                    <Edit className="w-4 h-4 text-gray-400 cursor-pointer hover:text-white transition-colors" />
                   </div>
 
                   {/* Chevron Right Icon for Detail */}

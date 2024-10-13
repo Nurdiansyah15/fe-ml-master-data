@@ -7,20 +7,42 @@ import {
 } from "@nextui-org/react";
 import { Plus, ShieldHalf, Sword, User, X } from "lucide-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import CompetitionForm from "./components/CompetitionForm";
-import CompetitionItem from "./components/CompetitionItem";
-import { useSelector, useDispatch } from "react-redux";
+import TournamentItem from "./components/TournamentItem";
+import {
+  getAllTournaments,
+  createTournament,
+} from "../../../redux/features/tournamentSlice";
+import { useEffect } from "react";
 
 export default function Sidebar({ isOpen, closeSidebar }) {
   const nav = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+  const { tournaments } = useSelector((state) => state.tournament);
+  const [loading, setLoading] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getAllTournaments());
+  }, [dispatch]);
+
   const handleCompetitionSubmit = (data) => {
-    console.log("New Competition Created:", data.name);
+    setLoading(true);
+    dispatch(createTournament(data))
+      .unwrap()
+      .then(() => {
+        setModalOpen(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
     setModalOpen(false);
   };
 
@@ -53,13 +75,18 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <Plus className="h-4 w-4 mr-2" />
           New Competition
         </Button>
-        <nav className="mt-4">
+        <nav className="mt-4 max-h-[500px] overflow-y-scroll">
           <ul>
             {/* Wrap each item with Link */}
-            <li>
-              <CompetitionItem />
-              <CompetitionItem />
-            </li>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              tournaments.map((item) => (
+                <li key={item.TournamentID}>
+                  <TournamentItem tournament={item} />
+                </li>
+              ))
+            )}
           </ul>
         </nav>
       </div>

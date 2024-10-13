@@ -1,46 +1,54 @@
-import { useContext, useEffect, useState } from "react";
 import {
   Button,
+  Input,
   Modal,
   ModalBody,
-  ModalHeader,
-  ModalFooter,
   ModalContent,
-  Input,
+  ModalHeader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@nextui-org/react";
+import { Ellipsis } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
-import { Edit, Trash, Ellipsis } from "lucide-react";
+import {
+  createTeamforTournament,
+  getAllTeamsinTournament,
+} from "../../redux/features/teamTournamentSlice";
 import TeamForm from "./components/TeamForm";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
 
 export default function Competition() {
   const { updatePage } = useContext(PageContext);
   const nav = useNavigate();
+  const { tournamentID } = useParams();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const { teams } = useSelector((state) => state.teamTournament);
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Sample teams data
-  const teams = [
-    { id: 1, name: "Team Alpha", image: "https://via.placeholder.com/150" },
-    { id: 2, name: "Team Beta", image: "https://via.placeholder.com/150" },
-    { id: 3, name: "Team Gamma", image: "https://via.placeholder.com/150" },
-    { id: 4, name: "Team Delta", image: "https://via.placeholder.com/150" },
-    { id: 5, name: "Team Epsilon", image: "https://via.placeholder.com/150" },
-    { id: 6, name: "Team Zeta", image: "https://via.placeholder.com/150" },
-    { id: 7, name: "Team Eta", image: "https://via.placeholder.com/150" },
-    { id: 8, name: "Team Theta", image: "https://via.placeholder.com/150" },
-  ];
+  useEffect(() => {
+    dispatch(getAllTeamsinTournament(tournamentID));
+  }, [dispatch, tournamentID]);
 
   // Filter teams based on search term
   const filteredTeams = teams.filter((team) =>
-    team.name.toLowerCase().includes(searchTerm.toLowerCase())
+    team.Name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Handle form submission
   const handleFormSubmit = (data) => {
-    console.log("Selected Team:", data.team);
-    setModalOpen(false); // Close modal on form submit
+    setLoading(true);
+    dispatch(createTeamforTournament({ tournamentID, teamID: data.team }))
+      .unwrap()
+      .then(() => setModalOpen(false))
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -66,28 +74,34 @@ export default function Competition() {
       <div className="flex flex-wrap gap-4 justify-start items-start w-full">
         {filteredTeams.map((team) => (
           <div
-            key={team.id}
+            key={team.TeamID}
             className="relative bg-gray-800 rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Image and Name */}
             <img
-              src={team.image}
-              alt={team.name}
+              src={team.Logo}
+              alt={team.Name}
               className="w-36 h-36 object-cover rounded-lg"
             />
             <h3 className="text-md font-semibold mt-1 text-center">
-              {team.name}
+              {team.Name}
             </h3>
 
             {/* Detail Button */}
             <Button
               onPress={() => {
-                nav("/competition/team");
+                nav(
+                  "/tournaments/" +
+                    tournamentID +
+                    "/teams/" +
+                    team.TeamID +
+                    "/matches"
+                );
               }}
               color="primary"
               className="mt-2 w-full text-sm"
             >
-              Detail
+              Matches
             </Button>
 
             {/* Hover Edit/Delete Button */}

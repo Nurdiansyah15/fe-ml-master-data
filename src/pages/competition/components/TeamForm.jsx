@@ -1,29 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { z } from "zod";
+import { getAllTeams } from "../../../redux/features/teamSlice";
 
 // Zod schema for validation
 const teamSchema = z.object({
-  team: z.string().min(1, "Please select a team"),
+  team: z.number().min(1, "Team is required"),
 });
 
-// List of teams
-const teams = [
-  { id: 1, name: "Team Alpha" },
-  { id: 2, name: "Team Beta" },
-  { id: 3, name: "Team Gamma" },
-  { id: 4, name: "Team Delta" },
-  { id: 5, name: "Team Epsilon" },
-  { id: 6, name: "Team Zeta" },
-  { id: 7, name: "Team Eta" },
-  { id: 8, name: "Team Theta" },
-  { id: 9, name: "Team Iota" },
-  { id: 10, name: "Team Kappa" },
-  { id: 11, name: "Team Lambda" },
-];
-
 export default function TeamForm({ onSubmit }) {
+  const { teams } = useSelector((state) => state.team);
+  const dispatch = useDispatch();
   const {
     control,
     handleSubmit,
@@ -34,6 +25,10 @@ export default function TeamForm({ onSubmit }) {
       team: "",
     },
   });
+
+  useEffect(() => {
+    dispatch(getAllTeams());
+  }, [dispatch]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -53,16 +48,19 @@ export default function TeamForm({ onSubmit }) {
             defaultItems={teams}
             onSelectionChange={(teamId) => {
               const selectedTeam = teams.find(
-                (team) => team.id.toString() === teamId
+                (team) => team.TeamID.toString() === teamId
               );
-              onChange(selectedTeam ? selectedTeam.name : "");
+              onChange(selectedTeam ? selectedTeam.TeamID : "");
             }}
             aria-label="Search and select team" // Added aria-label for accessibility
             className="w-full"
           >
             {(team) => (
-              <AutocompleteItem key={team.id} value={team.id.toString()}>
-                {team.name}
+              <AutocompleteItem
+                key={team.TeamID}
+                value={team.TeamID.toString()}
+              >
+                {team.Name}
               </AutocompleteItem>
             )}
           </Autocomplete>

@@ -27,11 +27,11 @@ const routes = [
         element: <Home />,
       },
       {
-        path: "competition",
+        path: "tournaments/:tournamentID",
         element: <Competition />,
       },
       {
-        path: "competition/team",
+        path: "tournaments/:tournamentID/teams/:teamID/matches",
         element: <CompetitionDetail />,
       },
       {
