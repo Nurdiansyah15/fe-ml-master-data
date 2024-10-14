@@ -32,11 +32,11 @@ export const getMatchByID = createAsyncThunk(
 export const createMatch = createAsyncThunk(
   "matches/createMatch",
   async (
-    { tournamentID, teamID, week, day, date },
+    { tournamentID, teamID, opponentTeamID, week, day, date },
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const data = { week, day, date };
+      const data = { opponent_team_id: opponentTeamID, week, day, date };
 
       await axiosInstance.post(
         `/api/tournaments/${tournamentID}/teams/${teamID}/matches`,
@@ -60,12 +60,9 @@ export const createMatch = createAsyncThunk(
 
 export const updateMatch = createAsyncThunk(
   "matches/updateMatch",
-  async (
-    { matchID, opponentTeamID, week, day, date },
-    { rejectWithValue, dispatch }
-  ) => {
+  async ({ matchID, week, day, date }, { rejectWithValue, dispatch }) => {
     try {
-      const data = { opponent_team_id: opponentTeamID, week, day, date };
+      const data = { week, day, date };
 
       await axiosInstance.put(`/api/matches/${matchID}`, data, {
         headers: {

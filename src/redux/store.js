@@ -7,6 +7,8 @@ import heroReducer from "./features/heroSlice";
 import tournamentReducer from "./features/tournamentSlice";
 import teamTournamentReducer from "./features/teamTournamentSlice";
 import matchReducer from "./features/matchSlice";
+import gameReducer from "./features/gameSlice";
+import selectionTeamReducer from "./features/selectionTeamSlice";
 
 export default configureStore({
   reducer: {
@@ -18,5 +20,7 @@ export default configureStore({
     tournament: tournamentReducer,
     teamTournament: teamTournamentReducer,
     match: matchReducer,
+    game: gameReducer,
+    selectionTeam: selectionTeamReducer,
   },
 });

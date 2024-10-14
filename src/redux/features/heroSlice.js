@@ -19,12 +19,12 @@ export const getAllHeroes = createAsyncThunk(
 
 export const createHero = createAsyncThunk(
   "heroes/createHero",
-  async ({ name, heroImage }, { rejectWithValue, dispatch }) => {
+  async ({ name, hero_image }, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      if (heroImage) {
-        formData.append("hero_image", heroImage);
+      if (hero_image) {
+        formData.append("hero_image", hero_image);
       }
 
       const response = await axiosInstance.post("/api/heroes", formData, {

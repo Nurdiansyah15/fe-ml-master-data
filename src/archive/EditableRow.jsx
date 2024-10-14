@@ -1,8 +1,5 @@
-import { Save } from "lucide-react";
-import { Trash } from "lucide-react";
-import { EditIcon } from "lucide-react";
-import { useEffect } from "react";
-import { useState } from "react";
+import { Save, Trash, EditIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const EditableRow = ({
   cols,
@@ -12,30 +9,43 @@ const EditableRow = ({
   onDelete,
   isEditing,
   setEditingIndex,
+  selectOptions,
+  handleSaveRow,
 }) => {
   const [isEditingState, setIsEditingState] = useState(isEditing);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setIsEditingState(isEditing); // Update local state when isEditing prop changes
+    setIsEditingState(isEditing);
   }, [isEditing]);
 
-  const toggleEditing = () => {
-    setIsEditingState(!isEditingState);
-    setEditingIndex(isEditingState ? null : index); // Set editing index
+  const startEditing = () => {
+    setIsEditingState(true);
+    setEditingIndex(index);
   };
+
+  const saveRow = () => {
+    if (!validateRow()) {
+      setHasError(true);
+      return;
+    }
+    handleSaveRow(index); // Call parent save handler
+    setIsEditingState(false);
+    setEditingIndex(null);
+  };
+
   const handleInputChange = (field, value) => {
+    setHasError(false);
     onChange(index, field, value);
   };
 
-  const handleDelete = () => {
-    onDelete(index); // Panggil fungsi delete dari props
+  const validateRow = () => {
+    return cols.every((col) =>
+      col.type === "checkbox" ? true : rowData[col.field]?.trim()
+    );
   };
 
-  const handleCancel = () => {
-    setRows(originalData); // Reset ke data asli
-    setIsEditingState(false); // Keluar dari mode edit
-    setHasChanges(false); // Reset state perubahan
-  };
+  const handleDelete = () => onDelete(index);
 
   return (
     <tr>
@@ -55,13 +65,49 @@ const EditableRow = ({
                 className="w-5 h-6 cursor-pointer"
               />
             </div>
+          ) : col.type === "select" ? (
+            isEditingState ? (
+              <select
+                value={rowData[col.field] || ""}
+                onChange={(e) => handleInputChange(col.field, e.target.value)}
+                className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
+              >
+                <option value="">Pilih Team</option>
+                {selectOptions[col.field].map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="flex items-center gap-2">
+                <img
+                  src={
+                    selectOptions[col.field].find(
+                      (option) => option.value == rowData[col.field]
+                    )?.logo || "https://via.placeholder.com/32"
+                  }
+                  alt="Team Logo"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-center block">
+                  {selectOptions[col.field].find(
+                    (option) => option.value == rowData[col.field]
+                  )?.label || "Unknown Team"}
+                </span>
+              </div>
+            )
           ) : isEditingState ? (
             <input
               type="text"
               value={rowData[col.field]}
               onChange={(e) => handleInputChange(col.field, e.target.value)}
-              className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
-              onKeyDown={(e) => e.key === "Enter" && toggleEditing()}
+              className={`bg-slate-800 text-white rounded-md p-1 w-full text-center ${
+                hasError && !rowData[col.field]?.trim()
+                  ? "border border-red-500"
+                  : ""
+              }`}
+              onKeyDown={(e) => e.key === "Enter" && saveRow()}
             />
           ) : (
             <span className="text-center w-full block">
@@ -72,12 +118,21 @@ const EditableRow = ({
       ))}
       <td className="py-2 w-5">
         <div className="flex items-center justify-center">
-          <button
-            className="text-white px-4 py-2 rounded-md"
-            onClick={() => toggleEditing()}
-          >
-            {!isEditingState ? <EditIcon /> : <Save />}
-          </button>
+          {!isEditingState ? (
+            <button
+              className="text-white px-4 py-2 rounded-md"
+              onClick={startEditing}
+            >
+              <EditIcon />
+            </button>
+          ) : (
+            <button
+              className="text-white px-4 py-2 rounded-md"
+              onClick={saveRow}
+            >
+              <Save />
+            </button>
+          )}
           <button
             className="text-white px-4 py-2 rounded-md"
             onClick={handleDelete}

@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const competitionSchema = z.object({
-  name: z.string().min(1, "Competition name is required"),
+  name: z.string().min(1, "Tournament name is required"),
 });
 
 export default function CompetitionForm({ onSubmit }) {
@@ -29,7 +29,7 @@ export default function CompetitionForm({ onSubmit }) {
           <Input
             {...field}
             type="text"
-            placeholder="Competition Name"
+            placeholder="Tournament Name"
             className="text-white"
           />
         )}

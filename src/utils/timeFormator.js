@@ -1,18 +1,17 @@
 // Fungsi untuk mengubah tanggal dan waktu menjadi Unix time
-export function toUnixTime(date, time) {
-  const dateTimeString = `${date}T${time}:00`; // Format: 'YYYY-MM-DDTHH:mm:ss'
-  return Math.floor(new Date(dateTimeString).getTime() / 1000);
+export function toUnixTime(dateTime) {
+  const localDate = new Date(dateTime); // 'datetime-local' menggunakan zona waktu lokal
+  return Math.floor(localDate.getTime() / 1000); // Konversi ke detik
 }
 
 // Fungsi untuk mengubah Unix time menjadi format tanggal dan waktu
-export function fromUnixTime(unixTime) {
-  const date = new Date(unixTime * 1000); // Convert to milliseconds
+export const fromUnixTime = (unixTime) => {
+  if (!unixTime) {
+    return null;
+  }
+  const date = new Date(unixTime * 1000); // Konversi detik ke milidetik
+  const offset = date.getTimezoneOffset() * 60000; // Perbedaan zona waktu dalam milidetik
+  const localDate = new Date(date.getTime() - offset); // Sesuaikan ke waktu lokal
 
-  // Format tanggal: YYYY-MM-DD
-  const formattedDate = date.toISOString().split("T")[0];
-
-  // Format waktu: HH:mm
-  const formattedTime = date.toTimeString().slice(0, 5);
-
-  return { date: formattedDate, time: formattedTime };
-}
+  return localDate.toISOString().slice(0, 16); // Format YYYY-MM-DDTHH:MM
+};

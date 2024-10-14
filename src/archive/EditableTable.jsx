@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 import EditableRow from "./EditableRow";
 
-const EditableTable = ({ columns, initialData }) => {
-  const [rows, setRows] = useState(initialData);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null); // State untuk menyimpan index baris yang sedang diedit
+const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
+  const [rows, setRows] = useState(
+    initialData.map((row) => ({ ...row, isNew: false })) // Mark existing rows as not new
+  );
+  const [editingIndex, setEditingIndex] = useState(null);
 
   const handleChange = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
     setRows(updatedRows);
-    setHasChanges(true);
   };
 
+  console.log("initialData", initialData);
+
   const addRow = () => {
-    const emptyRow = {};
+    const emptyRow = { isNew: true }; // New row with 'isNew' flag
     columns.forEach((col) => {
       emptyRow[col.field] = col.type === "checkbox" ? false : "";
     });
     setRows([...rows, emptyRow]);
-    setEditingIndex(rows.length); // Set index baris yang baru ditambahkan ke mode edit
-    setHasChanges(true);
+    setEditingIndex(rows.length);
   };
 
-  const handleSave = () => {
-    console.log("Data yang disimpan:", rows);
-    setHasChanges(false);
+  const handleSaveRow = (index) => {
+    const row = rows[index];
+    if (onSaveRow) {
+      onSaveRow(row); // Pass the type and data to parent
+    }
+    row.isNew = false; // Mark as existing after saving
+    setEditingIndex(null); // Stop editing
   };
 
   const handleDeleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
-    setHasChanges(true);
   };
 
   return (
@@ -56,8 +60,10 @@ const EditableTable = ({ columns, initialData }) => {
               onChange={handleChange}
               index={index}
               onDelete={handleDeleteRow}
-              isEditing={editingIndex === index} // Pass isEditing state to EditableRow
-              setEditingIndex={setEditingIndex} // Pass setter function
+              isEditing={editingIndex === index}
+              setEditingIndex={setEditingIndex}
+              selectOptions={selectOptions}
+              handleSaveRow={handleSaveRow}
             />
           ))}
         </tbody>
@@ -66,18 +72,9 @@ const EditableTable = ({ columns, initialData }) => {
       <div className="mt-4 mx-10 text-right">
         <button
           onClick={addRow}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md mr-2"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md"
         >
           Add Row
-        </button>
-        <button
-          onClick={handleSave}
-          className={`bg-green-600 text-white px-4 py-2 rounded-md ${
-            hasChanges ? "" : "opacity-50 cursor-not-allowed"
-          }`}
-          disabled={!hasChanges}
-        >
-          Save
         </button>
       </div>
     </div>

@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           className="flex items-center justify-center w-full bg-primary text-white py-2 rounded-lg px-3"
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Competition
+          New Tournament
         </Button>
         <nav className="mt-4 max-h-[500px] overflow-y-scroll">
           <ul>
@@ -130,7 +130,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
       {/* Modal for the Competition Form */}
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="bg-gray-800 text-white pb-4">
-          <ModalHeader>Create New Competition</ModalHeader>
+          <ModalHeader>Create New Tournament</ModalHeader>
           <ModalBody>
             <CompetitionForm onSubmit={handleCompetitionSubmit} />
           </ModalBody>

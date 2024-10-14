@@ -1,32 +1,57 @@
+import React, { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Select, SelectItem } from "@nextui-org/react";
-import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllTeams } from "../../../redux/features/teamSlice";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  Input,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
+import { fromUnixTime } from "../../../utils/timeFormator";
 
-// Zod schema for validation
 const matchSchema = z.object({
   week: z.string().min(1, "Week is required"),
   day: z.string().min(1, "Day is required"),
-  date: z.string().min(1, "Date is required"),
-  time: z.string().min(1, "Time is required"),
+  datetime: z.string().min(1, "Datetime is required"),
+  team: z.number().min(1, "Team is required"),
 });
 
-export default function MatchForm({ onSubmit }) {
+export default function MatchForm({ onSubmit, editingMatch }) {
+  const { teams } = useSelector((state) => state.team);
+  const dispatch = useDispatch();
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(matchSchema),
     defaultValues: {
       week: "",
       day: "",
-      date: "",
-      time: "",
+      datetime: "",
+      team: "",
     },
   });
 
-  // Creating options for weeks and days
+  useEffect(() => {
+    dispatch(getAllTeams());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (editingMatch) {
+      setValue("week", editingMatch.Week.toString());
+      setValue("day", editingMatch.Day.toString());
+      setValue("datetime", fromUnixTime(editingMatch.Date)); // Format waktu lokal
+      setValue("team", editingMatch.OpponentTeamID);
+    }
+  }, [editingMatch, setValue]);
+
   const weeks = Array.from({ length: 4 }, (_, i) => ({
     value: (i + 1).toString(),
     label: `Week ${i + 1}`,
@@ -39,7 +64,6 @@ export default function MatchForm({ onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-      {/* Week Input */}
       <div className="mb-1">
         <label className="block mb-2">Week</label>
         <Controller
@@ -53,10 +77,8 @@ export default function MatchForm({ onSubmit }) {
                 status={errors.week ? "error" : "default"}
                 aria-label="Select Week"
                 className="w-full"
+                selectedKeys={field.value ? [field.value] : []}
               >
-                <SelectItem value="" disabled>
-                  Select week...
-                </SelectItem>
                 {weeks.map((week) => (
                   <SelectItem key={week.value} value={week.value}>
                     {week.label}
@@ -73,7 +95,6 @@ export default function MatchForm({ onSubmit }) {
         />
       </div>
 
-      {/* Day Input */}
       <div className="mb-1">
         <label className="block mb-2">Day</label>
         <Controller
@@ -87,10 +108,8 @@ export default function MatchForm({ onSubmit }) {
                 status={errors.day ? "error" : "default"}
                 aria-label="Select Day"
                 className="w-full"
+                selectedKeys={field.value ? [field.value] : []}
               >
-                <SelectItem value="" disabled>
-                  Select day...
-                </SelectItem>
                 {days.map((day) => (
                   <SelectItem key={day.value} value={day.value}>
                     {day.label}
@@ -107,24 +126,23 @@ export default function MatchForm({ onSubmit }) {
         />
       </div>
 
-      {/* Date Input */}
       <div className="mb-1">
-        <label className="block mb-2">Date</label>
+        <label className="block mb-2">Date and Time</label>
         <Controller
-          name="date"
+          name="datetime"
           control={control}
           render={({ field }) => (
             <>
               <Input
                 {...field}
-                type="date"
-                placeholder="Select date..."
+                type="datetime-local"
+                placeholder="Select date and time..."
                 fullWidth
                 className="text-gray-600"
               />
-              {errors.date && (
+              {errors.datetime && (
                 <span className="text-danger text-sm">
-                  {errors.date.message}
+                  {errors.datetime.message}
                 </span>
               )}
             </>
@@ -132,34 +150,44 @@ export default function MatchForm({ onSubmit }) {
         />
       </div>
 
-      {/* Time Input */}
-      <div className="mb-1">
-        <label className="block mb-2">Time</label>
+      <div className={`mb-1 ${editingMatch ? "hidden" : ""}`}>
+        <label className="block mb-2">Select Opponent Team</label>
         <Controller
-          name="time"
+          name="team"
           control={control}
-          render={({ field }) => (
-            <>
-              <Input
-                {...field}
-                type="time"
-                placeholder="Select time..."
-                fullWidth
-                className="text-gray-600"
-              />
-              {errors.time && (
-                <span className="text-danger text-sm">
-                  {errors.time.message}
-                </span>
+          render={({ field: { onChange, value } }) => (
+            <Autocomplete
+              placeholder="Search and select team..."
+              defaultItems={teams}
+              onSelectionChange={(teamId) => {
+                const selectedTeam = teams.find(
+                  (team) => team.TeamID.toString() === teamId
+                );
+                onChange(selectedTeam ? selectedTeam.TeamID : "");
+              }}
+              aria-label="Search and select team"
+              className="w-full"
+              isDisabled={editingMatch !== null}
+              selectedKey={value ? value.toString() : undefined}
+            >
+              {(team) => (
+                <AutocompleteItem
+                  key={team.TeamID}
+                  value={team.TeamID.toString()}
+                >
+                  {team.Name}
+                </AutocompleteItem>
               )}
-            </>
+            </Autocomplete>
           )}
         />
+        {errors.team && (
+          <span className="text-danger text-sm">{errors.team.message}</span>
+        )}
       </div>
 
-      {/* Submit Button */}
       <Button type="submit" color="primary" className="w-full mt-6">
-        Submit
+        {editingMatch ? "Update" : "Submit"}
       </Button>
     </form>
   );

@@ -50,12 +50,9 @@ const TournamentItem = ({ tournament }) => {
   }, [isEditing]);
 
   useEffect(() => {
-    if (loc.pathname === "/tournaments/" + tournament.TournamentID) {
-      setIsActive(true);
-    } else {
-      setIsActive(false);
-    }
-  }, [loc, nav]);
+    const prefix = `/tournaments/${tournament.TournamentID}`;
+    setIsActive(loc.pathname.startsWith(prefix));
+  }, [loc.pathname, tournament.TournamentID]);
 
   const handleEditClick = (e) => {
     e.stopPropagation();

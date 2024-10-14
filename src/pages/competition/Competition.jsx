@@ -53,7 +53,7 @@ export default function Competition() {
 
   useEffect(() => {
     updatePage(
-      "Competition",
+      "Tournament",
       <>
         <Input
           type="text"

@@ -1,13 +1,15 @@
-import { Button, Card, CardBody } from "@nextui-org/react";
-import { Plus } from "lucide-react";
-import { Tabs, Tab } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
+import { getTeamByID } from "../../redux/features/teamSlice";
+import GameSection from "./match/GameSection";
+import HeroSection from "./match/HeroSection";
 import MatchSection from "./match/MatchSection";
 import MemberSection from "./match/MemberSection";
-import HeroSection from "./match/HeroSection";
 import PrioritySection from "./match/PrioritySection";
-import GameSection from "./match/GameSection";
+import { getMatchByID } from "../../redux/features/matchSlice";
 
 // Sample team data
 const team = {
@@ -114,16 +116,29 @@ const match = {
 
 export default function MatchDetail() {
   const { updatePage } = useContext(PageContext);
+  const { tournamentID, teamID, matchID } = useParams();
+  const { team } = useSelector((state) => state.team);
+  const { match } = useSelector((state) => state.match);
+  const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    dispatch(getTeamByID(teamID));
+    dispatch(getMatchByID(matchID));
+  }, [dispatch]);
 
   useEffect(() => {
     updatePage(
-      "Competition",
+      "Tournament",
       <>
         <Button color="secondary">Export</Button>
       </>
     );
   }, [updatePage]);
+
+  console.log(matchID);
+  console.log("match", match);
 
   const handleFormSubmit = (data) => {
     console.log("New Match Created:", data);
@@ -135,11 +150,11 @@ export default function MatchDetail() {
       {/* Header Section */}
       <div className="flex items-center mb-6">
         <img
-          src={team.logo}
-          alt={team.name}
+          src={team?.Logo}
+          alt={team?.Name}
           className="w-16 h-16 object-cover rounded-lg mr-4"
         />
-        <h1 className="text-xl font-bold">{team.name}</h1>
+        <h1 className="text-xl font-bold">{team?.Name}</h1>
       </div>
 
       <MatchSection match={match} />

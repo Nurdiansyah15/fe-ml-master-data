@@ -35,7 +35,7 @@ const routes = [
         element: <CompetitionDetail />,
       },
       {
-        path: "competition/team/match",
+        path: "tournaments/:tournamentID/teams/:teamID/matches/:matchID",
         element: <MatchDetail />,
       },
       { path: "teams", element: <Teams /> },
