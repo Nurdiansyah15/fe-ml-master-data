@@ -11,12 +11,12 @@ const ProtectedPage = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUserInfo());
+    // dispatch(getUserInfo());
   }, []);
 
-  if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+  // if (!token) {
+  //   return <Navigate to="/login" state={{ from: location }} replace />;
+  // }
 
   return children;
 };

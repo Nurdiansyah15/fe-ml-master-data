@@ -22,7 +22,7 @@ export default function Header({ toggleSidebar }) {
   }, [nav, loc.pathname]);
 
   return (
-    <header className="bg-gray-900 shadow-md p-4">
+    <header className="bg-[#161618] shadow-md p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button

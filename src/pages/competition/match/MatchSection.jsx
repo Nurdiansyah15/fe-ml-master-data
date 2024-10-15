@@ -1,4 +1,3 @@
-import { Card } from "@nextui-org/react";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,27 +9,28 @@ import {
   getAllGamesForMatch,
   updateGame,
 } from "../../../redux/features/gameSlice";
+import Card from "../../../components/Card";
 
 export default function MatchSection({ match }) {
-  const { teams } = useSelector((state) => state.selectionTeam);
-  const { games } = useSelector((state) => state.game);
+  // const { teams } = useSelector((state) => state.selectionTeam);
+  // const { games } = useSelector((state) => state.game);
   const [loading, setLoading] = React.useState(true); // Default loading true
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (match?.MatchID) {
-      setLoading(true); // Set loading true saat mulai fetch
-      Promise.all([
-        dispatch(getAllTeamsInMatch(match?.MatchID)),
-        dispatch(getAllGamesForMatch(match?.MatchID)),
-      ])
-        .then(() => setLoading(false)) // Selesai fetch
-        .catch((error) => {
-          console.error("Error loading data:", error);
-          setLoading(false);
-        });
-    }
-  }, [dispatch, match?.MatchID, games?.length]);
+  // useEffect(() => {
+  //   if (match?.MatchID) {
+  //     setLoading(true); // Set loading true saat mulai fetch
+  //     Promise.all([
+  //       dispatch(getAllTeamsInMatch(match?.MatchID)),
+  //       dispatch(getAllGamesForMatch(match?.MatchID)),
+  //     ])
+  //       .then(() => setLoading(false)) // Selesai fetch
+  //       .catch((error) => {
+  //         console.error("Error loading data:", error);
+  //         setLoading(false);
+  //       });
+  //   }
+  // }, [dispatch, match?.MatchID, games?.length]);
 
   const columns = [
     { label: "Game", field: "game", type: "text" },
@@ -39,34 +39,34 @@ export default function MatchSection({ match }) {
     { label: "Win", field: "win", type: "select" },
   ];
 
-  const initialData = games.map((game) => ({
-    id: game.GameID,
-    game: game.GameNumber.toString(),
-    first: game.FirstPickTeamID.toString(),
-    second: game.SecondPickTeamID.toString(),
-    win: game.WinnerTeamID?.toString() || "",
-  }));
+  const initialData = [{
+    id: 1,
+    game: "Game 1",
+    first: "1",
+    second: "2",
+    win: "1",
+  }];
 
   let selectOptions = [];
-  if (teams) {
-    selectOptions = {
-      first: teams.map((team) => ({
-        value: team.TeamID,
-        label: team.Name,
-        logo: team.Logo,
-      })),
-      second: teams.map((team) => ({
-        value: team.TeamID,
-        label: team.Name,
-        logo: team.Logo,
-      })),
-      win: teams.map((team) => ({
-        value: team.TeamID,
-        label: team.Name,
-        logo: team.Logo,
-      })),
-    };
-  }
+  // if (teams) {
+  //   selectOptions = {
+  //     first: teams.map((team) => ({
+  //       value: team.TeamID,
+  //       label: team.Name,
+  //       logo: team.Logo,
+  //     })),
+  //     second: teams.map((team) => ({
+  //       value: team.TeamID,
+  //       label: team.Name,
+  //       logo: team.Logo,
+  //     })),
+  //     win: teams.map((team) => ({
+  //       value: team.TeamID,
+  //       label: team.Name,
+  //       logo: team.Logo,
+  //     })),
+  //   };
+  // }
 
   const handleSaveRow = (rowData) => {
     console.log(`Action:`, rowData);
@@ -101,125 +101,51 @@ export default function MatchSection({ match }) {
   };
 
   return (
-    <div className="w-full mb-2">
-      <p className="text-xl font-bold mb-4">Match</p>
-      <Card className="bg-gray-800 w-full mb-6 p-5 text-white">
-        <p className="text-xl font-semibold">
-          Week {match?.Week} Day {match?.Day}
-        </p>
-        <p className="text-sm text-gray-400">
-          {moment(fromUnixTime(match?.Date)).format("MMMM DD, YYYY")}
-        </p>
-        <p className="text-sm text-gray-400">
-          {moment(fromUnixTime(match?.Date)).format("HH:mm a")}
-        </p>
-
-        <div className="flex justify-around mt-4">
-          <div className="flex flex-col w-[50%] p-4 gap-5 border-r border-gray-700">
-            <div className="flex items-center justify-around">
-              <div className="flex flex-col items-center gap-2">
-                <img
-                  src={match?.TournamentTeam?.Team?.Logo}
-                  alt={match?.TournamentTeam?.Team?.Name}
-                  className="w-36 h-36 rounded-lg object-cover"
-                />
-                <p className="text-lg">{match?.TournamentTeam?.Team.Name}</p>
-                <div className="bg-success px-4 rounded-full font-bold text-lg">
-                  0
+    <div className="mb-2 w-full">
+      <p className="text-xl font-bold mb-4">Match: RRQ - EVOS</p>
+      <div className="flex flex-row space-x-5 w-full">
+        <Card className="mb-6 p-8 text-white flex flex-1">
+          <div className="flex flex-col space-y-6">
+            <div>
+              <p className="text-sm text-gray-400">Week 1 - August 11, 2024 - 18:15 WIB</p>
+              <p className="text-3xl text-white font-bold">Day 2</p>
+            </div>
+            <div className="flex flex-row space-x-5 items-center">
+              <div className="flex flex-col space-y-3">
+                <button>
+                  <div className="w-40 h-40 bg-gray-500"></div>
+                </button>
+                <div className="px-5 py-2 bg-[#61AB76] rounded-full">
+                  <p className="text-center font-bold text-xl">2</p>
                 </div>
               </div>
-              <div className="text-2xl font-bold">VS</div>
-              <div className="flex flex-col items-center gap-2">
-                <img
-                  src={match?.OpponentTeam?.Logo}
-                  alt={match?.OpponentTeam?.Name}
-                  className="w-36 h-36 rounded-lg object-cover"
-                />
-                <p className="text-lg">{match?.OpponentTeam?.Name}</p>
-                <div className="bg-success px-4 rounded-full font-bold text-lg">
-                  0
+              <div className="text-3xl text-white font-bold">VS</div>
+              <div className="flex flex-col space-y-3">
+                <button>
+                  <div className="w-40 h-40 bg-gray-500"></div>
+                </button>
+                <div className="px-5 py-2 bg-[#1F1F21] rounded-full border border-[#454545]">
+                  <p className="text-center font-bold text-xl">0</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="flex w-full">
-              {loading ? (
-                <p className="text-center w-full text-lg">Loading...</p>
-              ) : (
+          {/* <div className="flex w-full">
                 <EditableTable
                   columns={columns}
                   initialData={initialData}
                   selectOptions={selectOptions}
                   onSaveRow={handleSaveRow}
                 />
-              )}
-            </div>
-          </div>
-
-          <div className="w-[50%] p-10">
-            <div className="w-[50%] p-10">
-              <div className="mt-4">
-                {/* Statistics Grid */}
-                <div className="grid grid-cols-4 text-center mt-2 gap-4">
-                  {/* Column Titles */}
-                  <div className="font-bold text-md">#</div>
-                  <div className="font-bold text-md">Wins</div>
-                  <div className="font-bold text-md">Loses</div>
-                  <div className="font-bold text-md">Win Rate</div>
-
-                  {/* First Pick */}
-                  <div className="text-lg">First Pick</div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    2
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    100%
-                  </div>
-
-                  {/* Second Pick */}
-                  <div className="text-lg">Second Pick</div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0%
-                  </div>
-
-                  {/* Total Game */}
-                  <div className="text-lg">Total Game</div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    2
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    100%
-                  </div>
-
-                  {/* Total Match */}
-                  <div className="text-lg">Total Match</div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0
-                  </div>
-                  <div className="border border-gray-700 rounded-md py-1 text-md">
-                    0%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
+            </div> */}
+          {/* </div> */}
+          {/* </div> */}
+        </Card>
+        <Card className="flex flex-1 w-full mb-6 p-8">
+          <div>Loading</div>
+        </Card>
+      </div>
     </div>
   );
 }

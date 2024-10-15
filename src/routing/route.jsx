@@ -9,6 +9,7 @@ import Heroes from "../pages/heroes/Heroes";
 import Home from "../pages/home/Home";
 import Teams from "../pages/teams/Teams";
 import TeamDetail from "../pages/teams/TeamDetail";
+import Match from "../pages/competition/Match";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -30,14 +31,18 @@ const routes = [
         path: "tournaments/:tournamentID",
         element: <Competition />,
       },
+      // {
+      //   path: "tournaments/:tournamentID/teams/:teamID/matches",
+      //   element: <CompetitionDetail />,
+      // },
       {
-        path: "tournaments/:tournamentID/teams/:teamID/matches",
-        element: <CompetitionDetail />,
+        path: "tournaments/:tournamentID/match/:matchID",
+        element: <Match />,
       },
-      {
-        path: "tournaments/:tournamentID/teams/:teamID/matches/:matchID",
-        element: <MatchDetail />,
-      },
+      // {
+      //   path: "tournaments/:tournamentID/match/:matchID/teams/:teamID",
+      //   element: <MatchDetail />,
+      // },
       { path: "teams", element: <Teams /> },
       { path: "teams/:teamID", element: <TeamDetail /> },
       { path: "heroes", element: <Heroes /> },

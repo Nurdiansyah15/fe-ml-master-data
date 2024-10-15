@@ -27,7 +27,7 @@ export default function TeamForm({ onSubmit }) {
   });
 
   useEffect(() => {
-    dispatch(getAllTeams());
+    // dispatch(getAllTeams());
   }, [dispatch]);
 
   return (

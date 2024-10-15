@@ -6,11 +6,15 @@ import {
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateTournament } from "../../../../redux/features/tournamentSlice";
 import { Save } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaPen } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const TournamentItem = ({ tournament }) => {
   const nav = useNavigate();
@@ -18,6 +22,7 @@ const TournamentItem = ({ tournament }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -80,11 +85,11 @@ const TournamentItem = ({ tournament }) => {
 
   return (
     <div
-      className={`my-2 cursor-pointer flex items-center ${
-        isEditing && "border border-blue-500"
-      } justify-between text-white p-2 ${
-        isActive && "bg-gray-700"
-      } rounded-lg px-3 hover:bg-gray-700`}
+      className={`my-2 cursor-pointer flex items-center ${isEditing && "border border-blue-500"
+        } justify-between text-white p-2 ${isActive && "bg-[#363638]"
+        } rounded-xl px-3 hover:bg-[#363638]`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={() =>
         !isEditing && nav("/tournaments/" + tournament.TournamentID)
       }
@@ -129,46 +134,63 @@ const TournamentItem = ({ tournament }) => {
         <p className="overflow-hidden line-clamp-1">{tournament.Name}</p>
       )}
       {!isEditing && (
-        <Popover
-          isOpen={isPopoverOpen}
-          onOpenChange={setIsPopoverOpen}
-          placement="right-start"
-        >
-          <PopoverTrigger>
-            <div className="w-5" onClick={(e) => e.stopPropagation()}>
-              {/* Prevent navigation when clicking ellipsis */}
-              <Ellipsis
-                size={20}
-                color="white"
-                className={`hover:opacity-100 opacity-0 h-full ${
-                  isActive && "opacity-100"
-                }`}
-              />
+        isHovered &&
+        <div>
+          <div className="flex flex-row gap-2">
+            <div className="flex items-center gap-2">
+              <button
+                className="text-gray-500 hover:text-white text-xs p-0 m-0"
+                onClick={handleEditClick}
+              >
+                <FontAwesomeIcon  icon={faPen} />
+              </button>
             </div>
-          </PopoverTrigger>
-          <PopoverContent
-            color="white"
-            className="bg-gray-700 border border-gray-500"
-          >
-            <div className="p-2 flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Button
-                  color="warning"
-                  size="sm"
-                  className="text-white"
-                  onClick={handleEditClick}
-                >
-                  Edit
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button color="danger" size="sm">
-                  Delete
-                </Button>
-              </div>
+            <div className="flex items-center gap-2">
+              <button className="text-gray-500 hover:text-white text-xs p-0 m-0">
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
             </div>
-          </PopoverContent>
-        </Popover>
+          </div>
+        </div>
+        // <Popover
+        //   isOpen={isPopoverOpen}
+        //   onOpenChange={setIsPopoverOpen}
+        //   placement="right-start"
+        // >
+        //   <PopoverTrigger>
+        //     <div className="w-5" onClick={(e) => e.stopPropagation()}>
+        //       <Ellipsis
+        //         size={20}
+        //         color="white"
+        //         className={`hover:opacity-100 opacity-0 h-full ${
+        //           isActive && "opacity-100"
+        //         }`}
+        //       />
+        //     </div>
+        //   </PopoverTrigger>
+        //   <PopoverContent
+        //     color="white"
+        //     className="bg-[#363638] border border-gray-500"
+        //   >
+        //     <div className="p-2 flex flex-col gap-2">
+        //       <div className="flex items-center gap-2">
+        //         <Button
+        //           color="warning"
+        //           size="sm"
+        //           className="text-white"
+        //           onClick={handleEditClick}
+        //         >
+        //           Edit
+        //         </Button>
+        //       </div>
+        //       <div className="flex items-center gap-2">
+        //         <Button color="danger" size="sm">
+        //           Delete
+        //         </Button>
+        //       </div>
+        //     </div>
+        //   </PopoverContent>
+        // </Popover>
       )}
     </div>
   );
