@@ -1,8 +1,9 @@
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import { CardBody, Tab, Tabs } from "@nextui-org/react";
 import React from "react";
 import PriorityPick from "./components/PriorityPick";
 import PriorityBan from "./components/PriorityBan";
 import FlexPick from "./components/FlexPick";
+import Card from "../../../components/Card";
 
 export default function PrioritySection() {
   return (
@@ -14,24 +15,24 @@ export default function PrioritySection() {
         className="w-fit rounded-xl border border-gray-700"
       >
         <Tab key="pick" title="Priority Pick">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
               <PriorityPick />
-            </CardBody>
+            {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="ban" title="Priority Ban">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
               <PriorityBan />
-            </CardBody>
+            {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="flex" title="Flex Pick">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
               <FlexPick />
-            </CardBody>
+            {/* </CardBody> */}
           </Card>
         </Tab>
       </Tabs>

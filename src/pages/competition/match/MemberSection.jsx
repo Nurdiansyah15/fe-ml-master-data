@@ -1,5 +1,4 @@
 import {
-  Card,
   Modal,
   ModalBody,
   ModalContent,
@@ -18,6 +17,7 @@ import {
 } from "../../../redux/thunks/teamThunk";
 import CoachTeamForm from "./components/CoachTeamForm"; // Impor CoachTeamForm
 import PlayerTeamForm from "./components/PlayerTeamForm";
+import Card from "../../../components/Card";
 
 export default function MemberSection({ team, match }) {
   const { matchPlayers } = useSelector((state) => state.matchPlayer);
@@ -126,14 +126,14 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center">
                   {player.player.role}
                 </p>
-                <Card className="bg-gray-800 w-40">
+                <Card className=" w-40">
                   <img
                     src={player.player.image}
                     alt={player.player.name}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                 </Card>
-                <Card className="bg-gray-800 w-40 text-white px-3 py-1 mt-4">
+                <Card className=" w-40 text-white px-3 py-1 mt-4">
                   <h3 className="font-semibold text-lg">
                     {player.player.name}
                   </h3>
@@ -167,7 +167,7 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center text-gray-400">
                   New Player
                 </p>
-                <Card className="bg-gray-800 w-40">
+                <Card className=" w-40">
                   <div className="w-full h-48 object-cover rounded-t-lg flex justify-center items-center">
                     <Plus className="h-12 w-12 text-gray-300" />
                   </div>
@@ -186,14 +186,14 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center">
                   {coach.coach.role}
                 </p>
-                <Card className="bg-gray-800 w-40">
+                <Card className=" w-40">
                   <img
                     src={coach.coach.image}
                     alt={coach.coach.name}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                 </Card>
-                <Card className="bg-gray-800 w-40 text-white px-3 py-1 mt-4">
+                <Card className=" w-40 text-white px-3 py-1 mt-4">
                   <h3 className="font-semibold text-lg">{coach.coach.name}</h3>
                   <div className="flex gap-2">
                     <div>
@@ -225,7 +225,7 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center text-gray-400">
                   New Coach
                 </p>
-                <Card className="bg-gray-800 w-40">
+                <Card className=" w-40">
                   <div className="w-full h-48 object-cover rounded-t-lg flex justify-center items-center">
                     <Plus className="h-12 w-12 text-gray-300" />
                   </div>
