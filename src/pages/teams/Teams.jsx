@@ -12,13 +12,14 @@ import {
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
+
+import TeamForm from "./components/TeamForm";
+import { useNavigate } from "react-router-dom";
 import {
   createTeam,
   getAllTeams,
   updateTeam,
-} from "../../redux/features/teamSlice"; // Tambahkan updateTeam thunk
-import TeamForm from "./components/TeamForm";
-import { useNavigate } from "react-router-dom";
+} from "../../redux/thunks/teamThunk";
 
 export default function Teams() {
   const { updatePage } = useContext(PageContext);
@@ -75,9 +76,9 @@ export default function Teams() {
 
   const handleEdit = (teamData) => {
     const team = {
-      id: teamData.TeamID,
-      name: teamData.Name,
-      logo: teamData.Logo,
+      id: teamData.team_id,
+      name: teamData.name,
+      image: teamData.image,
     };
     setTeamToEdit(team); // Simpan data tim yang ingin diedit
     setEditMode(true); // Ubah ke mode edit
@@ -93,23 +94,23 @@ export default function Teams() {
       <div className="flex flex-wrap gap-4 justify-start items-start w-full">
         {teams.map((team) => (
           <div
-            key={team.TeamID}
+            key={team.team_id}
             className="relative bg-gray-800 rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Image and Name */}
             <img
-              src={team.Logo}
-              alt={team.Name}
+              src={team.image}
+              alt={team.name}
               className="w-36 h-36 object-cover rounded-lg"
             />
             <h3 className="text-md font-semibold mt-1 text-center">
-              {team.Name}
+              {team.name}
             </h3>
 
             {/* Detail Button */}
             <Button
               onPress={() => {
-                nav("/teams/" + team.TeamID);
+                nav("/team/" + team.team_id);
               }}
               color="primary"
               className="mt-2 w-full text-sm"

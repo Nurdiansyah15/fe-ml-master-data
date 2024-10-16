@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getUserInfo } from "../../redux/features/authSlice";
+import { getUserInfo } from "../../redux/thunks/authThunk"; 
 
 const ProtectedPage = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -11,12 +11,12 @@ const ProtectedPage = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(getUserInfo());
+    dispatch(getUserInfo());
   }, []);
 
-  // if (!token) {
-  //   return <Navigate to="/login" state={{ from: location }} replace />;
-  // }
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
   return children;
 };

@@ -1,16 +1,3 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { PageContext } from "../../contexts/PageContext";
-import {
-  createMatch,
-  getAllTeamMatches,
-  updateMatch,
-} from "../../redux/features/matchSlice";
-import { getTeamByID } from "../../redux/features/teamSlice";
-import MatchForm from "./components/MatchForm";
-import { fromUnixTime, toUnixTime } from "../../utils/timeFormator";
-import moment from "moment";
 import {
   Button,
   Modal,
@@ -19,6 +6,19 @@ import {
   ModalHeader,
 } from "@nextui-org/react";
 import { ChevronRight, Copy, Edit, Swords } from "lucide-react";
+import moment from "moment";
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { PageContext } from "../contexts/PageContext";
+import {
+  createMatch,
+  getAllMatches,
+  updateMatch,
+} from "../redux/thunks/matchThunk";
+import { getTeamByID } from "../redux/thunks/teamThunk";
+import { fromUnixTime, toUnixTime } from "../utils/timeFormator";
+import MatchForm from "../pages/competition/components/MatchForm";
 
 export default function TeamDetail() {
   const { updatePage } = useContext(PageContext);
@@ -35,7 +35,6 @@ export default function TeamDetail() {
     dispatch(getTeamByID(teamID));
     dispatch(getAllTeamMatches({ tournamentID, teamID }));
   }, [dispatch, tournamentID, teamID]);
-
 
   // Group matches by week
   const groupedMatches = Array.isArray(matches)
@@ -68,42 +67,54 @@ export default function TeamDetail() {
   }, [updatePage, team?.name]);
 
   const handleFormSubmit = (formData) => {
+    // console.log(formData);
+
     const data = {
-      opponentTeamID: formData.team,
+      // opponentTeamID: formData.team,
+      // week: parseInt(formData.week),
+      // day: parseInt(formData.day),
+      // date: toUnixTime(formData.datetime),
+
       week: parseInt(formData.week),
       day: parseInt(formData.day),
       date: toUnixTime(formData.datetime),
+      team_a: parseInt(formData.team_a),
+      team_b: parseInt(formData.team_b),
+      team_a_score: parseInt(formData.team_a_score),
+      team_b_score: parseInt(formData.team_b_score),
     };
 
-    setLoading(true);
-    if (editingMatch) {
-      dispatch(updateMatch({ matchID: editingMatch.MatchID, ...data }))
-        .unwrap()
-        .then(() => {
-          setModalOpen(false);
-          setEditingMatch(null);
-          dispatch(getAllTeamMatches({ tournamentID, teamID }));
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      dispatch(createMatch({ tournamentID, teamID, ...data }))
-        .unwrap()
-        .then(() => {
-          setModalOpen(false);
-          dispatch(getAllTeamMatches({ tournamentID, teamID }));
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+    // console.log(data);
+
+    // setLoading(true);
+    // if (editingMatch) {
+    //   dispatch(updateMatch({ matchID: editingMatch.MatchID, ...data }))
+    //     .unwrap()
+    //     .then(() => {
+    //       setModalOpen(false);
+    //       setEditingMatch(null);
+    //       dispatch(getAllMatches({ tournamentID, teamID }));
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error:", error);
+    //     })
+    //     .finally(() => {
+    //       setLoading(false);
+    //     });
+    // } else {
+    //   dispatch(createMatch({ tournamentID, teamID, ...data }))
+    //     .unwrap()
+    //     .then(() => {
+    //       setModalOpen(false);
+    //       dispatch(getAllTeamMatches({ tournamentID, teamID }));
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error:", error);
+    //     })
+    //     .finally(() => {
+    //       setLoading(false);
+    //     });
+    // }
   };
 
   const handleEdit = (match) => {
@@ -164,7 +175,7 @@ export default function TeamDetail() {
                     <ChevronRight
                       onClick={() =>
                         nav(
-                          `/tournaments/${tournamentID}/teams/${teamID}/matches/${match.MatchID}`
+                          `/tournament/${tournamentID}/teams/${teamID}/matches/${match.MatchID}`
                         )
                       }
                       className="w-5 h-5 text-gray-400 cursor-pointer"

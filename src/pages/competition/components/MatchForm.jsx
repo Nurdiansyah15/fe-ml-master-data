@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTeams } from "../../../redux/features/teamSlice";
+import { getAllTeams } from "../../../redux/thunks/teamThunk";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -18,7 +18,10 @@ const matchSchema = z.object({
   week: z.string().min(1, "Week is required"),
   day: z.string().min(1, "Day is required"),
   datetime: z.string().min(1, "Datetime is required"),
-  team: z.number().min(1, "Team is required"),
+  team_a: z.number().min(1, "Team is required"),
+  team_b: z.number().min(1, "Team is required"),
+  team_a_score: z.number().min(0, "Score is required"),
+  team_b_score: z.number().min(0, "Score is required"),
 });
 
 export default function MatchForm({ onSubmit, editingMatch }) {
@@ -35,7 +38,10 @@ export default function MatchForm({ onSubmit, editingMatch }) {
       week: "",
       day: "",
       datetime: "",
-      team: "",
+      team_a: "",
+      team_b: "",
+      team_a_score: "",
+      team_b_score: "",
     },
   });
 
@@ -45,10 +51,13 @@ export default function MatchForm({ onSubmit, editingMatch }) {
 
   useEffect(() => {
     if (editingMatch) {
-      setValue("week", editingMatch.Week.toString());
-      setValue("day", editingMatch.Day.toString());
-      setValue("datetime", fromUnixTime(editingMatch.Date)); // Format waktu lokal
-      setValue("team", editingMatch.OpponentTeamID);
+      setValue("week", editingMatch.week.toString());
+      setValue("day", editingMatch.day.toString());
+      setValue("datetime", fromUnixTime(editingMatch.date)); // Format waktu lokal
+      setValue("team_a", editingMatch.team_a_id);
+      setValue("team_b", editingMatch.team_b_id);
+      setValue("team_a_score", editingMatch.team_a_score);
+      setValue("team_b_score", editingMatch.team_b_score);
     }
   }, [editingMatch, setValue]);
 
@@ -150,40 +159,138 @@ export default function MatchForm({ onSubmit, editingMatch }) {
         />
       </div>
 
-      <div className={`mb-1 ${editingMatch ? "hidden" : ""}`}>
-        <label className="block mb-2">Select Opponent Team</label>
-        <Controller
-          name="team"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Autocomplete
-              placeholder="Search and select team..."
-              defaultItems={teams}
-              onSelectionChange={(teamId) => {
-                const selectedTeam = teams.find(
-                  (team) => team.TeamID.toString() === teamId
-                );
-                onChange(selectedTeam ? selectedTeam.TeamID : "");
-              }}
-              aria-label="Search and select team"
-              className="w-full"
-              isDisabled={editingMatch !== null}
-              selectedKey={value ? value.toString() : undefined}
-            >
-              {(team) => (
-                <AutocompleteItem
-                  key={team.TeamID}
-                  value={team.TeamID.toString()}
-                >
-                  {team.Name}
-                </AutocompleteItem>
-              )}
-            </Autocomplete>
+      <div className={`mb-1 flex space-x-1`}>
+        <div className="w-1/2">
+          <label className="block mb-2">Select Team A</label>
+          <Controller
+            name="team_a"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Autocomplete
+                placeholder="Search and select team..."
+                defaultItems={teams}
+                onSelectionChange={(teamId) => {
+                  const selectedTeam = teams.find(
+                    (team) => team.team_id.toString() === teamId
+                  );
+                  onChange(selectedTeam ? selectedTeam.team_id : "");
+                }}
+                aria-label="Search and select team"
+                className="w-full"
+                selectedKey={value ? value.toString() : undefined}
+              >
+                {(team) => (
+                  <AutocompleteItem
+                    key={team.team_id}
+                    value={team.team_id.toString()}
+                  >
+                    {team.name}
+                  </AutocompleteItem>
+                )}
+              </Autocomplete>
+            )}
+          />
+          {errors.team_a && (
+            <span className="text-danger text-sm">{errors.team_a.message}</span>
           )}
-        />
-        {errors.team && (
-          <span className="text-danger text-sm">{errors.team.message}</span>
-        )}
+        </div>
+        <div className="w-1/2">
+          <label className="block mb-2">Team A Score</label>
+          <Controller
+            name="team_a_score"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input
+                  {...field}
+                  type="number"
+                  placeholder="Team A Score"
+                  fullWidth
+                  min={0}
+                  aria-label="Team A Score"
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === "" ? "" : Number(e.target.value);
+                    field.onChange(value);
+                  }}
+                  className="text-gray-600"
+                />
+                {errors.team_a_score && (
+                  <span className="text-danger text-sm">
+                    {errors.team_a_score.message}
+                  </span>
+                )}
+              </>
+            )}
+          />
+        </div>
+      </div>
+
+      <div className={`mb-1 flex space-x-1`}>
+        <div className="w-1/2">
+          <label className="block mb-2">Select Team B</label>
+          <Controller
+            name="team_b"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Autocomplete
+                placeholder="Search and select team..."
+                defaultItems={teams}
+                onSelectionChange={(teamId) => {
+                  const selectedTeam = teams.find(
+                    (team) => team.team_id.toString() === teamId
+                  );
+                  onChange(selectedTeam ? selectedTeam.team_id : "");
+                }}
+                aria-label="Search and select team"
+                className="w-full"
+                selectedKey={value ? value.toString() : undefined}
+              >
+                {(team) => (
+                  <AutocompleteItem
+                    key={team.team_id}
+                    value={team.team_id.toString()}
+                  >
+                    {team.name}
+                  </AutocompleteItem>
+                )}
+              </Autocomplete>
+            )}
+          />
+          {errors.team_b && (
+            <span className="text-danger text-sm">{errors.team_b.message}</span>
+          )}
+        </div>
+        <div className="w-1/2">
+          <label className="block mb-2">Team B Score</label>
+          <Controller
+            name="team_b_score"
+            control={control}
+            render={({ field }) => (
+              <>
+                <Input
+                  {...field}
+                  type="number"
+                  placeholder="Team B Score"
+                  fullWidth
+                  min={0}
+                  aria-label="Team B Score"
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === "" ? "" : Number(e.target.value);
+                    field.onChange(value);
+                  }}
+                  className="text-gray-600"
+                />
+                {errors.team_b_score && (
+                  <span className="text-danger text-sm">
+                    {errors.team_b_score.message}
+                  </span>
+                )}
+              </>
+            )}
+          />
+        </div>
       </div>
 
       <Button type="submit" color="primary" className="w-full mt-6">

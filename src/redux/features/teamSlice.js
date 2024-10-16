@@ -1,99 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../../api/axiosInstance";
-import CustomToast from "../../components/global/CustomToast";
+import {
+  createTeam,
+  getAllTeams,
+  getTeamByID,
+  updateTeam,
+} from "../thunks/teamThunk";
 
-// Thunks
-export const getAllTeams = createAsyncThunk(
-  "teams/getAllTeams",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get("/api/teams");
-
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const getTeamByID = createAsyncThunk(
-  "teams/getTeamByID",
-  async (teamID, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get(`/api/teams/${teamID}`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const createTeam = createAsyncThunk(
-  "teams/createTeam",
-  async ({ name, logo }, { rejectWithValue, dispatch }) => {
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      if (logo) {
-        formData.append("logo", logo);
-      }
-
-      const response = await axiosInstance.post("/api/teams", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      CustomToast("Team created successfully", "success");
-      dispatch(getAllTeams());
-      return;
-    } catch (error) {
-      CustomToast(error.response.data.error, "error");
-      return rejectWithValue(error.response.data.error);
-    }
-  }
-);
-
-export const updateTeam = createAsyncThunk(
-  "teams/updateTeam",
-  async ({ teamID, name, logo }, { rejectWithValue, dispatch }) => {
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      if (logo) {
-        formData.append("logo", logo); // logo diharapkan adalah File
-      }
-
-      const response = await axiosInstance.put(
-        `/api/teams/${teamID}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // Jangan lupa set header ini
-          },
-        }
-      );
-
-      CustomToast("Team updated successfully", "success");
-      dispatch(getAllTeams());
-      return;
-    } catch (error) {
-      CustomToast(error.response.data.error, "error");
-      return rejectWithValue(error.response.data.error);
-    }
-  }
-);
-
-const teamsSlice = createSlice({
-  name: "teams",
+const teamSlice = createSlice({
+  name: "team",
   initialState: {
     teams: [],
     team: null,
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearTeam: (state) => {
+      state.team = null;
+      state.loading = false;
+      state.error = null;
+      state.teams = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllTeams.pending, (state) => {
@@ -146,5 +74,5 @@ const teamsSlice = createSlice({
 });
 
 // Export actions and reducer
-export const {} = teamsSlice.actions;
-export default teamsSlice.reducer;
+export const { clearTeam } = teamSlice.actions;
+export default teamSlice.reducer;

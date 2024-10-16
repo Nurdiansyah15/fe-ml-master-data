@@ -7,7 +7,7 @@ import { z } from "zod";
 // Zod schema for validation
 const teamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
-  logo: z
+  image: z
     .any()
     .refine(
       (file) => file instanceof File || file === null,
@@ -27,14 +27,14 @@ export default function TeamForm({ onSubmit, teamData }) {
     resolver: zodResolver(teamSchema),
     defaultValues: {
       name: teamData?.name || "", // Set default value dari data yang diedit
-      logo: null, // Logo default akan tetap null karena gambar akan diseleksi melalui input
+      image: null, // Logo default akan tetap null karena gambar akan diseleksi melalui input
     },
   });
 
-  // Untuk update preview gambar pada saat edit (jika ada logo sebelumnya)
+  // Untuk update preview gambar pada saat edit (jika ada image sebelumnya)
   useEffect(() => {
-    if (teamData?.logo) {
-      setPreview(teamData.logo); // Gunakan logo URL dari data tim yang diedit
+    if (teamData?.image) {
+      setPreview(teamData.image); // Gunakan image URL dari data tim yang diedit
     }
   }, [teamData]);
 
@@ -92,7 +92,7 @@ export default function TeamForm({ onSubmit, teamData }) {
       <div className="mb-1">
         <label className="block mb-2">Team Logo</label>
         <Controller
-          name="logo"
+          name="image"
           control={control}
           render={({ field: { onChange, value, ...field } }) => (
             <>
@@ -101,16 +101,16 @@ export default function TeamForm({ onSubmit, teamData }) {
                 type="file"
                 accept="image/*"
                 className="text-black w-full p-2 rounded-xl bg-white dark:bg-dark-1 border border-gray-500"
-                placeholder="Upload team logo"
+                placeholder="Upload team image"
                 onChange={(e) => {
                   const file = e.target.files[0];
                   onChange(file); // Set file ke form
                   handleFileChange(file); // Perbarui preview
                 }}
               />
-              {errors.logo && (
+              {errors.image && (
                 <span className="text-danger text-sm">
-                  {errors.logo.message}
+                  {errors.image.message}
                 </span>
               )}
             </>

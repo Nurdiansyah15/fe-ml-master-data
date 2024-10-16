@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { z } from "zod";
-import { getAllTeams } from "../../../redux/features/teamSlice";
+import { getAllTeams } from "../../../redux/thunks/teamThunk";
 
 // Zod schema for validation
 const teamSchema = z.object({
@@ -27,7 +27,7 @@ export default function TeamForm({ onSubmit }) {
   });
 
   useEffect(() => {
-    // dispatch(getAllTeams());
+    dispatch(getAllTeams());
   }, [dispatch]);
 
   return (

@@ -3,13 +3,16 @@ import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
-import { getTeamByID } from "../../redux/features/teamSlice";
+import { getTeamByID } from "../../redux/thunks/teamThunk";
 import GameSection from "./match/GameSection";
 import HeroSection from "./match/HeroSection";
 import MatchSection from "./match/MatchSection";
 import MemberSection from "./match/MemberSection";
 import PrioritySection from "./match/PrioritySection";
-import { getMatchByID } from "../../redux/features/matchSlice";
+import { getMatchByID } from "../../redux/thunks/matchThunk";
+import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
+import { clearMatch } from "../../redux/features/matchSlice";
+import { clearTeam } from "../../redux/features/teamSlice";
 
 // Sample team data
 const team = {
@@ -60,49 +63,64 @@ const match = {
 
 export default function Match() {
   const { updatePage } = useContext(PageContext);
-  const { tournamentID, teamID, matchID } = useParams();
-//   const { team } = useSelector((state) => state.team);
-//   const { match } = useSelector((state) => state.match);
+  const { tournamentID, matchID } = useParams();
+  const { match } = useSelector((state) => state.match);
+  const { tournament } = useSelector((state) => state.tournament);
+  const { team } = useSelector((state) => state.team);
   const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-//   useEffect(() => {
-    // dispatch(getTeamByID(teamID));
-    // dispatch(getMatchByID(matchID));
-//   }, [dispatch]);
+  const [teamID, setTeamID] = useState("");
+
+  useEffect(() => {
+    dispatch(getMatchByID(matchID));
+    dispatch(getTournamentByID(tournamentID));
+    return () => {
+      dispatch(clearMatch());
+    };
+  }, [dispatch]);
+
+  // get team by id
+  useEffect(() => {
+    if (teamID) {
+      dispatch(getTeamByID(teamID));
+    }
+
+    return () => {
+      dispatch(clearTeam());
+    };
+  }, [dispatch, teamID]);
+  // console.log("team", team);
 
   useEffect(() => {
     updatePage(
-      "Tournament",
+      `${tournament?.name}`,
       <>
         <Button color="secondary">Export</Button>
       </>
     );
-  }, [updatePage]);
+  }, [updatePage, tournament?.name]);
 
-//   console.log(matchID);
-//   console.log("match", match);
+  //   console.log(matchID);
+  //   console.log("match", match);
 
   const handleFormSubmit = (data) => {
     console.log("New Match Created:", data);
     setModalOpen(false);
   };
 
+  const handleChooseTeam = (team) => {
+    console.log("Team Selected:", team);
+    setTeamID(team?.team_id);
+  };
+
+  // console.log(teamID, "teamID");
+
   return (
     <div className="text-white flex flex-col justify-start items-start w-full p-4">
-      {/* Header Section */}
-      {/* <div className="flex items-center mb-6">
-        <img
-          src={team?.Logo}
-          alt={team?.Name}
-          className="w-16 h-16 object-cover rounded-lg mr-4"
-        />
-        <h1 className="text-xl font-bold">{team?.Name}</h1>
-      </div> */}
-
-      <MatchSection match={match} />
-      {/* <MemberSection players={players} coaches={coaches} /> */}
+      <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
+      {team && <MemberSection team={team} match={match} />}
       {/* <HeroSection /> */}
       {/* <PrioritySection /> */}
       {/* <GameSection /> */}

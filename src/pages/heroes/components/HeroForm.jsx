@@ -7,7 +7,7 @@ import { z } from "zod";
 // Zod schema for validation
 const heroSchema = z.object({
   name: z.string().min(1, "Hero name is required"),
-  hero_image: z
+  image: z
     .any()
     .refine(
       (file) => file instanceof File || file === null,
@@ -27,14 +27,14 @@ export default function HeroForm({ onSubmit, heroData }) {
     resolver: zodResolver(heroSchema),
     defaultValues: {
       name: heroData?.name || "", // Default value from edit data
-      hero_image: null, // Image will be selected via input
+      image: null, // Image will be selected via input
     },
   });
 
   // Update image preview if editing and there is a previous image
   useEffect(() => {
-    if (heroData?.logo) {
-      setPreview(heroData.logo); // Use image URL from edit data
+    if (heroData?.image) {
+      setPreview(heroData.image); // Use image URL from edit data
     }
   }, [heroData]);
 
@@ -92,7 +92,7 @@ export default function HeroForm({ onSubmit, heroData }) {
       <div className="mb-1">
         <label className="block mb-2">Hero Image</label>
         <Controller
-          name="hero_image"
+          name="image"
           control={control}
           render={({ field: { onChange, value, ...field } }) => (
             <>
@@ -108,9 +108,9 @@ export default function HeroForm({ onSubmit, heroData }) {
                   handleFileChange(file); // Update preview
                 }}
               />
-              {errors.hero_image && (
+              {errors.image && (
                 <span className="text-danger text-sm">
-                  {errors.hero_image.message}
+                  {errors.image.message}
                 </span>
               )}
             </>

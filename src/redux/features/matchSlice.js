@@ -1,105 +1,38 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../../api/axiosInstance";
-import CustomToast from "../../components/global/CustomToast";
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  createMatch,
+  getAllMatches,
+  getMatchByID,
+  updateMatch,
+} from "../thunks/matchThunk";
 
-// Thunks
-export const getAllTeamMatches = createAsyncThunk(
-  "matches/getAllTeamMatches",
-  async ({ tournamentID, teamID }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/tournaments/${tournamentID}/teams/${teamID}/matches`
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const getMatchByID = createAsyncThunk(
-  "matches/getMatchByID",
-  async (matchID, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get(`/api/matches/${matchID}`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const createMatch = createAsyncThunk(
-  "matches/createMatch",
-  async (
-    { tournamentID, teamID, opponentTeamID, week, day, date },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      const data = { opponent_team_id: opponentTeamID, week, day, date };
-
-      await axiosInstance.post(
-        `/api/tournaments/${tournamentID}/teams/${teamID}/matches`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      CustomToast("Match created successfully", "success");
-      dispatch(getAllTeamMatches({ tournamentID, teamID }));
-      return;
-    } catch (error) {
-      CustomToast(error.response.data.error, "error");
-      return rejectWithValue(error.response.data.error);
-    }
-  }
-);
-
-export const updateMatch = createAsyncThunk(
-  "matches/updateMatch",
-  async ({ matchID, week, day, date }, { rejectWithValue, dispatch }) => {
-    try {
-      const data = { week, day, date };
-
-      await axiosInstance.put(`/api/matches/${matchID}`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      CustomToast("Match updated successfully", "success");
-      dispatch(getMatchByID(matchID));
-      return;
-    } catch (error) {
-      CustomToast(error.response.data.error, "error");
-      return rejectWithValue(error.response.data.error);
-    }
-  }
-);
-
-const matchesSlice = createSlice({
-  name: "matches",
+const matchSlice = createSlice({
+  name: "match",
   initialState: {
     matches: [],
     match: null,
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearMatch: (state) => {
+      state.match = null;
+      state.loading = false;
+      state.error = null;
+      state.matches = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllTeamMatches.pending, (state) => {
+      .addCase(getAllMatches.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllTeamMatches.fulfilled, (state, action) => {
+      .addCase(getAllMatches.fulfilled, (state, action) => {
         state.loading = false;
         state.matches = action.payload;
       })
-      .addCase(getAllTeamMatches.rejected, (state, action) => {
+      .addCase(getAllMatches.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -141,4 +74,5 @@ const matchesSlice = createSlice({
 });
 
 // Export reducer
-export default matchesSlice.reducer;
+export const { clearMatch } = matchSlice.actions;
+export default matchSlice.reducer;

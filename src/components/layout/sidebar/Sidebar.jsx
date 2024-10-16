@@ -11,31 +11,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import CompetitionForm from "./components/CompetitionForm";
 import TournamentItem from "./components/TournamentItem";
-import {
-  getAllTournaments,
-  createTournament,
-} from "../../../redux/features/tournamentSlice";
+
 import { useEffect } from "react";
+import {
+  createTournament,
+  getAllTournaments,
+} from "../../../redux/thunks/tournamentThunk";
 
 export default function Sidebar({ isOpen, closeSidebar }) {
   const nav = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  // const { tournaments } = useSelector((state) => state.tournament);
+  const { tournaments } = useSelector((state) => state.tournament);
   const [loading, setLoading] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const tournaments = [
-    {
-      TournamentID: 1,
-      Name: "Tournament 1",
-    }
-  ]
-
-  // useEffect(() => {
-  //   dispatch(getAllTournaments());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(getAllTournaments());
+  }, [dispatch]);
 
   const handleCompetitionSubmit = (data) => {
     setLoading(true);
@@ -89,7 +83,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
               <p>Loading...</p>
             ) : (
               tournaments.map((item) => (
-                <li key={item.TournamentID}>
+                <li key={item.tournament_id}>
                   <TournamentItem tournament={item} />
                 </li>
               ))
@@ -106,7 +100,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <ul>
             <li>
               <NavLink
-                to="/teams"
+                to="/team"
                 className={({ isActive }) =>
                   `flex items-center justify-start ${
                     isActive ? "text-white bg-[#363638]" : "text-white"
@@ -119,7 +113,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
             </li>
             <li>
               <NavLink
-                to="/heroes"
+                to="/hero"
                 className={({ isActive }) =>
                   `flex items-center justify-start ${
                     isActive ? "text-white bg-[#363638]" : "text-white"

@@ -9,7 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import { Controller, set, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateTournament } from "../../../../redux/features/tournamentSlice";
+import { updateTournament } from "../../../../redux/thunks/tournamentThunk"; 
 import { Save } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaPen } from "react-icons/fa";
@@ -29,7 +29,7 @@ const TournamentItem = ({ tournament }) => {
 
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      name: tournament.Name || "New Tournament",
+      name: tournament.name || "New Tournament",
     },
   });
 
@@ -55,9 +55,9 @@ const TournamentItem = ({ tournament }) => {
   }, [isEditing]);
 
   useEffect(() => {
-    const prefix = `/tournaments/${tournament.TournamentID}`;
+    const prefix = `/tournament/${tournament.tournament_id}`;
     setIsActive(loc.pathname.startsWith(prefix));
-  }, [loc.pathname, tournament.TournamentID]);
+  }, [loc.pathname, tournament.tournament_id]);
 
   const handleEditClick = (e) => {
     e.stopPropagation();
@@ -73,7 +73,7 @@ const TournamentItem = ({ tournament }) => {
 
     dispatch(
       updateTournament({
-        tournamentID: tournament.TournamentID,
+        tournamentID: tournament.tournament_id,
         name: name.trim() || "New Tournament",
       })
     )
@@ -85,13 +85,15 @@ const TournamentItem = ({ tournament }) => {
 
   return (
     <div
-      className={`my-2 cursor-pointer flex items-center ${isEditing && "border border-blue-500"
-        } justify-between text-white p-2 ${isActive && "bg-[#363638]"
-        } rounded-xl px-3 hover:bg-[#363638]`}
+      className={`my-2 cursor-pointer flex items-center ${
+        isEditing && "border border-blue-500"
+      } justify-between text-white p-2 ${
+        isActive && "bg-[#363638]"
+      } rounded-xl px-3 hover:bg-[#363638]`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() =>
-        !isEditing && nav("/tournaments/" + tournament.TournamentID)
+        !isEditing && nav("/tournament/" + tournament.tournament_id)
       }
     >
       {isEditing ? (
@@ -131,10 +133,9 @@ const TournamentItem = ({ tournament }) => {
           </Button>
         </div>
       ) : (
-        <p className="overflow-hidden line-clamp-1">{tournament.Name}</p>
+        <p className="overflow-hidden line-clamp-1">{tournament.name}</p>
       )}
-      {!isEditing && (
-        isHovered &&
+      {!isEditing && isHovered && (
         <div>
           <div className="flex flex-row gap-2">
             <div className="flex items-center gap-2">
@@ -142,7 +143,7 @@ const TournamentItem = ({ tournament }) => {
                 className="text-gray-500 hover:text-white text-xs p-0 m-0"
                 onClick={handleEditClick}
               >
-                <FontAwesomeIcon  icon={faPen} />
+                <FontAwesomeIcon icon={faPen} />
               </button>
             </div>
             <div className="flex items-center gap-2">

@@ -14,25 +14,24 @@ import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
+
+import MemberForm from "./components/MemberForm";
 import {
   createCoachInTeam,
-  getAllCoachesInTeam,
-  updateCoachInTeam,
-} from "../../redux/features/coachTeamSlice";
-import {
   createPlayerInTeam,
+  getAllCoachesInTeam,
   getAllPlayersInTeam,
+  getTeamByID,
+  updateCoachInTeam,
   updatePlayerInTeam,
-} from "../../redux/features/playerTeamSlice";
-import MemberForm from "./components/MemberForm";
-import { getTeamByID } from "../../redux/features/teamSlice";
+} from "../../redux/thunks/teamThunk";
 
 export default function TeamDetail() {
   const { updatePage } = useContext(PageContext);
   const { teamID } = useParams();
-  const { players } = useSelector((state) => state.playerTeam);
+  const { players } = useSelector((state) => state.player);
   const { team } = useSelector((state) => state.team);
-  const { coaches } = useSelector((state) => state.coachTeam);
+  const { coaches } = useSelector((state) => state.coach);
   const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false); // Determines create/edit mode
@@ -55,10 +54,10 @@ export default function TeamDetail() {
 
   const handleEdit = (data, type) => {
     const member = {
-      id: type === "player" ? data.PlayerID : data.CoachID,
-      name: data.Name,
-      role: data.Role,
-      image: data.Image,
+      id: type === "player" ? data.player_id : data.coach_id,
+      name: data.name,
+      role: data.role,
+      image: data.image,
     };
     setMemberToEdit(member);
     setModalRole(type === "player" ? "Player" : "Coach");
@@ -104,11 +103,11 @@ export default function TeamDetail() {
     <div className="text-white flex flex-col justify-start items-start w-full p-4">
       <div className="flex items-center mb-10">
         <img
-          src={team?.Logo}
-          alt={team?.Name}
+          src={team?.image}
+          alt={team?.name}
           className="w-16 h-16 object-cover rounded-lg mr-4"
         />
-        <h1 className="text-xl font-bold">{team?.Name}</h1>
+        <h1 className="text-xl font-bold">{team?.name}</h1>
       </div>
       {/* Players Section */}
       <div className="flex flex-col gap-4">
@@ -118,17 +117,17 @@ export default function TeamDetail() {
             <div key={index} className="flex flex-col relative">
               <Card className="bg-gray-800 w-40">
                 <img
-                  src={player.Image}
-                  alt={player.Name}
+                  src={player.image}
+                  alt={player.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </Card>
               <Card className="bg-gray-800 w-40 text-white px-3 py-1 mt-4">
                 <h3 className="font-semibold text-lg truncate">
-                  {player.Name}
+                  {player.name}
                 </h3>
                 <p className="text-sm font-semibold text-gray-400">
-                  {player.Role}
+                  {player.role}
                 </p>
               </Card>
               <div className="absolute top-0 right-0 opacity-0 hover:opacity-100 transition-opacity">
@@ -183,15 +182,15 @@ export default function TeamDetail() {
             <div key={index} className="flex flex-col relative">
               <Card className="bg-gray-800 w-40">
                 <img
-                  src={coach.Image}
-                  alt={coach.Name}
+                  src={coach.image}
+                  alt={coach.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </Card>
               <Card className="bg-gray-800 w-40 text-white px-3 py-1 mt-4">
-                <h3 className="font-semibold text-lg truncate">{coach.Name}</h3>
+                <h3 className="font-semibold text-lg truncate">{coach.name}</h3>
                 <p className="text-sm font-semibold text-gray-400">
-                  {coach.Role}
+                  {coach.role}
                 </p>
               </Card>
               <div className="absolute top-0 right-0 opacity-0 hover:opacity-100 transition-opacity">

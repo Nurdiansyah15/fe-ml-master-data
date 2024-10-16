@@ -2,9 +2,9 @@ import { Outlet } from "react-router-dom";
 import ProtectedPage from "../components/auth/ProtectedPage";
 import Layout from "../components/layout/Layout";
 import Login from "../pages/auth/Login";
-import Competition from "../pages/competition/Competition";
-import MatchDetail from "../pages/competition/MatchDetail";
-import CompetitionDetail from "../pages/competition/TeamDetail";
+import Competition from "../pages/competition/Tournament";
+import MatchDetail from "../archive/MatchDetail";
+import CompetitionDetail from "../archive/TeamDetail";
 import Heroes from "../pages/heroes/Heroes";
 import Home from "../pages/home/Home";
 import Teams from "../pages/teams/Teams";
@@ -28,24 +28,24 @@ const routes = [
         element: <Home />,
       },
       {
-        path: "tournaments/:tournamentID",
+        path: "tournament/:tournamentID",
         element: <Competition />,
       },
       // {
-      //   path: "tournaments/:tournamentID/teams/:teamID/matches",
+      //   path: "tournament/:tournamentID/team/:teamID/match",
       //   element: <CompetitionDetail />,
       // },
       {
-        path: "tournaments/:tournamentID/match/:matchID",
+        path: "tournament/:tournamentID/match/:matchID",
         element: <Match />,
       },
       // {
-      //   path: "tournaments/:tournamentID/match/:matchID/teams/:teamID",
+      //   path: "tournament/:tournamentID/match/:matchID/team/:teamID",
       //   element: <MatchDetail />,
       // },
-      { path: "teams", element: <Teams /> },
-      { path: "teams/:teamID", element: <TeamDetail /> },
-      { path: "heroes", element: <Heroes /> },
+      { path: "team", element: <Teams /> },
+      { path: "team/:teamID", element: <TeamDetail /> },
+      { path: "hero", element: <Heroes /> },
     ],
   },
 ];

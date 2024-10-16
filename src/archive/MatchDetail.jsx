@@ -2,15 +2,14 @@ import { Button } from "@nextui-org/react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { PageContext } from "../../contexts/PageContext";
-import { getTeamByID } from "../../redux/features/teamSlice";
-import GameSection from "./match/GameSection";
-import HeroSection from "./match/HeroSection";
-import MatchSection from "./match/MatchSection";
-import MemberSection from "./match/MemberSection";
-import PrioritySection from "./match/PrioritySection";
-import { getMatchByID } from "../../redux/features/matchSlice";
-
+import { PageContext } from "../contexts/PageContext";
+import { getTeamByID } from "../redux/thunks/teamThunk";
+import GameSection from "../pages/competition/match/GameSection";
+import HeroSection from "../pages/competition/match/HeroSection";
+import MatchSection from "../pages/competition/match/MatchSection";
+import MemberSection from "../pages/competition/match/MemberSection";
+import PrioritySection from "../pages/competition/match/PrioritySection";
+import { getMatchByID } from "../redux/thunks/matchThunk";
 // Sample team data
 const team = {
   name: "Team Alpha",
@@ -137,11 +136,8 @@ export default function MatchDetail() {
     );
   }, [updatePage]);
 
-  console.log(matchID);
-  console.log("match", match);
-
   const handleFormSubmit = (data) => {
-    console.log("New Match Created:", data);
+    // console.log("New Match Created:", data);
     setModalOpen(false);
   };
 

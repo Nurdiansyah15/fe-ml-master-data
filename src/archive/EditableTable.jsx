@@ -13,7 +13,7 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
     setRows(updatedRows);
   };
 
-  console.log("initialData", initialData);
+  // console.log("initialData", initialData);
 
   const addRow = () => {
     const emptyRow = { isNew: true }; // New row with 'isNew' flag

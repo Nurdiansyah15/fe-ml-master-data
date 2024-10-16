@@ -12,13 +12,14 @@ import {
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
+
+import HeroForm from "./components/HeroForm"; // Ganti dengan HeroForm
+import { useNavigate } from "react-router-dom";
 import {
   createHero,
   getAllHeroes,
   updateHero,
-} from "../../redux/features/heroSlice"; // Ganti dengan heroSlice
-import HeroForm from "./components/HeroForm"; // Ganti dengan HeroForm
-import { useNavigate } from "react-router-dom";
+} from "../../redux/thunks/heroThunk";
 
 export default function Heroes() {
   const { updatePage } = useContext(PageContext);
@@ -75,9 +76,9 @@ export default function Heroes() {
 
   const handleEdit = (heroData) => {
     const hero = {
-      id: heroData.HeroID,
-      name: heroData.Name,
-      logo: heroData.HeroImage,
+      id: heroData.hero_id,
+      name: heroData.name,
+      image: heroData.image,
     };
     setHeroToEdit(hero); // Simpan data hero yang ingin diedit
     setEditMode(true); // Ubah ke mode edit
@@ -96,23 +97,23 @@ export default function Heroes() {
             hero // Ganti dengan heroes
           ) => (
             <div
-              key={hero.HeroID}
+              key={hero.hero_id}
               className="relative bg-gray-800 rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow"
             >
               {/* Image and Name */}
               <img
-                src={hero.HeroImage}
-                alt={hero.Name}
+                src={hero.image}
+                alt={hero.name}
                 className="w-36 h-36 object-cover rounded-full"
               />
               <h3 className="text-md font-semibold mt-1 text-center">
-                {hero.Name}
+                {hero.name}
               </h3>
 
               {/* Detail Button */}
               {/* <Button
                 onPress={() => {
-                  nav("/heroes/" + hero.HeroID); // Ganti dengan hero
+                  nav("/heroes/" + hero.hero_id); // Ganti dengan hero
                 }}
                 color="primary"
                 className="mt-2 w-full text-sm"

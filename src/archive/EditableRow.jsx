@@ -41,7 +41,7 @@ const EditableRow = ({
 
   const validateRow = () => {
     return cols.every((col) =>
-      col.type === "checkbox" ? true : rowData[col.field]?.trim()
+      col.type === "checkbox" ? true : rowData[col.field]
     );
   };
 
@@ -85,7 +85,7 @@ const EditableRow = ({
                   src={
                     selectOptions[col.field].find(
                       (option) => option.value == rowData[col.field]
-                    )?.logo || "https://via.placeholder.com/32"
+                    )?.image || "https://via.placeholder.com/32"
                   }
                   alt="Team Logo"
                   className="w-8 h-8 rounded-full"

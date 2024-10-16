@@ -1,26 +1,28 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/authSlice";
-import teamReducer from "./features/teamSlice";
-import playerTeamReducer from "./features/playerTeamSlice";
-import coachTeamReducer from "./features/coachTeamSlice";
-import heroReducer from "./features/heroSlice";
-import tournamentReducer from "./features/tournamentSlice";
-import teamTournamentReducer from "./features/teamTournamentSlice";
-import matchReducer from "./features/matchSlice";
+import coachReducer from "./features/coachSlice";
 import gameReducer from "./features/gameSlice";
-import selectionTeamReducer from "./features/selectionTeamSlice";
+import heroReducer from "./features/heroSlice";
+import matchReducer from "./features/matchSlice";
+import playerReducer from "./features/playerSlice";
+import teamMatchReducer from "./features/teamMatchSlice";
+import teamReducer from "./features/teamSlice";
+import tournamentReducer from "./features/tournamentSlice";
+import matchPlayerReducer from "./features/matchPlayerSlice";
+import matchCoachReducer from "./features/matchCoachSlice";
 
 export default configureStore({
   reducer: {
     auth: authReducer,
     team: teamReducer,
-    playerTeam: playerTeamReducer,
-    coachTeam: coachTeamReducer,
+    player: playerReducer,
+    coach: coachReducer,
     hero: heroReducer,
     tournament: tournamentReducer,
-    teamTournament: teamTournamentReducer,
     match: matchReducer,
     game: gameReducer,
-    selectionTeam: selectionTeamReducer,
+    teamMatch: teamMatchReducer,
+    matchPlayer: matchPlayerReducer,
+    matchCoach: matchCoachReducer,
   },
 });
