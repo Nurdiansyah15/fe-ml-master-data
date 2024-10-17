@@ -1,32 +1,26 @@
+import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
-  ModalHeader,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  ModalHeader
 } from "@nextui-org/react";
-import { Ellipsis } from "lucide-react";
+import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { PageContext } from "../../contexts/PageContext";
-import TeamForm from "./components/TeamForm";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Card from "../../components/Card";
+import { PageContext } from "../../contexts/PageContext";
 import {
   createMatch,
   getAllMatches,
   updateMatch,
 } from "../../redux/thunks/matchThunk";
-import MatchForm from "./components/MatchForm";
-import { fromUnixTime, toUnixTime } from "../../utils/timeFormator";
-import moment from "moment";
 import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
+import { fromUnixTime, toUnixTime } from "../../utils/timeFormator";
+import MatchForm from "./components/MatchForm";
 
 export default function Tournament() {
   const { updatePage } = useContext(PageContext);

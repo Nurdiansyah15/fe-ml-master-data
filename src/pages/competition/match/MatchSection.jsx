@@ -1,14 +1,22 @@
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditableTable from "../../../archive/EditableTable";
-import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
+import Card from "../../../components/Card";
 import {
   createMatchGame,
-  updateGame,
   getAllMatchGames,
+  updateGame,
 } from "../../../redux/thunks/gameThunk";
-import Card from "../../../components/Card";
+import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -17,10 +25,8 @@ export default function MatchSection({ match, handleChooseTeam }) {
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
+  const [isAlertVisible, setAlertVisible] = useState(false); // State for alert
 
-  // console.log("matchlalalalal", match);
-
-  // Fetch teams and games when match_id is available
   useEffect(() => {
     if (match) {
       setLoading(true);
@@ -31,7 +37,6 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }
   }, [dispatch, match]);
 
-  // Populate initial data for the editable table
   useEffect(() => {
     const data = games.map((game) => ({
       id: game.game_id,
@@ -42,13 +47,11 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }));
     setInitialData(data);
 
-    return () => setInitialData([]); // Clean up on unmount
+    return () => setInitialData([]);
   }, [games]);
 
-  // Memoize select options for performance optimization
   const selectOptions = useMemo(() => {
     if (!teams) return {};
-
     return ["first", "second", "win"].reduce((options, key) => {
       options[key] = teams.map((team) => ({
         value: team.team_id,
@@ -59,7 +62,14 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }, {});
   }, [teams]);
 
-  // Handle saving a row (create or update game)
+  const handleTeamClick = (team) => {
+    if (games.length === 0) {
+      setAlertVisible(true); // Show alert if no game details
+      return;
+    }
+    handleChooseTeam(team); // Proceed if there are games
+  };
+
   const handleSaveRow = (rowData) => {
     setLoading(true);
     const data = {
@@ -78,6 +88,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
 
     dispatch(action)
       .unwrap()
+      .then(() => dispatch(getAllMatchGames(match?.match_id)))
       .catch((error) => console.error("Error:", error))
       .finally(() => setLoading(false));
   };
@@ -92,7 +103,52 @@ export default function MatchSection({ match, handleChooseTeam }) {
       <div className="flex flex-row space-x-5 w-full">
         <Card className="text-white flex flex-1 max-w-[60%]">
           <div className="flex flex-col space-y-6 pb-10">
-            <MatchDetails match={match} handleChooseTeam={handleChooseTeam} />
+            <div>
+              <p className="text-sm text-gray-400">
+                Week {match?.week} -{" "}
+                {moment(match?.datetime).format("MMM Do, YYYY h:mm A")}
+              </p>
+              <p className="text-3xl text-white font-bold">Day {match?.day}</p>
+            </div>
+            <div className="flex flex-row space-x-10 justify-center items-center p-2">
+              <div className="flex flex-col space-y-3">
+                <div
+                  className="w-40 h-40 cursor-pointer hover:scale-105 transition"
+                  onClick={() => handleTeamClick(match?.team_a)}
+                >
+                  <img
+                    src={match?.team_a?.image}
+                    alt={match?.team_a?.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <div className="px-5 py-2 bg-[#61AB76] rounded-full">
+                  <p className="text-center font-bold text-xl">
+                    {match?.team_a_score}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-3xl text-white font-bold">VS</div>
+
+              <div className="flex flex-col space-y-3">
+                <div
+                  className="w-40 h-40 cursor-pointer hover:scale-105 transition"
+                  onClick={() => handleTeamClick(match?.team_b)}
+                >
+                  <img
+                    src={match?.team_b?.image}
+                    alt={match?.team_b?.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <div className="px-5 py-2 bg-[#61AB76] rounded-full">
+                  <p className="text-center font-bold text-xl">
+                    {match?.team_b_score}
+                  </p>
+                </div>
+              </div>
+            </div>
             <div className="flex w-full">
               <EditableTable
                 columns={[
@@ -112,56 +168,16 @@ export default function MatchSection({ match, handleChooseTeam }) {
           <div>Additional Content</div>
         </Card>
       </div>
-    </div>
-  );
-}
 
-// Component to display match details
-function MatchDetails({ match, handleChooseTeam }) {
-  return (
-    <>
-      <div>
-        <p className="text-sm text-gray-400">
-          Week {match?.week} -{" "}
-          {moment(match?.datetime).format("MMM Do, YYYY h:mm A")}
-        </p>
-        <p className="text-3xl text-white font-bold">Day {match?.day}</p>
-      </div>
-      <div className="flex flex-row space-x-10 justify-center items-center p-2">
-        <TeamCard
-          team={match?.team_a}
-          score={match?.team_a_score}
-          handleChooseTeam={handleChooseTeam}
-        />
-        <div className="text-3xl text-white font-bold">VS</div>
-
-        <TeamCard
-          team={match?.team_b}
-          score={match?.team_b_score}
-          handleChooseTeam={handleChooseTeam}
-        />
-      </div>
-    </>
-  );
-}
-
-// Component to display individual team card
-function TeamCard({ team, score, handleChooseTeam }) {
-  return (
-    <div className="flex flex-col space-y-3">
-      <div
-        className="w-40 h-40 cursor-pointer hover:scale-105 transition"
-        onClick={() => handleChooseTeam(team)}
-      >
-        <img
-          src={team?.image}
-          alt={team?.name}
-          className="w-full h-full object-cover rounded-full"
-        />
-      </div>
-      <div className="px-5 py-2 bg-[#61AB76] rounded-full">
-        <p className="text-center font-bold text-xl">{score}</p>
-      </div>
+      <Modal isOpen={isAlertVisible} onClose={() => setAlertVisible(false)}>
+        <ModalContent className="bg-gray-800 text-white pb-4">
+          <ModalHeader>No Game Details</ModalHeader>
+          <ModalBody>Please add game details</ModalBody>
+          <ModalFooter>
+            <Button onClick={() => setAlertVisible(false)}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

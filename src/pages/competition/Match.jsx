@@ -14,53 +14,6 @@ import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
 import { clearMatch } from "../../redux/features/matchSlice";
 import { clearTeam } from "../../redux/features/teamSlice";
 
-// Sample team data
-const team = {
-  name: "Team Alpha",
-  logo: "https://via.placeholder.com/150",
-};
-
-// Sample match data
-const match = {
-  week: "Week 1",
-  day: "Day 1",
-  date: "2024-10-01",
-  teamA: {
-    name: "Team A",
-    logo: "https://via.placeholder.com/50",
-    score: "2",
-  },
-  teamB: {
-    name: "Team B",
-    logo: "https://via.placeholder.com/50",
-    score: "3",
-  },
-  summary: [
-    {
-      game: "Game 1",
-      firstPick: "Team A",
-      secondPick: "Team B",
-      winner: "Team B",
-    },
-    {
-      game: "Game 2",
-      firstPick: "Team B",
-      secondPick: "Team A",
-      winner: "Team B",
-    },
-  ],
-  stats: {
-    firstPick: "Team A",
-    firstPickWins: 10,
-    firstPickLoses: 5,
-    firstPickWinRate: "66%",
-    secondPick: "Team B",
-    secondPickWins: 8,
-    secondPickLoses: 7,
-    secondPickWinRate: "53%",
-  },
-};
-
 export default function Match() {
   const { updatePage } = useContext(PageContext);
   const { tournamentID, matchID } = useParams();
@@ -68,7 +21,6 @@ export default function Match() {
   const { tournament } = useSelector((state) => state.tournament);
   const { team } = useSelector((state) => state.team);
   const dispatch = useDispatch();
-  const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [teamID, setTeamID] = useState("");
@@ -81,7 +33,6 @@ export default function Match() {
     };
   }, [dispatch]);
 
-  // get team by id
   useEffect(() => {
     if (teamID) {
       dispatch(getTeamByID(teamID));
@@ -91,7 +42,6 @@ export default function Match() {
       dispatch(clearTeam());
     };
   }, [dispatch, teamID]);
-  // console.log("team", team);
 
   useEffect(() => {
     updatePage(
@@ -102,26 +52,16 @@ export default function Match() {
     );
   }, [updatePage, tournament?.name]);
 
-  //   console.log(matchID);
-  //   console.log("match", match);
-
-  const handleFormSubmit = (data) => {
-    console.log("New Match Created:", data);
-    setModalOpen(false);
-  };
-
   const handleChooseTeam = (team) => {
     console.log("Team Selected:", team);
     setTeamID(team?.team_id);
   };
 
-  // console.log(teamID, "teamID");
-
   return (
     <div className="text-white flex flex-col justify-start items-start w-full p-4">
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
       {team && <MemberSection team={team} match={match} />}
-      {/* <HeroSection /> */}
+      {team && <HeroSection team={team} match={match} />}
       {team && <PrioritySection team={team} match={match} />}
       <GameSection team={team} match={match} />
     </div>

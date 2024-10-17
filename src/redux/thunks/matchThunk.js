@@ -122,3 +122,198 @@ export const updateMatch = createAsyncThunk(
     }
   }
 );
+
+export const getAllHeroPicks = createAsyncThunk(
+  "matches/getAllHeroPicks",
+  async ({ matchID, teamID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/matches/${matchID}/teams/${teamID}/hero-picks`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addHeroPick = createAsyncThunk(
+  "matches/addHeroPick",
+  async (
+    { matchID, teamID, heroID, firstPhase, secondPhase, total, heroPickGame },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id: heroID,
+        first_phase: firstPhase,
+        second_phase: secondPhase,
+        total: total,
+        hero_pick_game: heroPickGame,
+      };
+      const response = await axiosInstance.post(
+        `/api/matches/${matchID}/teams/${teamID}/hero-picks`,
+        data
+      );
+      CustomToast("Hero picked successfully", "success");
+      dispatch(getAllHeroPicks({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const updateHeroPick = createAsyncThunk(
+  "matches/updateHeroPick",
+  async (
+    {
+      matchID,
+      teamID,
+      heroPickID,
+      heroID,
+      firstPhase,
+      total,
+      secondPhase,
+      heroPickGame,
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_pick_id: heroPickID,
+        hero_id: heroID,
+        first_phase: firstPhase,
+        total: total,
+        second_phase: secondPhase,
+        hero_pick_game: heroPickGame,
+      };
+      const response = await axiosInstance.put(
+        `/api/matches/${matchID}/teams/${teamID}/hero-picks/${heroPickID}`,
+        data
+      );
+      CustomToast("Hero picked updated successfully", "success");
+      dispatch(getAllHeroPicks({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteHeroPick = createAsyncThunk(
+  "matches/deleteHeroPick",
+  async ({ matchID, teamID, heroPickID }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/api/matches/${matchID}/teams/${teamID}/hero-picks/${heroPickID}`
+      );
+      CustomToast("Hero picked deleted successfully", "success");
+      dispatch(getAllHeroPicks({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+// hero ban
+export const getAllHeroBans = createAsyncThunk(
+  "matches/getAllHeroBans",
+  async ({ matchID, teamID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/matches/${matchID}/teams/${teamID}/hero-bans`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addHeroBan = createAsyncThunk(
+  "matches/addHeroBan",
+  async (
+    { matchID, teamID, heroID, firstPhase, secondPhase, total, heroBanGame },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id: heroID,
+        first_phase: firstPhase,
+        second_phase: secondPhase,
+        total: total,
+        hero_ban_game: heroBanGame,
+      };
+      const response = await axiosInstance.post(
+        `/api/matches/${matchID}/teams/${teamID}/hero-bans`,
+        data
+      );
+      CustomToast("Hero banned successfully", "success");
+      dispatch(getAllHeroBans({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const updateHeroBan = createAsyncThunk(
+  "matches/updateHeroBan",
+  async (
+    {
+      matchID,
+      teamID,
+      heroBanID,
+      heroID,
+      firstPhase,
+      total,
+      secondPhase,
+      heroBanGame,
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_ban_id: heroBanID,
+        hero_id: heroID,
+        first_phase: firstPhase,
+        total: total,
+        second_phase: secondPhase,
+        hero_ban_game: heroBanGame,
+      };
+      const response = await axiosInstance.put(
+        `/api/matches/${matchID}/teams/${teamID}/hero-bans/${heroBanID}`,
+        data
+      );
+      CustomToast("Hero banned updated successfully", "success");
+      dispatch(getAllHeroBans({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteHeroBan = createAsyncThunk(
+  "matches/deleteHeroBan",
+  async ({ matchID, teamID, heroBanID }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/api/matches/${matchID}/teams/${teamID}/hero-bans/${heroBanID}`
+      );
+      CustomToast("Hero banned deleted successfully", "success");
+      dispatch(getAllHeroBans({ matchID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);

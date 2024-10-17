@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import HeroPick from "./components/HeroPick";
 import HeroBan from "./components/HeroBan";
 
-export default function HeroSection() {
+export default function HeroSection({ team, match }) {
   return (
     <div className="flex w-full flex-col mt-10">
       <Tabs
@@ -15,14 +15,14 @@ export default function HeroSection() {
         <Tab key="pick" title="Hero Pick">
           <Card className="bg-gray-800 text-white">
             <CardBody>
-              <HeroPick />
+              <HeroPick team={team} match={match} />
             </CardBody>
           </Card>
         </Tab>
         <Tab key="ban" title="Hero Ban">
           <Card className="bg-gray-800 text-white">
             <CardBody>
-              <HeroBan />
+              <HeroBan team={team} match={match} />
             </CardBody>
           </Card>
         </Tab>

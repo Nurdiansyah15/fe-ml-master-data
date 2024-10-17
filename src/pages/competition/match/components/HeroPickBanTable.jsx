@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import EditableRow from "./EditableRow";
+import React, { useEffect, useState } from "react";
+import HeroPickBanRow from "./HeroPickBanRow";
 
-const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
-  const [rows, setRows] = useState(
-    initialData.map((row) => ({ ...row, isNew: false })) // Mark existing rows as not new
-  );
+const HeroPickBanTable = ({
+  columns,
+  initialData,
+  selectOptions,
+  onSaveRow,
+  onDelete, 
+}) => {
+  const [rows, setRows] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
+
+  // Update rows state ketika initialData berubah
+  useEffect(() => {
+    const newRows = initialData.map((row) => ({ ...row, isNew: false }));
+    setRows(newRows);
+  }, [initialData]);
 
   const handleChange = (index, field, value) => {
     const updatedRows = [...rows];
@@ -13,10 +23,8 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
     setRows(updatedRows);
   };
 
-  // console.log("initialData", initialData);
-
   const addRow = () => {
-    const emptyRow = { isNew: true }; // New row with 'isNew' flag
+    const emptyRow = { isNew: true, total: 0 };
     columns.forEach((col) => {
       emptyRow[col.field] = col.type === "checkbox" ? false : "";
     });
@@ -24,18 +32,22 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
     setEditingIndex(rows.length);
   };
 
-  const handleSaveRow = (index) => {
-    const row = rows[index];
+  const handleSaveRow = (index, updatedRowData) => {
+    const updatedRows = [...rows];
+    updatedRows[index] = { ...updatedRowData, isNew: false };
+    setRows(updatedRows);
+    setEditingIndex(null);
     if (onSaveRow) {
-      onSaveRow(row); // Pass the type and data to parent
+      onSaveRow(updatedRowData);
     }
-    row.isNew = false; // Mark as existing after saving
-    setEditingIndex(null); // Stop editing
   };
 
-  const handleDeleteRow = (index) => {
-    const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
+  const handleDeleteRow = (id) => {
+    const updatedRows = rows.filter((row) => row.id !== id);
     setRows(updatedRows);
+    if (onDelete) {
+      onDelete(id); 
+    }
   };
 
   return (
@@ -50,16 +62,16 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
             ))}
             <th className="py-2"></th>
           </tr>
-        </thead>  
+        </thead>
         <tbody>
           {rows.map((row, index) => (
-            <EditableRow
+            <HeroPickBanRow
               key={index}
               cols={columns}
               rowData={row}
               onChange={handleChange}
               index={index}
-              onDelete={handleDeleteRow}
+              onDelete={handleDeleteRow} // Menghubungkan fungsi delete ke HeroPickBanRow
               isEditing={editingIndex === index}
               setEditingIndex={setEditingIndex}
               selectOptions={selectOptions}
@@ -81,4 +93,4 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
   );
 };
 
-export default EditableTable;
+export default HeroPickBanTable;

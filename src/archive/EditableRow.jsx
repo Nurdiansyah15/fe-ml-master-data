@@ -72,7 +72,7 @@ const EditableRow = ({
                 onChange={(e) => handleInputChange(col.field, e.target.value)}
                 className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
               >
-                <option value="">Pilih Team</option>
+                <option value="">Pilih {col.label}</option>
                 {selectOptions[col.field].map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
