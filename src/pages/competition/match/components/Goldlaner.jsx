@@ -8,6 +8,7 @@ import {
   updateGoldlaner,
 } from "../../../../redux/thunks/gameThunk";
 import GameRoleResultTable from "./GameRoleResultTable";
+import { clearGoldlaner } from "../../../../redux/features/goldlanerSlice";
 
 export default function Goldlaner({ game, team }) {
   const dispatch = useDispatch();
@@ -25,6 +26,10 @@ export default function Goldlaner({ game, team }) {
       dispatch(
         getAllGoldlaners({ gameID: game.game_id, teamID: team.team_id })
       );
+    }
+
+    return () => {
+      dispatch(clearGoldlaner())
     }
   }, [dispatch, game, team]);
 

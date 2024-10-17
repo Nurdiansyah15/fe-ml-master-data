@@ -13,6 +13,8 @@ import matchCoachReducer from "./features/matchCoachSlice";
 import heroPickReducer from "./features/heroPickSlice";
 import heroBanReducer from "./features/heroBanSlice";
 import goldlanerReducer from "./features/goldlanerSlice";
+import explanerReducer from "./features/explanerSlice";
+import trioMidReducer from "./features/trioMidSlice";
 
 export default configureStore({
   reducer: {
@@ -30,5 +32,7 @@ export default configureStore({
     heroPick: heroPickReducer,
     heroBan: heroBanReducer,
     goldlaner: goldlanerReducer,
+    explaner: explanerReducer,
+    trioMid: trioMidReducer,
   },
 });

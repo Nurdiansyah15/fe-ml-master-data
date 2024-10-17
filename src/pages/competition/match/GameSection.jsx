@@ -63,12 +63,12 @@ export default function GameSection({ team, match }) {
                       </Tab>
                       <Tab key="explaner" title="Explaner">
                         <Card className="bg-[#161618] text-white">
-                          <Explaner />
+                          <Explaner game={game} team={team} />
                         </Card>
                       </Tab>
                       <Tab key="trio-mid" title="Trio Mid">
                         <Card className="bg-[#161618] text-white">
-                          <TrioMid />
+                          <TrioMid game={game} team={team} />
                         </Card>
                       </Tab>
                     </Tabs>

@@ -186,3 +186,195 @@ export const deleteGoldLaner = createAsyncThunk(
     }
   }
 );
+
+export const getAllExplaners = createAsyncThunk(
+  "games/getAllExplaners",
+  async ({ gameID, teamID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/games/${gameID}/teams/${teamID}/explaners`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addExplaner = createAsyncThunk(
+  "games/addExplaner",
+  async (
+    { gameID, teamID, hero_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        early_result,
+      };
+
+      await axiosInstance.post(
+        `/api/games/${gameID}/teams/${teamID}/explaners`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game created successfully", "success");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const updateExplaner = createAsyncThunk(
+  "games/updateExplaner",
+  async (
+    { gameID, teamID, explanerID, hero_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        early_result,
+      };
+
+      await axiosInstance.put(
+        `/api/games/${gameID}/teams/${teamID}/explaners/${explanerID}`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game updated successfully", "success");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteExplaner = createAsyncThunk(
+  "games/deleteExplaner",
+  async ({ gameID, teamID, explanerID }, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(
+        `/api/games/${gameID}/teams/${teamID}/explaners/${explanerID}`
+      );
+
+      CustomToast("Gold laner deleted successfully", "success");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllExplaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const getAllTrioMids = createAsyncThunk(
+  "games/getAllTrioMids",
+  async ({ gameID, teamID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/games/${gameID}/teams/${teamID}/trio-mids`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addTrioMid = createAsyncThunk(
+  "games/addTrioMid",
+  async (
+    { gameID, teamID, hero_id, role, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        early_result,
+        role,
+      };
+
+      await axiosInstance.post(
+        `/api/games/${gameID}/teams/${teamID}/trio-mids`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game created successfully", "success");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const updateTrioMid = createAsyncThunk(
+  "games/updateTrioMid",
+  async (
+    { gameID, teamID, trioMidHeroID, role, hero_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        role,
+        early_result,
+      };
+
+      await axiosInstance.put(
+        `/api/games/${gameID}/teams/${teamID}/trio-mids/${trioMidHeroID}`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game updated successfully", "success");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteTrioMid = createAsyncThunk(
+  "games/deleteTrioMid",
+  async ({ gameID, teamID, trioMidHeroID }, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(
+        `/api/games/${gameID}/teams/${teamID}/trio-mids/${trioMidHeroID}`
+      );
+
+      CustomToast("Trio Mid deleted successfully", "success");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllTrioMids({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
