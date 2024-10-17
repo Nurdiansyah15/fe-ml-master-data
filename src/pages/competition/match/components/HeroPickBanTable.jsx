@@ -6,12 +6,11 @@ const HeroPickBanTable = ({
   initialData,
   selectOptions,
   onSaveRow,
-  onDelete, 
+  onDelete,
 }) => {
   const [rows, setRows] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
 
-  // Update rows state ketika initialData berubah
   useEffect(() => {
     const newRows = initialData.map((row) => ({ ...row, isNew: false }));
     setRows(newRows);
@@ -46,18 +45,20 @@ const HeroPickBanTable = ({
     const updatedRows = rows.filter((row) => row.id !== id);
     setRows(updatedRows);
     if (onDelete) {
-      onDelete(id); 
+      onDelete(id);
     }
   };
 
   return (
     <div className="w-full p-10">
       <table className="w-full text-center">
-        <thead>
+        <thead className="">
           <tr>
             {columns.map((col, index) => (
               <th className="py-2" key={index}>
-                {col.label}
+                <div className="bg-[#363638] rounded-xl p-2 mx-1">
+                  {col.label}
+                </div>
               </th>
             ))}
             <th className="py-2"></th>
@@ -71,7 +72,7 @@ const HeroPickBanTable = ({
               rowData={row}
               onChange={handleChange}
               index={index}
-              onDelete={handleDeleteRow} // Menghubungkan fungsi delete ke HeroPickBanRow
+              onDelete={handleDeleteRow}
               isEditing={editingIndex === index}
               setEditingIndex={setEditingIndex}
               selectOptions={selectOptions}

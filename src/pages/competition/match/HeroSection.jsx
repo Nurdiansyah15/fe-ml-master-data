@@ -13,14 +13,14 @@ export default function HeroSection({ team, match }) {
         className="w-fit rounded-xl border border-gray-700"
       >
         <Tab key="pick" title="Hero Pick">
-          <Card className="bg-gray-800 text-white">
+          <Card className="bg-[#1f1f21]  text-white w-full rounded-xl border border-gray-700">
             <CardBody>
               <HeroPick team={team} match={match} />
             </CardBody>
           </Card>
         </Tab>
         <Tab key="ban" title="Hero Ban">
-          <Card className="bg-gray-800 text-white">
+          <Card className="bg-[#1f1f21]  text-white w-full rounded-xl border border-gray-700">
             <CardBody>
               <HeroBan team={team} match={match} />
             </CardBody>

@@ -1,5 +1,6 @@
-import { EditIcon, Save, Trash } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import { Save, Trash, EditIcon } from "lucide-react";
+
 const HeroPickBanRow = ({
   cols,
   rowData,
@@ -13,12 +14,15 @@ const HeroPickBanRow = ({
 }) => {
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
-  const [tempRowData, setTempRowData] = useState(rowData);
+  const [localRowData, setLocalRowData] = useState(rowData);
 
   useEffect(() => {
     setIsEditingState(isEditing);
-    setTempRowData(rowData);
-  }, [isEditing, rowData]);
+  }, [isEditing]);
+
+  useEffect(() => {
+    setLocalRowData(rowData);
+  }, [rowData]);
 
   const startEditing = () => {
     setIsEditingState(true);
@@ -27,8 +31,7 @@ const HeroPickBanRow = ({
 
   const saveRow = () => {
     if (validateRow()) {
-      const newTotal = calculateTotal(tempRowData);
-      handleSaveRow(index, { ...tempRowData, total: newTotal });
+      handleSaveRow(index, localRowData);
       setIsEditingState(false);
       setEditingIndex(null);
       setHasError(false);
@@ -39,116 +42,120 @@ const HeroPickBanRow = ({
 
   const handleInputChange = (field, value) => {
     setHasError(false);
-    setTempRowData((prev) => ({ ...prev, [field]: value }));
+    const updatedRowData = { ...localRowData, [field]: value };
+
+    // Recalculate total
+    const newTotal = cols.filter(
+      (col) => col.type === "checkbox" && updatedRowData[col.field]
+    ).length;
+    updatedRowData.total = newTotal;
+
+    setLocalRowData(updatedRowData);
+    onChange(index, field, value);
   };
 
   const validateRow = () => {
     return cols.every((col) => {
-      if (col.type === "checkbox") return true;
-      if (col.field === "total") return true;
+      if (col.type === "checkbox" || col.field === "total") return true;
+      if (col.type === "select")
+        return (
+          localRowData[col.field] !== undefined &&
+          localRowData[col.field] !== ""
+        );
       return (
-        tempRowData[col.field] !== undefined && tempRowData[col.field] !== ""
+        localRowData[col.field] !== undefined &&
+        localRowData[col.field].toString().trim() !== ""
       );
     });
   };
 
   const handleDelete = () => onDelete(rowData.id);
 
-  const calculateTotal = (data) => {
-    return cols.filter((col) => col.type === "checkbox" && data[col.field])
-      .length;
+  const renderInput = (col) => {
+    const options = selectOptions[col.field] || [];
+    const isDisabled = !isEditingState || col.field === "total";
+
+    switch (col.type) {
+      case "checkbox":
+        return (
+          <div
+            className={`flex items-center justify-center p-1 rounded-md ${
+              isEditingState ? "bg-[#363638]" : ""
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={localRowData[col.field] || false}
+              onChange={(e) => handleInputChange(col.field, e.target.checked)}
+              disabled={isDisabled}
+              className="w-5 h-6 cursor-pointer"
+            />
+          </div>
+        );
+      case "select":
+        return isEditingState ? (
+          <select
+            value={localRowData[col.field] || ""}
+            onChange={(e) => handleInputChange(col.field, e.target.value)}
+            disabled={isDisabled}
+            className="bg-[#363638] text-white rounded-md p-1 w-full text-center"
+          >
+            <option value="">Choose {col.label}</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="flex items-center gap-2 justify-center">
+            <img
+              src={
+                options.find(
+                  (option) => option.value == localRowData[col.field]
+                )?.image || "https://via.placeholder.com/32"
+              }
+              alt="Team Logo"
+              className="w-8 h-8 rounded-full"
+            />
+            <span className="text-center block">
+              {options.find((option) => option.value == localRowData[col.field])
+                ?.label || "Unknown"}
+            </span>
+          </div>
+        );
+      case "number":
+      case "text":
+      default:
+        const value = localRowData[col.field];
+        const displayValue = value !== undefined && value !== null ? value : "";
+
+        return isEditingState && col.field !== "total" ? (
+          <input
+            type={col.type === "number" ? "number" : "text"}
+            value={displayValue}
+            onChange={(e) => handleInputChange(col.field, e.target.value)}
+            disabled={isDisabled}
+            className={`bg-[#363638] text-white rounded-md p-1 w-full text-center ${
+              hasError && displayValue.toString().trim() === ""
+                ? "border border-red-500"
+                : ""
+            } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            onKeyDown={(e) => e.key === "Enter" && saveRow()}
+          />
+        ) : (
+          <span className="text-center w-full block">{displayValue}</span>
+        );
+    }
   };
 
-  const tempTotal = useMemo(
-    () => calculateTotal(tempRowData),
-    [tempRowData, cols]
-  );
-
   return (
-    <tr className={hasError ? "bg-red-100" : ""}>
-      {cols.map((col, colIndex) => {
-        if (col.field === "total") {
-          return (
-            <td key={colIndex} className="py-2 w-32 p-2 rounded-md">
-              <span className="text-center w-full block">
-                {isEditingState ? tempTotal : rowData.total}
-              </span>
-            </td>
-          );
-        }
-
-        return (
-          <td className="py-2 w-32 p-2 rounded-md" key={colIndex}>
-            {col.type === "checkbox" ? (
-              <div
-                className={`flex items-center justify-center p-1 rounded-md ${
-                  isEditingState ? "bg-slate-800" : ""
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    isEditingState ? tempRowData[col.field] : rowData[col.field]
-                  }
-                  onChange={(e) =>
-                    handleInputChange(col.field, e.target.checked)
-                  }
-                  disabled={!isEditingState}
-                  className="w-5 h-6 cursor-pointer"
-                />
-              </div>
-            ) : col.type === "select" ? (
-              isEditingState ? (
-                <select
-                  value={tempRowData[col.field] || ""}
-                  onChange={(e) => handleInputChange(col.field, e.target.value)}
-                  className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
-                >
-                  <option value="">Pilih {col.label}</option>
-                  {selectOptions[col.field].map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <img
-                    src={
-                      selectOptions[col.field].find(
-                        (option) => option.value == rowData[col.field]
-                      )?.image || "https://via.placeholder.com/32"
-                    }
-                    alt="Team Logo"
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="text-center block">
-                    {selectOptions[col.field].find(
-                      (option) => option.value == rowData[col.field]
-                    )?.label || "Unknown Team"}
-                  </span>
-                </div>
-              )
-            ) : isEditingState ? (
-              <input
-                type="text"
-                value={tempRowData[col.field] || ""}
-                onChange={(e) => handleInputChange(col.field, e.target.value)}
-                className={`bg-slate-800 text-white rounded-md p-1 w-full text-center ${
-                  hasError && !tempRowData[col.field]?.trim()
-                    ? "border border-red-500"
-                    : ""
-                }`}
-                onKeyDown={(e) => e.key === "Enter" && saveRow()}
-              />
-            ) : (
-              <span className="text-center w-full block">
-                {rowData[col.field]}
-              </span>
-            )}
-          </td>
-        );
-      })}
+    <tr>
+      {cols.map((col, colIndex) => (
+        <td className="py-2 w-32 p-2 rounded-md" key={colIndex}>
+          {renderInput(col)}
+        </td>
+      ))}
       <td className="py-2 w-5">
         <div className="flex items-center justify-center">
           {!isEditingState ? (
