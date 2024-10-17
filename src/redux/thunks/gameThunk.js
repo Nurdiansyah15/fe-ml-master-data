@@ -91,3 +91,98 @@ export const updateGame = createAsyncThunk(
     }
   }
 );
+
+export const getAllGoldlaners = createAsyncThunk(
+  "games/getAllGoldlaners",
+  async ({ gameID, teamID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/games/${gameID}/teams/${teamID}/goldlaners`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addGoldlaner = createAsyncThunk(
+  "games/addGoldlaner",
+  async (
+    { gameID, teamID, hero_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        early_result,
+      };
+
+      await axiosInstance.post(
+        `/api/games/${gameID}/teams/${teamID}/goldlaners`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game created successfully", "success");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const updateGoldlaner = createAsyncThunk(
+  "games/updateGoldlaner",
+  async (
+    { gameID, teamID, goldLanerID, hero_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        hero_id,
+        early_result,
+      };
+
+      await axiosInstance.put(
+        `/api/games/${gameID}/teams/${teamID}/goldlaners/${goldLanerID}`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game updated successfully", "success");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteGoldLaner = createAsyncThunk(
+  "games/deleteGoldLaner",
+  async ({ gameID, teamID, goldLanerID }, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(
+        `/api/games/${gameID}/teams/${teamID}/goldlaners/${goldLanerID}`
+      );
+
+      CustomToast("Gold laner deleted successfully", "success");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getAllGoldlaners({ gameID, teamID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);

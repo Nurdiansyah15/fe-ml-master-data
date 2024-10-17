@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import HeroPickBanRow from "./HeroPickBanRow";
+import GameRoleResultRow from "./GameRoleResultRow";
 
-const HeroPickBanTable = ({
+const GameRoleResultTable = ({
   columns,
   initialData,
   selectOptions,
@@ -66,7 +66,7 @@ const HeroPickBanTable = ({
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <HeroPickBanRow
+            <GameRoleResultRow
               key={index}
               cols={columns}
               rowData={row}
@@ -94,4 +94,4 @@ const HeroPickBanTable = ({
   );
 };
 
-export default HeroPickBanTable;
+export default GameRoleResultTable;

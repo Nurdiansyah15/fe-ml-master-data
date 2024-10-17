@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Save, Trash, EditIcon } from "lucide-react";
 
-const HeroPickBanRow = ({
+const GameRoleResultRow = ({
   cols,
   rowData,
   onChange,
@@ -187,4 +187,4 @@ const HeroPickBanRow = ({
   );
 };
 
-export default HeroPickBanRow;
+export default GameRoleResultRow;
