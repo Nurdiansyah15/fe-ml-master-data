@@ -10,6 +10,7 @@ import teamReducer from "./features/teamSlice";
 import tournamentReducer from "./features/tournamentSlice";
 import matchPlayerReducer from "./features/matchPlayerSlice";
 import matchCoachReducer from "./features/matchCoachSlice";
+import trioMidReducer from "./features/trioMidSlice";
 
 export default configureStore({
   reducer: {
@@ -24,5 +25,6 @@ export default configureStore({
     teamMatch: teamMatchReducer,
     matchPlayer: matchPlayerReducer,
     matchCoach: matchCoachReducer,
+    trioMid: trioMidReducer,
   },
 });

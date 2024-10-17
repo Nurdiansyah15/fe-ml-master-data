@@ -123,7 +123,7 @@ export default function Match() {
       {team && <MemberSection team={team} match={match} />}
       {/* <HeroSection /> */}
       {team && <PrioritySection team={team} match={match} />}
-      {/* <GameSection /> */}
+      <GameSection team={team} match={match} />
     </div>
   );
 }

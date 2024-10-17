@@ -1,37 +1,106 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import EditableTable from "../../../../components/global/EditableTable";
+import { useDispatch, useSelector } from "react-redux";
+import CustomEditableTable from "../../../../archive/CustomEditableTable";
 
-export default function Lord() {
+export default function Lord({ game }) {
+  const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(true);
+  const [initialData, setInitialData] = useState([]);
+
   const columns = [
-    { label: "Hero", field: "hero", type: "text" },
-    { label: "Game 1", field: "game1", type: "checkbox" },
-    { label: "Game 2", field: "game2", type: "text" },
-    { label: "Total", field: "total", type: "text" },
-    { label: "First Phase", field: "firstPhase", type: "text" },
-    { label: "Second Phase", field: "secondPhase", type: "text" },
+    {
+      label: "phase", field: "Phase", type: "text"
+    },
+    {
+      label: "Setup", field: "setup", type: "select", renderCell: (value, options) => {
+        const result = options.find(option => option.value == value);
+        let style = "bg-[#4b3232] text-[#ab6161]";
+        if (result?.value === "early") {
+          style = "bg-[#324B39] text-[#61AB76]";
+        } else if (result?.value === "late") {
+          style = "bg-[#494b32] text-[#d4b560]";
+        }
+        
+        return (
+          <div className={`${style} px-4 py-2 rounded-full`}>
+            <span>{result?.label || "Unknown"}</span>
+          </div>
+        );
+      }
+    },
+    {
+      label: "Initiate", field: "initiate", type: "select", renderCell: (value, options) => {
+        const result = options.find(option => option.value == value);
+        let style = "bg-[#4b3232] text-[#ab6161]";
+        if (result?.value === "early") {
+          style = "bg-[#324B39] text-[#61AB76]";
+        } else if (result?.value === "late") {
+          style = "bg-[#494b32] text-[#d4b560]";
+        }
+        
+        return (
+          <div className={`${style} px-4 py-2 rounded-full`}>
+            <span>{result?.label || "Unknown"}</span>
+          </div>
+        );
+      }
+    },
+    {
+      label: "Result", field: "result", type: "select", renderCell: (value, options) => {
+        const result = options.find(option => option.value == value);
+        let style = "bg-[#4b3232] text-[#ab6161]";
+        if (result?.value === "early") {
+          style = "bg-[#324B39] text-[#61AB76]";
+        } else if (result?.value === "late") {
+          style = "bg-[#494b32] text-[#d4b560]";
+        }
+        
+        return (
+          <div className={`${style} px-4 py-2 rounded-full`}>
+            <span>{result?.label || "Unknown"}</span>
+          </div>
+        );
+      }
+    },
   ];
 
-  const initialData = [
-    {
-      hero: "Hero 1",
-      game1: 1,
-      game2: 2,
-      total: 10,
-      firstPhase: 5,
-      secondPhase: 5,
-    },
-    {
-      hero: "Hero 1",
-      game1: 1,
-      game2: 2,
-      total: 10,
-      firstPhase: 5,
-      secondPhase: 5,
-    },
-  ];
+  const selectOptions = useMemo(() => {
+    return {
+      setup: [
+        { value: "early", label: "Early" },
+        { value: "late", label: "Late" },
+        { value: "no", label: "No" },
+      ],
+      initiate: [
+        { value: "early", label: "Early" },
+        { value: "late", label: "Late" },
+        { value: "no", label: "No" },
+      ],
+      result: [
+        { value: "early", label: "Early" },
+        { value: "late", label: "Late" },
+        { value: "no", label: "No" },
+      ],
+    };
+  }, []);
+
+  const handleSaveRow = (rowData) => {
+    console.log("Data yang disimpan:", rowData);
+  };
+
+  const handleDeleteRow = (index) => {
+    console.log("Data yang dihapus:", initialData[index]);
+
+  };
+
+
+  // if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="w-full flex">
-      <EditableTable columns={columns} initialData={initialData} />
+    <div className="w-full flex flex-col">
+      <CustomEditableTable columns={columns} initialData={initialData} selectOptions={selectOptions} onSaveRow={handleSaveRow} onDeleteRow={handleDeleteRow} />
     </div>
   );
 }

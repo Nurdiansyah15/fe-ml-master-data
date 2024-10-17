@@ -10,6 +10,8 @@ export default function PriorityPick({ team, match }) {
 
   const { heroes } = useSelector((state) => state.hero);
 
+  const { games } = useSelector((state) => state.game);
+
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
 
@@ -21,10 +23,10 @@ export default function PriorityPick({ team, match }) {
       renderCell: (value, options) => {
         const hero = options.find(option => option.value == value);
         return (
-          <>
-            <img src={hero?.image || "https://via.placeholder.com/32"} alt="Hero" className="w-8 h-8 rounded-full" />
+          <div className="flex items-center gap-2 justify-center">
+            <img src={ "https://via.placeholder.com/32"} alt="Hero" className="w-8 h-8 rounded-full" />
             <span>{hero?.label || "Unknown"}</span>
-          </>
+          </div>
         );
       }
     },
@@ -32,7 +34,7 @@ export default function PriorityPick({ team, match }) {
       label: "Total",
       field: "total",
       type: "number",
-      defaultValue: 2,
+      defaultValue: games?.length,
       readOnly: true  // This makes the column non-editable
     },
     { label: "Role", field: "role", type: "select" },
@@ -43,7 +45,7 @@ export default function PriorityPick({ team, match }) {
       defaultValue: 0,
       dependsOn: ["total"],
       calculate: (rowData) => {
-        return rowData.total ? (rowData.total / 2 * 100).toFixed(2) : 0;
+        return rowData.total ? (rowData.total / games?.length * 100).toFixed(2) : 0;
       }
     },
   ];
@@ -67,7 +69,11 @@ export default function PriorityPick({ team, match }) {
 
   const handleSaveRow = (rowData) => {
     console.log("Data yang disimpan:", rowData);
+  };
 
+  const handleDeleteRow = (index) => {
+    console.log("Data yang dihapus:", initialData[index]);
+    
   };
 
   useEffect(() => {
@@ -83,7 +89,7 @@ export default function PriorityPick({ team, match }) {
 
   return (
     <div className="w-full flex">
-      <CustomEditableTable columns={columns} initialData={initialData} selectOptions={selectOptions} onSaveRow={handleSaveRow} />
+      <CustomEditableTable columns={columns} initialData={initialData} selectOptions={selectOptions} onSaveRow={handleSaveRow} onDeleteRow={handleDeleteRow} />
     </div>
   );
 }

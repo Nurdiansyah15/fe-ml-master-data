@@ -42,7 +42,7 @@ const EditableRow = ({
   const handleInputChange = (field, value) => {
     setHasError(false);
     const updatedRowData = { ...localRowData, [field]: value };
-    
+
     // Recalculate dependent fields
     cols.forEach(col => {
       if (col.dependsOn) {
@@ -65,7 +65,7 @@ const EditableRow = ({
   const renderInput = (col) => {
     const options = selectOptions[col.field] || [];
     const isDisabled = !isEditingState || col.dependsOn || col.readOnly;
-    
+
     switch (col.type) {
       case "checkbox":
         return (
@@ -83,7 +83,7 @@ const EditableRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
+            className="bg-[#363638] text-white rounded-md p-1 w-full text-center"
           >
             <option value="">Choose {col.label}</option>
             {options.map((option) => (
@@ -112,9 +112,8 @@ const EditableRow = ({
             value={localRowData[col.field]}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`bg-slate-800 text-white rounded-md p-1 w-full text-center ${
-              hasError && !localRowData[col.field]?.toString().trim() ? "border border-red-500" : ""
-            } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-[#363638] text-white rounded-md p-1 w-full text-center ${hasError && !localRowData[col.field]?.toString().trim() ? "border border-red-500" : ""
+              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
@@ -159,7 +158,7 @@ const EditableRow = ({
   );
 };
 
-const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
+const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow, onDeleteRow }) => {
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
   );
@@ -177,7 +176,7 @@ const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow })
       if (col.dependsOn) {
         emptyRow[col.field] = col.calculate(emptyRow);
       } else {
-        emptyRow[col.field] = col.defaultValue !== undefined ? col.defaultValue : 
+        emptyRow[col.field] = col.defaultValue !== undefined ? col.defaultValue :
           (col.type === "checkbox" ? false : "");
       }
     });
@@ -196,6 +195,8 @@ const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow })
   };
 
   const handleDeleteRow = (index) => {
+    const rowToDelete = rows[index];
+    onDeleteRow(rowToDelete);
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
   };
@@ -203,11 +204,13 @@ const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow })
   return (
     <div className="w-full p-10">
       <table className="w-full text-center">
-        <thead>
+        <thead className="">
           <tr>
             {columns.map((col, index) => (
               <th className="py-2" key={index}>
-                {col.label}
+                <div className="bg-[#363638] rounded-xl p-2 mx-1">
+                  {col.label}
+                </div>
               </th>
             ))}
             <th className="py-2"></th>
