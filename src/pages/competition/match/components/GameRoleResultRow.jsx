@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Save, Trash, EditIcon } from "lucide-react";
 
-const HeroPickBanRow = ({
+const GameRoleResultRow = ({
   cols,
   rowData,
   onChange,
@@ -80,7 +80,7 @@ const HeroPickBanRow = ({
         return (
           <div
             className={`flex items-center justify-center p-1 rounded-md ${
-              isEditingState ? "border-b-1 border-gray-600" : ""
+              isEditingState ? "border-b-1 border-gray-600 bg-transparent" : ""
             }`}
           >
             <input
@@ -121,7 +121,7 @@ const HeroPickBanRow = ({
                     <img
                       src={selectedOption.image}
                       alt={selectedOption.label || "Image"}
-                      className="w-8 h-8 rounded-full"
+                      className="w-8 h-8 rounded-full object-cover"
                     />
                   )}
                   <span className="text-center block">
@@ -193,4 +193,4 @@ const HeroPickBanRow = ({
   );
 };
 
-export default HeroPickBanRow;
+export default GameRoleResultRow;

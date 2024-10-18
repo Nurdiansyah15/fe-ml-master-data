@@ -1,99 +1,198 @@
 import React, { useEffect, useMemo, useState } from "react";
-import EditableTable from "../../../../components/global/EditableTable";
 import { useDispatch, useSelector } from "react-redux";
-import CustomEditableTable from "../../../../archive/CustomEditableTable";
 import { getAllHeroes } from "../../../../redux/thunks/heroThunk";
-import TrioMidSummary from "./TrioMidSummary";
+import {
+  addTrioMid,
+  deleteTrioMid,
+  getAllTrioMids,
+  getTrioMidResult,
+  updateTrioMid,
+  updateTrioMidResult,
+} from "../../../../redux/thunks/gameThunk";
+import { clearTrioMid } from "../../../../redux/features/trioMidSlice";
+import GameRoleResultTable from "./GameRoleResultTable";
+import EarlyResultForm from "./EarlyResultForm";
 
-export default function TrioMid({ game }) {
-
+export default function TrioMid({ game, team }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
+  const { trioMids } = useSelector((state) => state.trioMid);
+  const { trioMidResult } = useSelector((state) => state.trioMid);
 
-  const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const columns = [
-    {
-      label: "Hero", field: "hero", type: "select", renderCell: (value, options) => {
-        const hero = options.find(option => option.value == value);
-        return (
-          <div className="flex items-center gap-2 justify-center">
-            <img src={"https://via.placeholder.com/32"} alt="Hero" className="w-8 h-8 rounded-full" />
-            <span>{hero?.label || "Unknown"}</span>
-          </div>
-        );
-      }
-    },
-    { label: "Role", field: "role", type: "select" },
-    {
-      label: "Early Result", field: "early_result", type: "select", renderCell: (value, options) => {
-        const result = options.find(option => option.value == value);
-        let style = "bg-[#4b3232] text-[#ab6161]";
-        if (result?.value === "win") {
-          style = "bg-[#324B39] text-[#61AB76]";
-        } else if (result?.value === "draw") {
-          style = "bg-[#494b32] text-[#d4b560]";
-        }
-        
-        return (
-          <div className={`${style} px-4 py-2 rounded-full`}>
-            <span>{result?.label || "Unknown"}</span>
-          </div>
-        );
-      }
-    },
-  ];
+  const [earlyResult, setEarlyResult] = useState(null);
 
-  const selectOptions = useMemo(() => {
-    if (!heroes || heroes.length === 0) return {};
+  // Ambil data heroes dan trioMids berdasarkan game dan team ID
+  useEffect(() => {
+    if (game && team) {
+      dispatch(getAllHeroes());
+      dispatch(getAllTrioMids({ gameID: game.game_id, teamID: team.team_id }));
+    }
 
-    return {
-      hero: heroes.map((hero) => ({
+    return () => {
+      dispatch(clearTrioMid());
+    };
+  }, [dispatch, game, team]);
+
+  useEffect(() => {
+    if (trioMids.length > 0) {
+      dispatch(
+        getTrioMidResult({
+          gameID: game.game_id,
+          teamID: team.team_id,
+          trioMidID: trioMids[0]?.trio_mid_id,
+        })
+      );
+    }
+  }, [dispatch, game, team, trioMids]);
+
+  console.log("TriosMid:", trioMids);
+  console.log("Heroes:", heroes);
+  console.log("TrioMid Result:", trioMidResult);
+
+  // Parsing kolom untuk tabel
+  const columns = useMemo(
+    () => [
+      { label: "Hero", field: "hero", type: "select" },
+      { label: "Role", field: "role", type: "select" },
+      { label: "Early Result", field: "early_result", type: "select" },
+    ],
+    []
+  );
+
+  // Parsing data awal dari trioMids untuk tabel
+  useEffect(() => {
+    if (trioMids) {
+      const parsedData = trioMids.map((trioMid) => ({
+        id: trioMid.trio_mid_hero_id,
+        hero: trioMid.hero.hero_id,
+        role: trioMid.role,
+        early_result: trioMid.early_result,
+      }));
+      setInitialData(parsedData);
+    }
+  }, [trioMids]);
+
+  console.log("Initial Data:", initialData);
+
+  // Opsi select untuk heroes
+  const heroOptions = useMemo(
+    () =>
+      heroes.map((hero) => ({
         value: hero.hero_id,
         label: hero.name,
         image: hero.image,
       })),
-      role: [
-        { value: "jungler", label: "jungler" },
-        { value: "midlaner", label: "Midlaner" },
-        { value: "roamer", label: "Roamer" },
-        { value: "goldlaner", label: "Goldlaner" },
-        { value: "explaner", label: "Explaner" },
-      ],
-      early_result: [
-        { value: "win", label: "Win" },
-        { value: "draw", label: "Draw" },
-        { value: "lose", label: "Lose" },
-      ],
+    [heroes]
+  );
+
+  // Opsi select untuk performance
+  const earlyResultOptions = [
+    { value: "win", label: "Win" },
+    { value: "draw", label: "Draw" },
+    { value: "lose", label: "Lose" },
+  ];
+
+  // 'jungler', 'midlaner', 'roamer'
+  const roleOptions = [
+    { value: "jungler", label: "Jungler" },
+    { value: "midlaner", label: "Midlaner" },
+    { value: "roamer", label: "Roamer" },
+  ];
+
+  const onSaveRow = (dataForm) => {
+    console.log("Saved Row Data:", dataForm);
+    setLoading(true);
+
+    const data = {
+      gameID: game.game_id,
+      teamID: team.team_id,
+      role: dataForm.role,
+      hero_id: parseInt(dataForm.hero, 10),
+      early_result: dataForm.early_result,
     };
-  }, [heroes]);
 
-  const handleSaveRow = (rowData) => {
-    console.log("Data yang disimpan:", rowData);
+    const action = dataForm.isNew
+      ? addTrioMid(data)
+      : updateTrioMid({ trioMidHeroID: dataForm.id, ...data });
+
+    dispatch(action)
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllTrioMids({ gameID: game.game_id, teamID: team.team_id })
+        );
+        setLoading(false);
+      });
   };
 
-  const handleDeleteRow = (index) => {
-    console.log("Data yang dihapus:", initialData[index]);
+  const handleDeleteRow = (id) => {
+    setLoading(true);
+    if (id === undefined) return;
 
-  };
-
-  useEffect(() => {
     dispatch(
-      getAllHeroes()
-    ).unwrap().then(() => {
-      setLoading(false);
-    });
-  }, [dispatch]);
+      deleteTrioMid({
+        gameID: game.game_id,
+        teamID: team.team_id,
+        trioMidHeroID: id,
+      })
+    )
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllTrioMids({ gameID: game.game_id, teamID: team.team_id })
+        );
+        setLoading(false);
+      });
+  };
 
-
-  if (loading) return <div>Loading...</div>;
+  const handleSubmitEarlyResult = (result) => {
+    setEarlyResult(result);
+    dispatch(
+      updateTrioMidResult({
+        trioMidID: trioMidResult.trio_mid_id,
+        teamID: trioMidResult.team_id,
+        gameID: trioMidResult.game_id,
+        team_id: trioMidResult.team_id,
+        early_result: result,
+      })
+    )
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllTrioMids({ gameID: game.game_id, teamID: team.team_id })
+        );
+      });
+  };
 
   return (
     <div className="w-full flex flex-col">
-      <CustomEditableTable columns={columns} initialData={initialData} selectOptions={selectOptions} onSaveRow={handleSaveRow} onDeleteRow={handleDeleteRow} />
-      <TrioMidSummary data={initialData} />
+      <GameRoleResultTable
+        columns={columns}
+        initialData={initialData}
+        selectOptions={{
+          hero: heroOptions,
+          early_result: earlyResultOptions,
+          role: roleOptions,
+        }}
+        onDelete={handleDeleteRow}
+        onSaveRow={onSaveRow}
+      />
+      {trioMids.length > 0 && (
+        <div className="flex px-10 w-full">
+          <EarlyResultForm
+            onSelect={setEarlyResult}
+            onSave={handleSubmitEarlyResult}
+            initialResult={trioMidResult?.early_result || ""}
+          />
+        </div>
+      )}
     </div>
   );
 }

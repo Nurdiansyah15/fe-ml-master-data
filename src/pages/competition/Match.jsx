@@ -13,6 +13,8 @@ import { getMatchByID } from "../../redux/thunks/matchThunk";
 import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
 import { clearMatch } from "../../redux/features/matchSlice";
 import { clearTeam } from "../../redux/features/teamSlice";
+import TeamStatsSection from "./match/TeamStatsSection";
+import TeamTitle from "./match/TeamTitle";
 
 export default function Match() {
   const { updatePage } = useContext(PageContext);
@@ -58,8 +60,10 @@ export default function Match() {
   };
 
   return (
-    <div className="text-white flex flex-col justify-start items-start w-full p-4">
+    <div className="text-white flex flex-col justify-start items-start w-full p-4 gap-10">
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
+      {team && <TeamTitle team={team} />}
+      {team && <TeamStatsSection team={team} match={match} />}
       {team && <MemberSection team={team} match={match} />}
       {team && <HeroSection team={team} match={match} />}
       {team && <PrioritySection team={team} match={match} />}

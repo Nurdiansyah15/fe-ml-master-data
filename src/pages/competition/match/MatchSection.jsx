@@ -17,6 +17,7 @@ import {
   updateGame,
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
+import GameRoleResultTable from "./components/GameRoleResultTable";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
   const [isAlertVisible, setAlertVisible] = useState(false); // State for alert
+  
 
   useEffect(() => {
     if (match) {
@@ -96,12 +98,12 @@ export default function MatchSection({ match, handleChooseTeam }) {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="mb-10 w-full">
+    <div className="w-full">
       <p className="text-xl font-bold mb-4">
         {match?.team_a?.name} VS {match?.team_b?.name}
       </p>
-      <div className="flex flex-row space-x-5 w-full">
-        <Card className="text-white flex flex-1 max-w-[60%]">
+      <div className="flex flex-col w-full space-y-5">
+        <Card className="text-white flex flex-1 w-full">
           <div className="flex flex-col space-y-6 pb-10">
             <div>
               <p className="text-sm text-gray-400">
@@ -110,8 +112,8 @@ export default function MatchSection({ match, handleChooseTeam }) {
               </p>
               <p className="text-3xl text-white font-bold">Day {match?.day}</p>
             </div>
-            <div className="flex flex-row space-x-10 justify-center items-center p-2">
-              <div className="flex flex-col space-y-3">
+            <div className="flex flex-row space-x-10 justify-around items-center p-2">
+              <div className="flex flex-1 justify-around items-center">
                 <div
                   className="w-40 h-40 cursor-pointer hover:scale-105 transition"
                   onClick={() => handleTeamClick(match?.team_a)}
@@ -122,16 +124,17 @@ export default function MatchSection({ match, handleChooseTeam }) {
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <div className="px-5 py-2 bg-[#61AB76] rounded-full">
-                  <p className="text-center font-bold text-xl">
-                    {match?.team_a_score}
-                  </p>
-                </div>
+                <p className="text-center font-bold text-5xl">
+                  {match?.team_a_score}
+                </p>
               </div>
 
               <div className="text-3xl text-white font-bold">VS</div>
 
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-1 justify-around items-center">
+                <p className="text-center font-bold text-5xl">
+                  {match?.team_b_score}
+                </p>
                 <div
                   className="w-40 h-40 cursor-pointer hover:scale-105 transition"
                   onClick={() => handleTeamClick(match?.team_b)}
@@ -142,15 +145,10 @@ export default function MatchSection({ match, handleChooseTeam }) {
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <div className="px-5 py-2 bg-[#61AB76] rounded-full">
-                  <p className="text-center font-bold text-xl">
-                    {match?.team_b_score}
-                  </p>
-                </div>
               </div>
             </div>
             <div className="flex w-full">
-              <EditableTable
+              <GameRoleResultTable
                 columns={[
                   { label: "Game", field: "game", type: "text" },
                   { label: "First Pick", field: "first", type: "select" },
@@ -164,9 +162,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
             </div>
           </div>
         </Card>
-        <Card className="flex flex-1 w-[40%] mb-6 p-8">
-          <div>Additional Content</div>
-        </Card>
+     
       </div>
 
       <Modal isOpen={isAlertVisible} onClose={() => setAlertVisible(false)}>

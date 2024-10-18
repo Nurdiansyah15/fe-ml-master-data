@@ -7,7 +7,7 @@ import Card from "../../../components/Card";
 
 export default function PrioritySection() {
   return (
-    <div className="flex w-full flex-col mt-10">
+    <div className="flex w-full flex-col">
       <Tabs
         aria-label="Options"
         color="primary"
@@ -17,21 +17,21 @@ export default function PrioritySection() {
         <Tab key="pick" title="Priority Pick">
           <Card className="text-white">
             {/* <CardBody> */}
-              <PriorityPick />
+            <PriorityPick />
             {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="ban" title="Priority Ban">
           <Card className="text-white">
             {/* <CardBody> */}
-              <PriorityBan />
+            <PriorityBan />
             {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="flex" title="Flex Pick">
           <Card className="text-white">
             {/* <CardBody> */}
-              <FlexPick />
+            <FlexPick />
             {/* </CardBody> */}
           </Card>
         </Tab>
