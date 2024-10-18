@@ -8,6 +8,8 @@ import Goldlaner from "./components/Goldlaner";
 import Lord from "./components/Lord";
 import TrioMid from "./components/TrioMid";
 import Turtle from "./components/Turtle";
+import axiosInstance from "../../../api/axiosInstance";
+import GameResult from "./components/GameResult";
 
 export default function GameSection({ team, match }) {
   const dispatch = useDispatch();
@@ -48,7 +50,7 @@ export default function GameSection({ team, match }) {
                     {game.winner_team_id === team?.team_id ? "Win" : "Lose"}
                   </p>
                 </div>
-                <div className="flex flex-row mt-5">
+                <div className="flex flex-col mt-5">
                   <div className="flex w-full flex-col">
                     <Tabs
                       aria-label="Options"
@@ -73,7 +75,9 @@ export default function GameSection({ team, match }) {
                       </Tab>
                     </Tabs>
                   </div>
-                  {/* <Card className="bg-[#161618] text-white"></Card> */}
+                  <div className="flex w-full flex-col p-1">
+                    <GameResult game={game} team={team} />
+                  </div>
                 </div>
                 <div className="flex w-full flex-col mt-5">
                   <Tabs

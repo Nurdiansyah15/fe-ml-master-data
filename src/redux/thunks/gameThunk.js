@@ -282,13 +282,59 @@ export const deleteExplaner = createAsyncThunk(
   }
 );
 
+export const getTrioMidResult = createAsyncThunk(
+  "games/getTrioMidResult",
+  async ({ gameID, teamID, trioMidID }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/games/${gameID}/teams/${teamID}/trio-mid-results/${trioMidID}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateTrioMidResult = createAsyncThunk(
+  "games/updateTrioMidResult",
+  async (
+    { gameID, teamID, trioMidID, team_id, early_result },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const data = {
+        team_id,
+        early_result,
+      };
+
+      await axiosInstance.put(
+        `/api/games/${gameID}/teams/${teamID}/trio-mid-results/${trioMidID}`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      CustomToast("Game updated successfully", "success");
+      dispatch(getTrioMidResult({ gameID, teamID, trioMidID }));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      dispatch(getTrioMidResult({ gameID, teamID, trioMidID }));
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
 export const getAllTrioMids = createAsyncThunk(
   "games/getAllTrioMids",
-  async ({ gameID, teamID }, { rejectWithValue }) => {
+  async ({ gameID, teamID }, { rejectWithValue, dispatch }) => {
     try {
       const response = await axiosInstance.get(
         `/api/games/${gameID}/teams/${teamID}/trio-mids`
       );
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

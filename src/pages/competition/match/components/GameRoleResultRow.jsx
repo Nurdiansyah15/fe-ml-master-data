@@ -80,7 +80,7 @@ const GameRoleResultRow = ({
         return (
           <div
             className={`flex items-center justify-center p-1 rounded-md ${
-              isEditingState ? "bg-[#363638]" : ""
+              isEditingState ? "border-b-1 border-gray-600 bg-transparent" : ""
             }`}
           >
             <input
@@ -98,7 +98,7 @@ const GameRoleResultRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`bg-[#363638] text-white rounded-md p-[6px] w-full text-center ${
+            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-[6px] w-full text-center ${
               hasError ? "border border-red-500" : ""
             }`}
           >
@@ -111,19 +111,25 @@ const GameRoleResultRow = ({
           </select>
         ) : (
           <div className="flex items-center gap-2 justify-center">
-            <img
-              src={
-                options.find(
-                  (option) => option.value == localRowData[col.field]
-                )?.image || "https://via.placeholder.com/32"
-              }
-              alt="Team Logo"
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-center block">
-              {options.find((option) => option.value == localRowData[col.field])
-                ?.label || "Unknown"}
-            </span>
+            {(() => {
+              const selectedOption = options.find(
+                (option) => option.value == localRowData[col.field]
+              );
+              return (
+                <>
+                  {selectedOption?.image && (
+                    <img
+                      src={selectedOption.image}
+                      alt={selectedOption.label || "Image"}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  )}
+                  <span className="text-center block">
+                    {selectedOption?.label || "Unknown"}
+                  </span>
+                </>
+              );
+            })()}
           </div>
         );
       case "number":
@@ -138,7 +144,7 @@ const GameRoleResultRow = ({
             value={displayValue}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`bg-[#363638] text-white rounded-md p-1 w-full text-center ${
+            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${
               hasError && displayValue.toString().trim() === ""
                 ? "border border-red-500"
                 : ""
