@@ -44,7 +44,7 @@ const EditableRow = ({
     const updatedRowData = { ...localRowData, [field]: value };
 
     // Recalculate dependent fields
-    cols.forEach(col => {
+    cols.forEach((col) => {
       if (col.dependsOn) {
         updatedRowData[col.field] = col.calculate(updatedRowData);
       }
@@ -83,7 +83,7 @@ const EditableRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className="bg-[#363638] text-white rounded-md p-1 w-full text-center"
+            className="border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center"
           >
             <option value="">Choose {col.label}</option>
             {options.map((option) => (
@@ -98,7 +98,11 @@ const EditableRow = ({
               col.renderCell(localRowData[col.field], options)
             ) : (
               <span className="text-center block">
-                {options.find((option) => option.value == localRowData[col.field])?.label || localRowData[col.field] || "Unknown"}
+                {options.find(
+                  (option) => option.value == localRowData[col.field]
+                )?.label ||
+                  localRowData[col.field] ||
+                  "Unknown"}
               </span>
             )}
           </div>
@@ -112,12 +116,17 @@ const EditableRow = ({
             value={localRowData[col.field]}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`bg-[#363638] text-white rounded-md p-1 w-full text-center ${hasError && !localRowData[col.field]?.toString().trim() ? "border border-red-500" : ""
-              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${
+              hasError && !localRowData[col.field]?.toString().trim()
+                ? "border border-red-500"
+                : ""
+            } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
-          <span className="text-center w-full block">{localRowData[col.field]}</span>
+          <span className="text-center w-full block">
+            {localRowData[col.field]}
+          </span>
         );
     }
   };
@@ -158,7 +167,13 @@ const EditableRow = ({
   );
 };
 
-const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow, onDeleteRow }) => {
+const CustomEditableTable = ({
+  columns,
+  initialData,
+  selectOptions,
+  onSaveRow,
+  onDeleteRow,
+}) => {
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
   );
@@ -176,8 +191,12 @@ const CustomEditableTable = ({ columns, initialData, selectOptions, onSaveRow, o
       if (col.dependsOn) {
         emptyRow[col.field] = col.calculate(emptyRow);
       } else {
-        emptyRow[col.field] = col.defaultValue !== undefined ? col.defaultValue :
-          (col.type === "checkbox" ? false : "");
+        emptyRow[col.field] =
+          col.defaultValue !== undefined
+            ? col.defaultValue
+            : col.type === "checkbox"
+            ? false
+            : "";
       }
     });
     setRows([...rows, emptyRow]);

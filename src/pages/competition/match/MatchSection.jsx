@@ -18,6 +18,7 @@ import {
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
 import GameRoleResultTable from "./components/GameRoleResultTable";
+import CustomEditableTable from "../../../archive/CustomEditableTable";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -27,7 +28,6 @@ export default function MatchSection({ match, handleChooseTeam }) {
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
   const [isAlertVisible, setAlertVisible] = useState(false); // State for alert
-  
 
   useEffect(() => {
     if (match) {
@@ -73,6 +73,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
   };
 
   const handleSaveRow = (rowData) => {
+    console.log(rowData);
     setLoading(true);
     const data = {
       matchID: match?.match_id,
@@ -148,11 +149,55 @@ export default function MatchSection({ match, handleChooseTeam }) {
               </div>
             </div>
             <div className="flex w-full">
-              <GameRoleResultTable
+              <CustomEditableTable
                 columns={[
-                  { label: "Game", field: "game", type: "text" },
-                  { label: "First Pick", field: "first", type: "select" },
-                  { label: "Second Pick", field: "second", type: "select" },
+                  {
+                    label: "Game",
+                    field: "game",
+                    type: "text",
+                    readOnly: true,
+                    defaultValue: games.length + 1,
+                  },
+                  {
+                    label: "First Pick",
+                    field: "first",
+                    type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <img
+                            src={hero?.image}
+                            alt="Hero"
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    label: "Second Pick",
+                    field: "second",
+                    type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <img
+                            src={hero?.image}
+                            alt="Hero"
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
                   { label: "Win", field: "win", type: "select" },
                 ]}
                 initialData={initialData}
@@ -162,7 +207,6 @@ export default function MatchSection({ match, handleChooseTeam }) {
             </div>
           </div>
         </Card>
-     
       </div>
 
       <Modal isOpen={isAlertVisible} onClose={() => setAlertVisible(false)}>
