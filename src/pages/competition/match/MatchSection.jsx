@@ -27,6 +27,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
   const [isAlertVisible, setAlertVisible] = useState(false); // State for alert
+  
 
   useEffect(() => {
     if (match) {
@@ -97,7 +98,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="mb-10 w-full">
+    <div className="w-full">
       <p className="text-xl font-bold mb-4">
         {match?.team_a?.name} VS {match?.team_b?.name}
       </p>
@@ -161,9 +162,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
             </div>
           </div>
         </Card>
-        <Card className="text-white flex flex-1 w-full">
-          <div>Additional Content</div>
-        </Card>
+     
       </div>
 
       <Modal isOpen={isAlertVisible} onClose={() => setAlertVisible(false)}>

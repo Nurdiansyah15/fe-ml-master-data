@@ -5,7 +5,7 @@ import HeroBan from "./components/HeroBan";
 
 export default function HeroSection({ team, match }) {
   return (
-    <div className="flex w-full flex-col mt-10">
+    <div className="flex w-full flex-col">
       <Tabs
         aria-label="Options"
         color="primary"

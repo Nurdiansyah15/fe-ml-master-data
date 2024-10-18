@@ -27,7 +27,7 @@ export default function GameSection({ team, match }) {
   }, [dispatch, match]);
 
   return (
-    <div className="flex w-full flex-col mt-10">
+    <div className="flex w-full flex-col">
       <Tabs
         aria-label="Options"
         color="primary"
