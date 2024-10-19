@@ -1,9 +1,4 @@
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-} from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import { Plus, X } from "lucide-react"; // Tambahkan ikon X
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,6 +49,7 @@ export default function MemberSection({ team, match }) {
       teamID: team.team_id,
       matchID: match.match_id,
       player_id: formData.player_id,
+      role: formData.role,
     };
 
     setLoading(true);
@@ -70,6 +66,7 @@ export default function MemberSection({ team, match }) {
       teamID: team.team_id,
       matchID: match.match_id,
       coach_id: formData.coach_id,
+      role: formData.role,
     };
 
     setLoading(true);
@@ -124,16 +121,16 @@ export default function MemberSection({ team, match }) {
             {matchPlayers.slice(0, 5).map((player, index) => (
               <div key={index} className="relative flex flex-col">
                 <p className="text-lg font-semibold text-center">
-                  {player.player.role}
+                  {player.role.charAt(0).toUpperCase() + player.role.slice(1)}
                 </p>
-                <Card className=" w-40">
+                <div className="w-40">
                   <img
                     src={player.player.image}
                     alt={player.player.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
+                    className="w-full h-56 object-cover rounded-lg"
                   />
-                </Card>
-                <Card className=" w-40 text-white px-3 py-1 mt-4">
+                </div>
+                <Card className="w-40 text-white px-3 py-1 mt-4">
                   <h3 className="font-semibold text-lg">
                     {player.player.name}
                   </h3>
@@ -167,11 +164,11 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center text-gray-400">
                   New Player
                 </p>
-                <Card className=" w-40">
-                  <div className="w-full h-48 object-cover rounded-t-lg flex justify-center items-center">
+                <div className="bg-[#1F1F21] border border-[#454545] rounded-lg  w-40">
+                  <div className="w-full h-56 object-cover rounded-t-lg flex justify-center items-center">
                     <Plus className="h-12 w-12 text-gray-300" />
                   </div>
-                </Card>
+                </div>
               </div>
             )}
           </div>
@@ -184,15 +181,15 @@ export default function MemberSection({ team, match }) {
             {matchCoaches.slice(0, 2).map((coach, index) => (
               <div key={index} className="relative flex flex-col">
                 <p className="text-lg font-semibold text-center">
-                  {coach.coach.role}
+                  {coach.role}
                 </p>
-                <Card className=" w-40">
+                <div className="w-40">
                   <img
                     src={coach.coach.image}
                     alt={coach.coach.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
+                    className="w-full h-56 object-cover rounded-lg"
                   />
-                </Card>
+                </div>
                 <Card className=" w-40 text-white px-3 py-1 mt-4">
                   <h3 className="font-semibold text-lg">{coach.coach.name}</h3>
                   <div className="flex gap-2">
@@ -225,11 +222,11 @@ export default function MemberSection({ team, match }) {
                 <p className="text-lg font-semibold text-center text-gray-400">
                   New Coach
                 </p>
-                <Card className=" w-40">
-                  <div className="w-full h-48 object-cover rounded-t-lg flex justify-center items-center">
+                <div className="bg-[#1F1F21] border border-[#454545] rounded-lg  w-40">
+                  <div className="w-full h-56 object-cover rounded-t-lg flex justify-center items-center">
                     <Plus className="h-12 w-12 text-gray-300" />
                   </div>
-                </Card>
+                </div>
               </div>
             )}
           </div>

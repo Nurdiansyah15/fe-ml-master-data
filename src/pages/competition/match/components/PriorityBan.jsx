@@ -3,7 +3,13 @@ import EditableTable from "../../../../components/global/EditableTable";
 import CustomEditableTable from "../../../../archive/CustomEditableTable";
 import { getAllHeroes } from "../../../../redux/thunks/heroThunk";
 import { useDispatch, useSelector } from "react-redux";
-import { addPriorityBan, deletePriorityBan, getAllPriorityBans, updatePriorityBan } from "../../../../redux/thunks/priorityBanThunk";
+import {
+  addPriorityBan,
+  deletePriorityBan,
+  getAllPriorityBans,
+  updatePriorityBan,
+} from "../../../../redux/thunks/priorityBanThunk";
+import { getAllHeroBans } from "../../../../redux/thunks/matchThunk";
 
 export default function PriorityBan({ team, match }) {
   const dispatch = useDispatch();
@@ -16,6 +22,14 @@ export default function PriorityBan({ team, match }) {
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
+
+  useEffect(() => {
+    if (match) {
+      dispatch(
+        getAllHeroBans({ matchID: match.match_id, teamID: team.team_id })
+      );
+    }
+  }, [dispatch, match]);
 
   const columns = [
     {
@@ -42,7 +56,9 @@ export default function PriorityBan({ team, match }) {
       type: "number",
       dependsOn: ["hero"],
       calculate: (rowData) => {
-        const selectedHeroPick = heroBans.filter((heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10))
+        const selectedHeroPick = heroBans.filter(
+          (heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10)
+        );
         return selectedHeroPick.length > 0 ? selectedHeroPick[0].total : 0;
       },
       readOnly: true,
@@ -57,11 +73,17 @@ export default function PriorityBan({ team, match }) {
       calculate: (rowData) => {
         console.log("rowData: ", rowData);
 
-        console.log("total: ", ((rowData.total / games?.length) * 100).toFixed(2));
-        
-        
-        const selectedHeroPick = heroBans.filter((heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10))
-        return selectedHeroPick.pick_rate ? selectedHeroPick.pick_rate : ((rowData.total / games?.length) * 100).toFixed(2);
+        console.log(
+          "total: ",
+          ((rowData.total / games?.length) * 100).toFixed(2)
+        );
+
+        const selectedHeroPick = heroBans.filter(
+          (heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10)
+        );
+        return selectedHeroPick.pick_rate
+          ? selectedHeroPick.pick_rate
+          : ((rowData.total / games?.length) * 100).toFixed(2);
       },
     },
   ];
@@ -70,11 +92,13 @@ export default function PriorityBan({ team, match }) {
     if (!heroBans || heroBans.length === 0) return {};
 
     return {
-      hero: heroBans.filter((heroPick) => heroPick.first_phase !== 0).map((heroPick) => ({
-        value: heroPick.hero.hero_id,
-        label: heroPick.hero.name,
-        image: heroPick.hero.image,
-      })),
+      hero: heroBans
+        .filter((heroPick) => heroPick.first_phase !== 0)
+        .map((heroPick) => ({
+          value: heroPick.hero.hero_id,
+          label: heroPick.hero.name,
+          image: heroPick.hero.image,
+        })),
       role: [
         { value: "exp", label: "EXP" },
         { value: "roam", label: "Roam" },
@@ -84,7 +108,6 @@ export default function PriorityBan({ team, match }) {
       ],
     };
   }, [heroBans]);
-
 
   const handleSaveRow = (rowData) => {
     console.log("Data yang disimpan:", rowData);
@@ -99,7 +122,6 @@ export default function PriorityBan({ team, match }) {
       role: rowData.role,
       total: rowData.total,
     };
-    
 
     const action = rowData.isNew
       ? addPriorityBan(data)
@@ -144,8 +166,8 @@ export default function PriorityBan({ team, match }) {
     console.log("Field: ", field, "Value: ", value);
     console.log("idx: ", rowIndex);
     console.log("updatedRowData: ", updatedRowData);
-    
-    const selectedHeroPick = heroBans.find(hp => hp.hero.hero_id == value);
+
+    const selectedHeroPick = heroBans.find((hp) => hp.hero.hero_id == value);
     if (selectedHeroPick) {
       const updatedData = [...initialData];
       updatedData[rowIndex] = {
@@ -166,32 +188,34 @@ export default function PriorityBan({ team, match }) {
         setLoading(false);
       });
     if (match && team) {
-      dispatch(getAllPriorityBans({ matchID: match.match_id, teamID: team.team_id }))
+      dispatch(
+        getAllPriorityBans({ matchID: match.match_id, teamID: team.team_id })
+      )
         .unwrap()
         .then(() => {
           setLoading(false);
-        })
+        });
     }
   }, [dispatch]);
 
   useEffect(() => {
     if (priorityBans && priorityBans.length > 0) {
-      
-      const initialpriorityBans = priorityBans.filter(hp => hp.first_phase !== 0).map(hp => ({
-        id: hp.priority_ban_id,
-        hero: hp.hero.hero_id,
-        total: hp.total,
-        role: hp.role,
-        rateBan: ((hp.total / games?.length) * 100).toFixed(2)
-      }));
+      const initialpriorityBans = priorityBans
+        .filter((hp) => hp.first_phase !== 0)
+        .map((hp) => ({
+          id: hp.priority_ban_id,
+          hero: hp.hero.hero_id,
+          total: hp.total,
+          role: hp.role,
+          rateBan: ((hp.total / games?.length) * 100).toFixed(2),
+        }));
       setInitialData(initialpriorityBans);
     }
 
     return () => {
       setInitialData([]);
-    }
+    };
   }, [priorityBans, games]);
-
 
   if (loading) return <div>Loading...</div>;
 

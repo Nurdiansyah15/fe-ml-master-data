@@ -113,7 +113,7 @@ export default function TeamDetail() {
       <div className="flex flex-col gap-4">
         <p className="text-xl font-bold">Players</p>
         <div className="flex gap-4">
-          {players.slice(0, 5).map((player, index) => (
+          {players.map((player, index) => (
             <div key={index} className="flex flex-col relative">
               <Card className="bg-gray-800 w-40">
                 <img
@@ -126,9 +126,6 @@ export default function TeamDetail() {
                 <h3 className="font-semibold text-lg truncate">
                   {player.name}
                 </h3>
-                <p className="text-sm font-semibold text-gray-400">
-                  {player.role}
-                </p>
               </Card>
               <div className="absolute top-0 right-0 opacity-0 hover:opacity-100 transition-opacity">
                 <Popover placement="right-start">
@@ -178,7 +175,7 @@ export default function TeamDetail() {
       <div className="flex flex-col gap-4 mt-10">
         <p className="text-xl font-bold">Coaches</p>
         <div className="flex gap-4">
-          {coaches.slice(0, 2).map((coach, index) => (
+          {coaches.map((coach, index) => (
             <div key={index} className="flex flex-col relative">
               <Card className="bg-gray-800 w-40">
                 <img
@@ -189,9 +186,6 @@ export default function TeamDetail() {
               </Card>
               <Card className="bg-gray-800 w-40 text-white px-3 py-1 mt-4">
                 <h3 className="font-semibold text-lg truncate">{coach.name}</h3>
-                <p className="text-sm font-semibold text-gray-400">
-                  {coach.role}
-                </p>
               </Card>
               <div className="absolute top-0 right-0 opacity-0 hover:opacity-100 transition-opacity">
                 <Popover placement="right-start">

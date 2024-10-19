@@ -7,7 +7,6 @@ import { z } from "zod";
 // Zod schema for validation
 const memberSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  role: z.string().min(1, "Role is required"),
   image: z
     .any()
     .refine(
@@ -28,7 +27,6 @@ export default function MemberForm({ onSubmit, memberData, role = "Member" }) {
     resolver: zodResolver(memberSchema),
     defaultValues: {
       name: memberData?.name || "", // Default value from edit data
-      role: memberData?.role || "", // Default value from edit data
       image: null, // Image will be selected via input
     },
   });
@@ -71,32 +69,6 @@ export default function MemberForm({ onSubmit, memberData, role = "Member" }) {
               {errors.name && (
                 <span className="text-danger text-sm">
                   {errors.name.message}
-                </span>
-              )}
-            </>
-          )}
-        />
-      </div>
-
-      {/* Role Input */}
-      <div className="mb-1">
-        <label className="block mb-2">{role} Role</label>
-        <Controller
-          name="role"
-          control={control}
-          render={({ field }) => (
-            <>
-              <Input
-                {...field}
-                value={field.value || ""} // Ensure it's not `null`
-                placeholder={`Enter ${role.toLowerCase()} role`}
-                fullWidth
-                status={errors.role ? "error" : "default"}
-                className="text-black"
-              />
-              {errors.role && (
-                <span className="text-danger text-sm">
-                  {errors.role.message}
                 </span>
               )}
             </>
