@@ -13,6 +13,7 @@ import {
 import CoachTeamForm from "./components/CoachTeamForm"; // Impor CoachTeamForm
 import PlayerTeamForm from "./components/PlayerTeamForm";
 import Card from "../../../components/Card";
+import MemberMatchTeam from "./components/MemberMatchTeam";
 
 export default function MemberSection({ team, match }) {
   const { matchPlayers } = useSelector((state) => state.matchPlayer);
@@ -119,41 +120,13 @@ export default function MemberSection({ team, match }) {
           <p className="text-xl font-bold">Players</p>
           <div className="flex gap-4">
             {matchPlayers.slice(0, 5).map((player, index) => (
-              <div key={index} className="relative flex flex-col">
-                <p className="text-lg font-semibold text-center">
-                  {player.role.charAt(0).toUpperCase() + player.role.slice(1)}
-                </p>
-                <div className="w-40">
-                  <img
-                    src={player.player.image}
-                    alt={player.player.name}
-                    className="w-full h-56 object-cover rounded-lg"
-                  />
-                </div>
-                <Card className="w-40 text-white px-3 py-1 mt-4">
-                  <h3 className="font-semibold text-lg">
-                    {player.player.name}
-                  </h3>
-                  <div className="flex gap-2">
-                    <div>
-                      <p className="text-[10px]">Match Rate:</p>
-                      <p className="text-lg text-success">20%</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px]">Game Rate:</p>
-                      <p className="text-lg text-success">20%</p>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Tombol Delete */}
-                <button
-                  className="absolute top-0 right-0 bg-red-500 p-1 rounded-full"
-                  onClick={() => handleDeletePlayer(player.player.player_id)}
-                >
-                  <X className="text-white w-5 h-5" />
-                </button>
-              </div>
+              <MemberMatchTeam
+                key={index}
+                member={player}
+                onDelete={handleDeletePlayer}
+                type={"player"}
+                match={match}
+              />
             ))}
 
             {matchPlayers.length < 5 && (
@@ -179,39 +152,13 @@ export default function MemberSection({ team, match }) {
           <h2 className="text-lg font-semibold">Coaches</h2>
           <div className="flex gap-4">
             {matchCoaches.slice(0, 2).map((coach, index) => (
-              <div key={index} className="relative flex flex-col">
-                <p className="text-lg font-semibold text-center">
-                  {coach.role}
-                </p>
-                <div className="w-40">
-                  <img
-                    src={coach.coach.image}
-                    alt={coach.coach.name}
-                    className="w-full h-56 object-cover rounded-lg"
-                  />
-                </div>
-                <Card className=" w-40 text-white px-3 py-1 mt-4">
-                  <h3 className="font-semibold text-lg">{coach.coach.name}</h3>
-                  <div className="flex gap-2">
-                    <div>
-                      <p className="text-[10px]">Match Rate:</p>
-                      <p className="text-lg text-success">20%</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px]">Game Rate:</p>
-                      <p className="text-lg text-success">20%</p>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Tombol Delete */}
-                <button
-                  className="absolute top-0 right-0 bg-red-500 p-1 rounded-full"
-                  onClick={() => handleDeleteCoach(coach.coach.coach_id)}
-                >
-                  <X className="text-white w-5 h-5" />
-                </button>
-              </div>
+              <MemberMatchTeam
+                key={index}
+                member={coach}
+                onDelete={handleDeleteCoach}
+                type={"coach"}
+                match={match}
+              />
             ))}
 
             {matchCoaches.length < 2 && (
