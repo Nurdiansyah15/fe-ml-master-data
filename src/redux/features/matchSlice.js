@@ -30,7 +30,12 @@ const matchSlice = createSlice({
       })
       .addCase(getAllMatches.fulfilled, (state, action) => {
         state.loading = false;
-        state.matches = action.payload;
+        state.matches = action.payload.sort((a, b) => {
+          if (a.week === b.week) {
+            return a.day - b.day; // Jika week sama, urutkan berdasarkan day
+          }
+          return a.week - b.week; // Urutkan berdasarkan week
+        });
       })
       .addCase(getAllMatches.rejected, (state, action) => {
         state.loading = false;

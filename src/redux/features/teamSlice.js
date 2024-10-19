@@ -21,6 +21,11 @@ const teamSlice = createSlice({
       state.error = null;
       state.teams = [];
     },
+    clearTeamSelect: (state) => {
+      state.team = null;
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -74,5 +79,5 @@ const teamSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { clearTeam } = teamSlice.actions;
+export const { clearTeam, clearTeamSelect } = teamSlice.actions;
 export default teamSlice.reducer;

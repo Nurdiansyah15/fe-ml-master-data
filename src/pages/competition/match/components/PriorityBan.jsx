@@ -4,6 +4,7 @@ import CustomEditableTable from "../../../../archive/CustomEditableTable";
 import { getAllHeroes } from "../../../../redux/thunks/heroThunk";
 import { useDispatch, useSelector } from "react-redux";
 import { addPriorityBan, deletePriorityBan, getAllPriorityBans, updatePriorityBan } from "../../../../redux/thunks/priorityBanThunk";
+import { getAllHeroBans } from "../../../../redux/thunks/matchThunk";
 
 export default function PriorityBan({ team, match }) {
   const dispatch = useDispatch();
@@ -16,6 +17,12 @@ export default function PriorityBan({ team, match }) {
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
+
+  useEffect(() => {
+    if (match) {
+      dispatch(getAllHeroBans({ matchID: match.match_id, teamID: team.team_id }));
+    }
+  }, [dispatch, match, team]);
 
   const columns = [
     {

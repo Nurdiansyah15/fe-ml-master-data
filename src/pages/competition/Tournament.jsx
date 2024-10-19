@@ -21,6 +21,7 @@ import {
 import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
 import { fromUnixTime, toUnixTime } from "../../utils/timeFormator";
 import MatchForm from "./components/MatchForm";
+import TeamSelect from "../../components/layout/TeamSelect";
 
 export default function Tournament() {
   const { updatePage } = useContext(PageContext);
@@ -30,15 +31,39 @@ export default function Tournament() {
   const { matches } = useSelector((state) => state.match);
   const { tournament } = useSelector((state) => state.tournament);
 
+  const { team } = useSelector((state) => state.team);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
+  const [filteredMatches, setFilteredMatches] = useState(matches);
 
   useEffect(() => {
-    dispatch(getAllMatches(tournamentID));
+    dispatch(getAllMatches(tournamentID))
+      .unwrap()
+      .then((value) => {
+        if (filteredMatches.length === 0) {
+          setFilteredMatches(value)
+        }
+      });
     dispatch(getTournamentByID(tournamentID));
   }, [dispatch, tournamentID]);
+
+  useEffect(() => {
+    if (matches && matches.length > 0) {
+      console.log("matchessdsdsd: ", matches);
+      console.log("team again: ", team);
+      
+      
+      if (team) {
+        const filter = matches.filter((match) => match.team_a_id === team.team_id || match.team_b_id === team.team_id);
+        setFilteredMatches(filter);
+      } else {
+        setFilteredMatches(matches);
+      }
+    }
+  }, [team, matches]);
 
   const handleFormSubmit = (formData) => {
     const data = {
@@ -70,6 +95,7 @@ export default function Tournament() {
     updatePage(
       tournament?.name,
       <>
+        <TeamSelect />
         <input
           type="text"
           placeholder="Search"
@@ -99,7 +125,7 @@ export default function Tournament() {
   return (
     <div className="text-white flex flex-col justify-start items-start h-full w-full p-4">
       <div className="flex flex-wrap gap-4 justify-start items-start w-full">
-        {matches.map((match) => (
+        {filteredMatches.map((match) => (
           <div
             key={match.match_id}
             onClick={() =>
@@ -108,10 +134,11 @@ export default function Tournament() {
           >
             <Card className="hover:bg-[#29292b] cursor-pointer">
               <div className="flex flex-row justify-between items-center">
-                <div className="text-[10px] text-gray-400">
-                  {moment(fromUnixTime(match.date)).format(
+                <div className="text-[12px] text-gray-400">
+                  Week {match.week}, Day {match.day}
+                  {/* {moment(fromUnixTime(match.date)).format(
                     "MMM Do YYYY, h:mm A"
-                  )}
+                  )} */}
                 </div>
                 <div
                   className="flex flex-row ml-3"
