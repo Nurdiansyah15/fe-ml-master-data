@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../../components/Card";
 import axiosInstance from "../../../api/axiosInstance"; // Sesuaikan path axiosInstance
+import { useSelector } from "react-redux";
 
 export default function TeamStatsSection({ team, match }) {
   const [teamStats, setTeamStats] = useState(null);
+  const { games } = useSelector((state) => state.game);
 
   const getTeamStats = async () => {
     try {
@@ -20,7 +22,7 @@ export default function TeamStatsSection({ team, match }) {
     if (team && match) {
       getTeamStats();
     }
-  }, [team, match]);
+  }, [team, match, games]);
 
   const calculateWinRate = (wins, total) =>
     total > 0 ? Math.round((wins / total) * 100) : 0;
