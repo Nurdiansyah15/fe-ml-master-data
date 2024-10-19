@@ -181,6 +181,7 @@ const CustomEditableTable = ({
   onSaveRow,
   onDeleteRow,
   onFieldChange,
+  maxRows,
 }) => {
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
@@ -268,7 +269,7 @@ const CustomEditableTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (
+      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
         <div className="mt-4 mx-10 text-right">
           <button
             disabled={editingIndex !== null}

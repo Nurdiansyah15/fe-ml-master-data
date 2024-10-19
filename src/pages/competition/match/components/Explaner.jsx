@@ -9,12 +9,15 @@ import {
 } from "../../../../redux/thunks/gameThunk";
 import GameRoleResultTable from "./GameRoleResultTable";
 import { clearExplaner } from "../../../../redux/features/explanerSlice";
+import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function Explaner({ game, team }) {
+export default function Explaner({ game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
   const { explaners } = useSelector((state) => state.explaner);
+
+  const { heroPicks } = useSelector((state) => state.heroPick);
 
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,6 +26,9 @@ export default function Explaner({ game, team }) {
   useEffect(() => {
     if (game && team) {
       dispatch(getAllHeroes());
+      dispatch(
+        getAllHeroPicks({ matchID: match.match_id, teamID: team.team_id })
+      );
       dispatch(getAllExplaners({ gameID: game.game_id, teamID: team.team_id }));
     }
 
@@ -63,12 +69,12 @@ export default function Explaner({ game, team }) {
   // Opsi select untuk heroes
   const heroOptions = useMemo(
     () =>
-      heroes.map((hero) => ({
-        value: hero.hero_id,
-        label: hero.name,
-        image: hero.image,
+      heroPicks.map((hero) => ({
+        value: hero.hero.hero_id,
+        label: hero.hero.name,
+        image: hero.hero.image,
       })),
-    [heroes]
+    [heroPicks]
   );
 
   // Opsi select untuk performance
@@ -136,6 +142,7 @@ export default function Explaner({ game, team }) {
         }}
         onDelete={handleDeleteRow}
         onSaveRow={onSaveRow}
+        maxRows={1}
       />
     </div>
   );

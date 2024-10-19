@@ -40,11 +40,18 @@ export default function Tournament() {
   const [filteredMatches, setFilteredMatches] = useState(matches);
 
   useEffect(() => {
+    console.log("cccccc");
+    
     dispatch(getAllMatches(tournamentID))
       .unwrap()
       .then((value) => {
-        if (filteredMatches.length === 0) {
-          setFilteredMatches(value)
+        if (value.length === 0) {
+          setFilteredMatches([]);
+        } else {
+          if (filteredMatches.length === 0) {
+            const filter = value.filter((match) => match.team_a_id === team.team_id || match.team_b_id === team.team_id);
+            setFilteredMatches(filter)
+          }
         }
       });
     dispatch(getTournamentByID(tournamentID));

@@ -9,11 +9,13 @@ import {
 } from "../../../../redux/thunks/gameThunk";
 import GameRoleResultTable from "./GameRoleResultTable";
 import { clearGoldlaner } from "../../../../redux/features/goldlanerSlice";
+import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function Goldlaner({ game, team }) {
+export default function Goldlaner({ game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
+  const { heroPicks } = useSelector((state) => state.heroPick);
   const { goldlaners } = useSelector((state) => state.goldlaner);
 
   const [initialData, setInitialData] = useState([]);
@@ -23,6 +25,9 @@ export default function Goldlaner({ game, team }) {
   useEffect(() => {
     if (game && team) {
       dispatch(getAllHeroes());
+      dispatch(
+        getAllHeroPicks({ matchID: match.match_id, teamID: team.team_id })
+      );
       dispatch(
         getAllGoldlaners({ gameID: game.game_id, teamID: team.team_id })
       );
@@ -65,12 +70,12 @@ export default function Goldlaner({ game, team }) {
   // Opsi select untuk heroes
   const heroOptions = useMemo(
     () =>
-      heroes.map((hero) => ({
-        value: hero.hero_id,
-        label: hero.name,
-        image: hero.image,
+      heroPicks.map((hero) => ({
+        value: hero.hero.hero_id,
+        label: hero.hero.name,
+        image: hero.hero.image,
       })),
-    [heroes]
+    [heroPicks]
   );
 
   // Opsi select untuk early_result
@@ -138,6 +143,7 @@ export default function Goldlaner({ game, team }) {
         }}
         onDelete={handleDeleteRow}
         onSaveRow={onSaveRow}
+        maxRows={1}
       />
     </div>
   );

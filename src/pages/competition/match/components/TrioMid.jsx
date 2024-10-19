@@ -12,11 +12,13 @@ import {
 import { clearTrioMid } from "../../../../redux/features/trioMidSlice";
 import GameRoleResultTable from "./GameRoleResultTable";
 import EarlyResultForm from "./EarlyResultForm";
+import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function TrioMid({ game, team }) {
+export default function TrioMid({ game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
+  const { heroPicks } = useSelector((state) => state.heroPick);
   const { trioMids } = useSelector((state) => state.trioMid);
   const { trioMidResult } = useSelector((state) => state.trioMid);
 
@@ -29,6 +31,9 @@ export default function TrioMid({ game, team }) {
   useEffect(() => {
     if (game && team) {
       dispatch(getAllHeroes());
+      dispatch(
+        getAllHeroPicks({ matchID: match.match_id, teamID: team.team_id })
+      );
       dispatch(getAllTrioMids({ gameID: game.game_id, teamID: team.team_id }));
     }
 
@@ -84,12 +89,12 @@ export default function TrioMid({ game, team }) {
   // Opsi select untuk heroes
   const heroOptions = useMemo(
     () =>
-      heroes.map((hero) => ({
-        value: hero.hero_id,
-        label: hero.name,
-        image: hero.image,
+      heroPicks.map((hero) => ({
+        value: hero.hero.hero_id,
+        label: hero.hero.name,
+        image: hero.hero.image,
       })),
-    [heroes]
+    [heroPicks]
   );
 
   // Opsi select untuk performance
@@ -186,6 +191,7 @@ export default function TrioMid({ game, team }) {
         }}
         onDelete={handleDeleteRow}
         onSaveRow={onSaveRow}
+        maxRows={3}
       />
       {trioMids.length > 0 && (
         <div className="flex px-10 w-full">

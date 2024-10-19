@@ -7,6 +7,7 @@ const GameRoleResultTable = ({
   selectOptions,
   onSaveRow,
   onDelete,
+  maxRows
 }) => {
   const [rows, setRows] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -82,7 +83,7 @@ const GameRoleResultTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (
+      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
         <div className="mt-4 mx-10 text-right">
           <button
             disabled={editingIndex !== null}
