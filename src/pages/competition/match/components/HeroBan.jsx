@@ -72,6 +72,9 @@ export default function HeroBan({ match, team }) {
       });
       setInitialData(parsedData);
     }
+    return () => {
+      setInitialData([]);
+    }
   }, [heroBans]);
 
   console.log("Initial Data:", initialData);

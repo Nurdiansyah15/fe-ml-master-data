@@ -74,6 +74,9 @@ export default function TrioMid({ game, team }) {
       }));
       setInitialData(parsedData);
     }
+    return () => {
+      setInitialData([]);
+    }
   }, [trioMids]);
 
   console.log("Initial Data:", initialData);

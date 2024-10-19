@@ -11,6 +11,7 @@ const EditableRow = ({
   setEditingIndex,
   selectOptions,
   handleSaveRow,
+  onFieldChange,
 }) => {
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
@@ -52,6 +53,12 @@ const EditableRow = ({
 
     setLocalRowData(updatedRowData);
     onChange(index, updatedRowData);
+
+    // if (field === 'hero') {
+    //   if(onFieldChange) {
+    //     onFieldChange(index, field, value, updatedRowData);
+    //   }
+    // }
   };
 
   const validateRow = () => {
@@ -60,7 +67,7 @@ const EditableRow = ({
     );
   };
 
-  const handleDelete = () => onDelete(index);
+  const handleDelete = () => onDelete(index, localRowData);
 
   const renderInput = (col) => {
     const options = selectOptions[col.field] || [];
@@ -83,7 +90,7 @@ const EditableRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className="border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center"
+            className="border-b-1 border-gray-600 bg-[#1f1f1f] text-white rounded-md p-1 w-full text-center"
           >
             <option value="">Choose {col.label}</option>
             {options.map((option) => (
@@ -173,6 +180,7 @@ const CustomEditableTable = ({
   selectOptions,
   onSaveRow,
   onDeleteRow,
+  onFieldChange
 }) => {
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
@@ -190,6 +198,8 @@ const CustomEditableTable = ({
     columns.forEach((col) => {
       if (col.dependsOn) {
         emptyRow[col.field] = col.calculate(emptyRow);
+      } else if (col.field === 'total') {
+        emptyRow[col.field] = 0; // Default value for new rows
       } else {
         emptyRow[col.field] =
           col.defaultValue !== undefined
@@ -213,12 +223,17 @@ const CustomEditableTable = ({
     setEditingIndex(null);
   };
 
-  const handleDeleteRow = (index) => {
+  const handleDeleteRow = (index, rowData) => {
     const rowToDelete = rows[index];
-    onDeleteRow(rowToDelete);
+    onDeleteRow(rowToDelete, rowData);
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
   };
+
+  useEffect(() => {
+    setRows(initialData);
+  }, [initialData]);
+  
 
   return (
     <div className="w-full p-10">
@@ -248,6 +263,7 @@ const CustomEditableTable = ({
               setEditingIndex={setEditingIndex}
               selectOptions={selectOptions}
               handleSaveRow={handleSaveRow}
+              onFieldChange={onFieldChange}
             />
           ))}
         </tbody>

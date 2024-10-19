@@ -2,12 +2,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
 import CustomToast from "../../components/global/CustomToast";
 
-export const getAllTurtleResults = createAsyncThunk(
-    "matches/getAllTurtleResults",
+export const getAllLordResults = createAsyncThunk(
+    "matches/getAllLordResults",
     async ({ matchID, gameID }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get(
-                `/api/matches/${matchID}/games/${gameID}/turtle-results`
+                `/api/matches/${matchID}/games/${gameID}/lord-results`
             );
             return response.data;
         } catch (error) {
@@ -16,8 +16,8 @@ export const getAllTurtleResults = createAsyncThunk(
     }
 );
 
-export const addTurtleResult = createAsyncThunk(
-    "matches/addTurtleResult",
+export const addLordResult = createAsyncThunk(
+    "matches/addLordResult",
     async (
         { matchID, gameID, teamID, initiate, phase, result, setup },
         { rejectWithValue, dispatch }
@@ -31,11 +31,11 @@ export const addTurtleResult = createAsyncThunk(
                 team_id: teamID
             };
             const response = await axiosInstance.post(
-                `/api/matches/${matchID}/games/${gameID}/turtle-results`,
+                `/api/matches/${matchID}/games/${gameID}/lord-results`,
                 data
             );
-            CustomToast("Turtle Result added successfully", "success");
-            dispatch(getAllTurtleResults({ matchID, gameID }));
+            CustomToast("Lord Result added successfully", "success");
+            dispatch(getAllLordResults({ matchID, gameID }));
             return;
         } catch (error) {
             CustomToast(error.response.data.error, "error");
@@ -44,11 +44,11 @@ export const addTurtleResult = createAsyncThunk(
     }
 );
 
-export const updateTurtleResult = createAsyncThunk(
-    "matches/updateTurtleResult",
+export const updateLordResult = createAsyncThunk(
+    "matches/updateLordResult",
     async (
         {
-            matchID, gameID, turtleResultID, teamID, initiate, phase, result, setup
+            matchID, gameID, lordResultID, teamID, initiate, phase, result, setup
         },
         { rejectWithValue, dispatch }
     ) => {
@@ -61,11 +61,11 @@ export const updateTurtleResult = createAsyncThunk(
                 team_id: teamID
             };
             const response = await axiosInstance.put(
-                `/api/matches/${matchID}/games/${gameID}/turtle-results/${turtleResultID}`,
+                `/api/matches/${matchID}/games/${gameID}/lord-results/${lordResultID}`,
                 data
             );
-            CustomToast("Turtle Result updated successfully", "success");
-            dispatch(getAllTurtleResults({ matchID, gameID }));
+            CustomToast("Lord Result updated successfully", "success");
+            dispatch(getAllLordResults({ matchID, gameID }));
             return;
         } catch (error) {
             CustomToast(error.response.data.error, "error");
@@ -74,15 +74,15 @@ export const updateTurtleResult = createAsyncThunk(
     }
 );
 
-export const deleteTurtleResult = createAsyncThunk(
-    "matches/deleteTurtleResult",
-    async ({ matchID, gameID, turtleResultID }, { rejectWithValue, dispatch }) => {
+export const deleteLordResult = createAsyncThunk(
+    "matches/deleteLordResult",
+    async ({ matchID, gameID, lordResultID }, { rejectWithValue, dispatch }) => {
         try {
             const response = await axiosInstance.delete(
-                `/api/matches/${matchID}/games/${gameID}/turtle-results/${turtleResultID}`
+                `/api/matches/${matchID}/games/${gameID}/lord-results/${lordResultID}`
             );
-            CustomToast("Turtle Result deleted successfully", "success");
-            dispatch(getAllTurtleResults({ matchID, gameID }));
+            CustomToast("Lord Result deleted successfully", "success");
+            dispatch(getAllLordResults({ matchID, gameID }));
             return;
         } catch (error) {
             CustomToast(error.response.data.error, "error");

@@ -1,17 +1,20 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import EditableTable from "../../../../components/global/EditableTable";
 import { useDispatch, useSelector } from "react-redux";
 import CustomEditableTable from "../../../../archive/CustomEditableTable";
+import { addLordResult, deleteLordResult, getAllLordResults, updateLordResult } from "../../../../redux/thunks/lordThunk";
 
-export default function Lord({ game }) {
+export default function Lord({ game, match, team }) {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
 
+  const { lords } = useSelector((state) => state.lord);
+
   const columns = [
     {
-      label: "phase", field: "Phase", type: "text"
+      label: "Phase", field: "phase", type: "text"
     },
     {
       label: "Setup", field: "setup", type: "select", renderCell: (value, options) => {
@@ -74,13 +77,11 @@ export default function Lord({ game }) {
         { value: "no", label: "No" },
       ],
       initiate: [
-        { value: "early", label: "Early" },
-        { value: "late", label: "Late" },
+        { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
       ],
       result: [
-        { value: "early", label: "Early" },
-        { value: "late", label: "Late" },
+        { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
       ],
     };
@@ -88,15 +89,91 @@ export default function Lord({ game }) {
 
   const handleSaveRow = (rowData) => {
     console.log("Data yang disimpan:", rowData);
+    // console.log("sdsd: ", match);
+    setLoading(true);
+
+    const data = {
+      gameID: game.game_id,
+      matchID: match.match_id,
+      phase: rowData.Phase,
+      setup: rowData.setup,
+      initiate: rowData.initiate,
+      result: rowData.result,
+      teamID: team.team_id  
+    };
+
+    console.log("Data ", data);
+    
+
+    const action = rowData.isNew
+      ? addLordResult(data)
+      : updateLordResult({ lordResultID: rowData.id, ...data });
+
+    dispatch(action)
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+        );
+        setLoading(false);
+      });
   };
 
-  const handleDeleteRow = (index) => {
+  const handleDeleteRow = (index, rowData) => {
+    const id = rowData.id;
     console.log("Data yang dihapus:", initialData[index]);
+    console.log("Data yang dihapus (rowdata):", rowData);
+    setLoading(true);
+    if (id === undefined) return;
 
+    dispatch(
+      deleteLordResult({
+        matchID: match.match_id,
+        gameID: game.game_id,
+        lordResultID: id,
+      })
+    )
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+        );
+        setLoading(false);
+      });
   };
 
+  useEffect(() => {
+    if (lords && lords.length > 0) {
+      const initialLordResults = lords.map(lord => ({
+        id: lord.lord_result_id,
+        initiate: lord.initiate,
+        phase: lord.phase,
+        result: lord.result,
+        setup: lord.setup,
+      }));
+      setInitialData(initialLordResults);
+    }
+    return () => {
+      setInitialData([]);
+    }
+  }, [lords, game]);
 
-  // if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    if (match && game) {
+      dispatch(getAllLordResults({ matchID: match.match_id, gameID: game.game_id }))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [dispatch]);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="w-full flex flex-col">

@@ -1,17 +1,20 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import EditableTable from "../../../../components/global/EditableTable";
 import CustomEditableTable from "../../../../archive/CustomEditableTable";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addTurtleResult, deleteTurtleResult, getAllTurtleResults, updateTurtleResult } from "../../../../redux/thunks/turtleThunk";
 
-export default function Turtle() {
+export default function Turtle({ game, match, team }) {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
 
+  const { turtles } = useSelector((state) => state.turtle);
+
   const columns = [
     {
-      label: "phase", field: "Phase", type: "text"
+      label: "Phase", field: "phase", type: "text"
     },
     {
       label: "Setup", field: "setup", type: "select", renderCell: (value, options) => {
@@ -74,13 +77,11 @@ export default function Turtle() {
         { value: "no", label: "No" },
       ],
       initiate: [
-        { value: "early", label: "Early" },
-        { value: "late", label: "Late" },
+        { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
       ],
       result: [
-        { value: "early", label: "Early" },
-        { value: "late", label: "Late" },
+        { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
       ],
     };
@@ -88,12 +89,94 @@ export default function Turtle() {
 
   const handleSaveRow = (rowData) => {
     console.log("Data yang disimpan:", rowData);
+    // console.log("sdsd: ", match);
+    setLoading(true);
+
+    const data = {
+      gameID: game.game_id,
+      matchID: match.match_id,
+      phase: rowData.Phase,
+      setup: rowData.setup,
+      initiate: rowData.initiate,
+      result: rowData.result,
+      teamID: team.team_id  
+    };
+
+    console.log("Data ", data);
+    
+
+    const action = rowData.isNew
+      ? addTurtleResult(data)
+      : updateTurtleResult({ turtleResultID: rowData.id, ...data });
+
+    dispatch(action)
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id })
+        );
+        setLoading(false);
+      });
   };
 
-  const handleDeleteRow = (index) => {
+  const handleDeleteRow = (index, rowData) => {
+    const id = rowData.id;
     console.log("Data yang dihapus:", initialData[index]);
+    console.log("Data yang dihapus (rowdata):", rowData);
+    setLoading(true);
+    if (id === undefined) return;
 
+    dispatch(
+      deleteTurtleResult({
+        matchID: match.match_id,
+        gameID: game.game_id,
+        turtleResultID: id,
+      })
+    )
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id })
+        );
+        setLoading(false);
+      });
   };
+
+
+  useEffect(() => {
+    if (turtles && turtles.length > 0) {
+      console.log("Turtles:", turtles);
+      
+      const initialTurtleResults = turtles.map(turtle => ({
+        id: turtle.turtle_result_id,
+        initiate: turtle.initiate,
+        phase: turtle.phase,
+        result: turtle.result,
+        setup: turtle.setup,
+      }));
+      setInitialData(initialTurtleResults);
+    }
+    return () => {
+      setInitialData([]);
+    }
+  }, [turtles, game]);
+
+  useEffect(() => {
+    if (match && game) {
+      dispatch(getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id }))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [dispatch]);
+
+  if (loading) return <div>Loading...</div>;
 
 
   // if (loading) return <div>Loading...</div>;

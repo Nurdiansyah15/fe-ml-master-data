@@ -15,6 +15,11 @@ import heroBanReducer from "./features/heroBanSlice";
 import goldlanerReducer from "./features/goldlanerSlice";
 import explanerReducer from "./features/explanerSlice";
 import trioMidReducer from "./features/trioMidSlice";
+import priorityPickReducer from "./features/priorityPickSlice";
+import priorityBanReducer from "./features/priorityBanSlice";
+import flexPickReducer from "./features/flexPickSlice";
+import turtleReducer from "./features/turtleSlice";
+import lordReducer from "./features/lordSlice";
 
 export default configureStore({
   reducer: {
@@ -34,5 +39,10 @@ export default configureStore({
     goldlaner: goldlanerReducer,
     explaner: explanerReducer,
     trioMid: trioMidReducer,
+    priorityPick: priorityPickReducer,
+    priorityBan: priorityBanReducer,
+    flexPick: flexPickReducer,
+    turtle: turtleReducer,
+    lord: lordReducer
   },
 });

@@ -98,7 +98,7 @@ function StatCard({ title, win, loss, total, winRate }) {
         <span className="text-2xl font-bold">{winRate}%</span>
       </div>
       <div className="flex items-center justify-center space-x-5">
-        <p className="text-sm text-green-400">
+        <p className="text-sm text-[#61AB76]">
           <span className="font-semibold">Win:</span> {win}
         </p>
         <p className="text-sm text-red-400">

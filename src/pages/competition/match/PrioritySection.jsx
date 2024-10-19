@@ -5,7 +5,7 @@ import PriorityBan from "./components/PriorityBan";
 import FlexPick from "./components/FlexPick";
 import Card from "../../../components/Card";
 
-export default function PrioritySection() {
+export default function PrioritySection({ team, match }) {
   return (
     <div className="flex w-full flex-col">
       <Tabs
@@ -17,21 +17,21 @@ export default function PrioritySection() {
         <Tab key="pick" title="Priority Pick">
           <Card className="text-white">
             {/* <CardBody> */}
-            <PriorityPick />
+            <PriorityPick team={team} match={match} />
             {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="ban" title="Priority Ban">
           <Card className="text-white">
             {/* <CardBody> */}
-            <PriorityBan />
+            <PriorityBan team={team} match={match} />
             {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="flex" title="Flex Pick">
           <Card className="text-white">
             {/* <CardBody> */}
-            <FlexPick />
+            <FlexPick team={team} match={match} />
             {/* </CardBody> */}
           </Card>
         </Tab>

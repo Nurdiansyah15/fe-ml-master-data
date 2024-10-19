@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllHeroes } from "../../../../redux/thunks/heroThunk";
 import EditableTable from "../../../../archive/EditableTable";
 import CustomEditableTable from "../../../../archive/CustomEditableTable";
+import { addPriorityPick, deletePriorityPick, getAllPriorityPicks, updatePriorityPick } from "../../../../redux/thunks/priorityPickThunk";
 
 export default function PriorityPick({ team, match }) {
   const dispatch = useDispatch();
 
-  const { heroes } = useSelector((state) => state.hero);
+  const { heroPicks } = useSelector((state) => state.heroPick);
+
+  const { priorityPicks } = useSelector((state) => state.priorityPick);
 
   const { games } = useSelector((state) => state.game);
 
@@ -24,7 +27,7 @@ export default function PriorityPick({ team, match }) {
         return (
           <div className="flex items-center gap-2 justify-center">
             <img
-              src={"https://via.placeholder.com/32"}
+              src={hero?.image || "https://via.placeholder.com/32"}
               alt="Hero"
               className="w-8 h-8 rounded-full"
             />
@@ -37,48 +40,123 @@ export default function PriorityPick({ team, match }) {
       label: "Total",
       field: "total",
       type: "number",
-      defaultValue: games?.length,
-      readOnly: true, // This makes the column non-editable
+      dependsOn: ["hero"],
+      calculate: (rowData) => {
+        const selectedHeroPick = heroPicks.filter((heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10))
+        return selectedHeroPick.length > 0 ? selectedHeroPick[0].total : 0;
+      },
+      readOnly: true,
     },
     { label: "Role", field: "role", type: "select" },
     {
       label: "Rate Pick",
       field: "ratePick",
       type: "number",
-      defaultValue: 0,
       dependsOn: ["total"],
+      readOnly: true,
       calculate: (rowData) => {
-        return rowData.total
-          ? ((rowData.total / games?.length) * 100).toFixed(2)
-          : 0;
+        console.log("rowData: ", rowData);
+
+        console.log("total: ", ((rowData.total / games?.length) * 100).toFixed(2));
+        
+        
+        const selectedHeroPick = heroPicks.filter((heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10))
+        return selectedHeroPick.pick_rate ? selectedHeroPick.pick_rate : ((rowData.total / games?.length) * 100).toFixed(2);
       },
     },
   ];
 
   const selectOptions = useMemo(() => {
-    if (!heroes || heroes.length === 0) return {};
+    if (!heroPicks || heroPicks.length === 0) return {};
 
     return {
-      hero: heroes.map((hero) => ({
-        value: hero.hero_id,
-        label: hero.name,
-        image: hero.image,
+      hero: heroPicks.filter((heroPick) => heroPick.first_phase !== 0).map((heroPick) => ({
+        value: heroPick.hero.hero_id,
+        label: heroPick.hero.name,
+        image: heroPick.hero.image,
       })),
       role: [
         { value: "exp", label: "EXP" },
         { value: "roam", label: "Roam" },
         { value: "jungler", label: "Jungler" },
+        { value: "gold", label: "Gold" },
+        { value: "mid", label: "Mid" },
       ],
     };
-  }, [heroes]);
+  }, [heroPicks]);
 
 
   const handleSaveRow = (rowData) => {
     console.log("Data yang disimpan:", rowData);
+    // console.log("sdsd: ", match);
+    setLoading(true);
+
+    const data = {
+      matchID: match.match_id,
+      teamID: team.team_id,
+      heroID: parseInt(rowData.hero, 10),
+      pickRate: parseFloat(rowData.ratePick),
+      role: rowData.role,
+      total: rowData.total,
+    };
+    
+
+    const action = rowData.isNew
+      ? addPriorityPick(data)
+      : updatePriorityPick({ priorityPickID: rowData.id, ...data });
+
+    dispatch(action)
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllPriorityPicks({ matchID: match.match_id, teamID: team.team_id })
+        );
+        setLoading(false);
+      });
   };
 
-  const handleDeleteRow = (index) => {
-    console.log("Data yang dihapus:", initialData[index]);
+  const handleDeleteRow = (index, rowData) => {
+    const id = rowData.id;
+    console.log("Data yang dihapus (id):", id);
+    console.log("Data yang dihapus (rowdata):", rowData);
+    setLoading(true);
+    if (id === undefined) return;
+
+    dispatch(
+      deletePriorityPick({
+        matchID: match.match_id,
+        teamID: team.team_id,
+        priorityPickID: id,
+      })
+    )
+      .unwrap()
+      .catch((error) => console.error("Error:", error))
+      .finally(() => {
+        dispatch(
+          getAllPriorityPicks({ matchID: match.match_id, teamID: team.team_id })
+        );
+        setLoading(false);
+      });
+  };
+
+  const handleHeroChange = (rowIndex, field, value, updatedRowData) => {
+    console.log("Field: ", field, "Value: ", value);
+    console.log("idx: ", rowIndex);
+    console.log("updatedRowData: ", updatedRowData);
+    
+    const selectedHeroPick = heroPicks.find(hp => hp.hero.hero_id == value);
+    if (selectedHeroPick) {
+      const updatedData = [...initialData];
+      updatedData[rowIndex] = {
+        ...updatedData[rowIndex],
+        hero: value,
+        total: selectedHeroPick.total,
+        ratePick: ((selectedHeroPick.total / games?.length) * 100).toFixed(2),
+        isNew: updatedRowData.isNew,
+      };
+      setInitialData(updatedData);
+    }
   };
 
   useEffect(() => {
@@ -87,7 +165,34 @@ export default function PriorityPick({ team, match }) {
       .then(() => {
         setLoading(false);
       });
+    if (match && team) {
+      dispatch(getAllPriorityPicks({ matchID: match.match_id, teamID: team.team_id }))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+        })
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (priorityPicks && priorityPicks.length > 0) {
+      const initialpriorityPicks = priorityPicks.filter(hp => hp.first_phase !== 0).map(hp => ({
+        id: hp.priority_pick_id,
+        hero: hp.hero.hero_id,
+        total: hp.total,
+        role: hp.role,
+        ratePick: ((hp.total / games?.length) * 100).toFixed(2)
+      }));
+      setInitialData(initialpriorityPicks);
+    }
+
+    return () => {
+      setInitialData([]);
+    }
+  }, [priorityPicks, games]);
+
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="w-full flex">
@@ -97,6 +202,7 @@ export default function PriorityPick({ team, match }) {
         selectOptions={selectOptions}
         onSaveRow={handleSaveRow}
         onDeleteRow={handleDeleteRow}
+        onFieldChange={handleHeroChange}
       />
     </div>
   );

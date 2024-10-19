@@ -79,7 +79,7 @@ const HeroPickBanRow = ({
       case "checkbox":
         return (
           <div
-            className={`flex items-center justify-center p-1 rounded-md ${
+            className={`flex items-center justify-center p-1 rounded-md bg-[#1f1f1f] ${
               isEditingState ? "border-b-1 border-gray-600" : ""
             }`}
           >
@@ -88,7 +88,7 @@ const HeroPickBanRow = ({
               checked={localRowData[col.field] || false}
               onChange={(e) => handleInputChange(col.field, e.target.checked)}
               disabled={isDisabled}
-              className="w-5 h-6 cursor-pointer"
+              className="w-5 h-6 cursor-pointer bg-[#1f1f1f] disabled:bg-[#1f1f1f]"
             />
           </div>
         );
@@ -98,7 +98,7 @@ const HeroPickBanRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-[6px] w-full text-center ${
+            className={`border-b-1 border-gray-600 bg-[#1f1f1f] text-white rounded-md p-[6px] w-full text-center ${
               hasError ? "border border-red-500" : ""
             }`}
           >

@@ -98,7 +98,7 @@ const GameRoleResultRow = ({
             value={localRowData[col.field] || ""}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-[6px] w-full text-center ${
+            className={`border-b-1 border-gray-600 bg-[#1f1f1f] text-white rounded-md p-[6px] w-full text-center ${
               hasError ? "border border-red-500" : ""
             }`}
           >

@@ -48,8 +48,8 @@ export default function HeroPick({ match, team }) {
       { label: "Hero", field: "hero", type: "select" },
       ...gameColumns,
       { label: "Total", field: "total", type: "text" },
-      { label: "First Phase", field: "firstPhase", type: "text" },
-      { label: "Second Phase", field: "secondPhase", type: "text" },
+      { label: "First Phase", field: "firstPhase", type: "number" },
+      { label: "Second Phase", field: "secondPhase", type: "number" },
     ];
   }, [games]);
 
@@ -72,6 +72,9 @@ export default function HeroPick({ match, team }) {
         };
       });
       setInitialData(parsedData);
+    }
+    return () => {
+      setInitialData([]);
     }
   }, [heroPicks]);
 

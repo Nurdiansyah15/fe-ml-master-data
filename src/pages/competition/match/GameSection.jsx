@@ -88,12 +88,12 @@ export default function GameSection({ team, match }) {
                   >
                     <Tab key="turtle" title="Turtle Result">
                       <Card className="bg-[#161618] text-white">
-                        <Turtle />
+                        <Turtle game={game} team={team} match={match} />
                       </Card>
                     </Tab>
                     <Tab key="lord" title="Lord Result">
                       <Card className="bg-[#161618] text-white">
-                        <Lord />
+                        <Lord game={game} team={team} match={match} />
                       </Card>
                     </Tab>
                   </Tabs>

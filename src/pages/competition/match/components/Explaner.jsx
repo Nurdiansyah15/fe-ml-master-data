@@ -53,6 +53,9 @@ export default function Explaner({ game, team }) {
       }));
       setInitialData(parsedData);
     }
+    return () => {
+      setInitialData([]);
+    }
   }, [explaners]);
 
   console.log("Initial Data:", initialData);

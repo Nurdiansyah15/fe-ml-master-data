@@ -7,7 +7,6 @@ export const getAllHeroes = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/heroes");
-      console.log(response.data);
       
       return response.data;
     } catch (error) {

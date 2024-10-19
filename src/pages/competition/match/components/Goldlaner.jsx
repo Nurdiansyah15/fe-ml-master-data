@@ -55,6 +55,9 @@ export default function Goldlaner({ game, team }) {
       }));
       setInitialData(parsedData);
     }
+    return () => {
+      setInitialData([]);
+    }
   }, [goldlaners]);
 
   console.log("Initial Data:", initialData);
