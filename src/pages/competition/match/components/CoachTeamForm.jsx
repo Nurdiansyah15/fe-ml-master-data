@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  Input,
+} from "@nextui-org/react";
 import { getAllCoachesInTeam } from "../../../../redux/thunks/teamThunk";
 
 export default function CoachTeamForm({ onSubmit, team }) {
@@ -16,6 +21,7 @@ export default function CoachTeamForm({ onSubmit, team }) {
   } = useForm({
     defaultValues: {
       coach_id: "",
+      role: "", // Tambahkan default value untuk role
     },
   });
 
@@ -79,6 +85,26 @@ export default function CoachTeamForm({ onSubmit, team }) {
           </span>
         </div>
       )}
+
+      {/* Input untuk Role */}
+      <div className="mb-4">
+        <label className="block mb-2">Coach Role</label>
+        <Controller
+          name="role"
+          control={control}
+          rules={{ required: "Role is required" }} // Validasi tidak boleh kosong
+          render={({ field }) => (
+            <Input
+              {...field}
+              placeholder="Enter coach role..."
+              className="w-full"
+            />
+          )}
+        />
+        {errors.role && (
+          <span className="text-danger text-sm">{errors.role.message}</span>
+        )}
+      </div>
 
       <Button type="submit" color="primary" className="w-full mt-4">
         Submit

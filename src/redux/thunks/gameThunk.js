@@ -29,17 +29,20 @@ export const createMatchGame = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const data = {
-        first_pick_team_id: firstPickTeamID,
-        second_pick_team_id: secondPickTeamID,
-        winner_team_id: winnerTeamID,
-        game_number: gameNumber,
-        video_link: videoLink,
-        full_draft_image: fullDraftImage,
-      };
+      const formData = new FormData();
+      formData.append("first_pick_team_id", firstPickTeamID);
+      formData.append("second_pick_team_id", secondPickTeamID);
+      formData.append("winner_team_id", winnerTeamID);
+      formData.append("game_number", gameNumber);
+      formData.append("video_link", videoLink);
+      if (fullDraftImage) {
+        formData.append("full_draft_image", fullDraftImage);
+      }
 
-      await axiosInstance.post(`/api/matches/${matchID}/games`, data, {
-        headers: { "Content-Type": "application/json" },
+      await axiosInstance.post(`/api/matches/${matchID}/games`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       CustomToast("Game created successfully", "success");
@@ -69,18 +72,27 @@ export const updateGame = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const data = {
-        first_pick_team_id: firstPickTeamID,
-        second_pick_team_id: secondPickTeamID,
-        winner_team_id: winnerTeamID,
-        game_number: gameNumber,
-        video_link: videoLink,
-        full_draft_image: fullDraftImage,
-      };
+      const formData = new FormData();
+      formData.append("first_pick_team_id", firstPickTeamID);
+      formData.append("second_pick_team_id", secondPickTeamID);
+      formData.append("winner_team_id", winnerTeamID);
+      formData.append("game_number", gameNumber);
+      formData.append("video_link", videoLink);
+      if (fullDraftImage) {
+        formData.append("full_draft_image", fullDraftImage);
+      }
 
-      await axiosInstance.put(`/api/matches/${matchID}/games/${gameID}`, data, {
-        headers: { "Content-Type": "application/json" },
-      });
+      console.log("formData: ", formData);
+
+      await axiosInstance.put(
+        `/api/matches/${matchID}/games/${gameID}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Jangan lupa set header ini
+          },
+        }
+      );
 
       CustomToast("Game updated successfully", "success");
       dispatch(getAllMatchGames(matchID));

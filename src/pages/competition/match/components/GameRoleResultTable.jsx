@@ -82,14 +82,17 @@ const GameRoleResultTable = ({
         </tbody>
       </table>
 
-      <div className="mt-4 mx-10 text-right">
-        <button
-          onClick={addRow}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md"
-        >
-          Add Row
-        </button>
-      </div>
+      {editingIndex === null && (
+        <div className="mt-4 mx-10 text-right">
+          <button
+            disabled={editingIndex !== null}
+            onClick={addRow}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
+            Add Row
+          </button>
+        </div>
+      )}
     </div>
   );
 };

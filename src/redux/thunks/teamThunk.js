@@ -181,11 +181,10 @@ export const getAllPlayersInTeam = createAsyncThunk(
 
 export const createPlayerInTeam = createAsyncThunk(
   "playerTeam/createPlayerInTeam",
-  async ({ teamID, name, role, image }, { rejectWithValue, dispatch }) => {
+  async ({ teamID, name, image }, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("role", role);
       if (image) {
         formData.append("image", image);
       }
@@ -212,11 +211,10 @@ export const createPlayerInTeam = createAsyncThunk(
 
 export const updatePlayerInTeam = createAsyncThunk(
   "playerTeam/updatePlayerInTeam",
-  async ({ id, name, role, image }, { rejectWithValue, dispatch }) => {
+  async ({ id, name,  image }, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("role", role);
       if (image) {
         formData.append("image", image);
       }
@@ -252,11 +250,11 @@ export const getAllPlayersInMatchTeam = createAsyncThunk(
 
 export const createPlayerInMatchTeam = createAsyncThunk(
   "playerTeam/createPlayerInMatchTeam",
-  async ({ teamID, matchID, player_id }, { rejectWithValue, dispatch }) => {
+  async ({ teamID, matchID, player_id, role }, { rejectWithValue, dispatch }) => {
     try {
       const response = await axiosInstance.post(
         `/api/matches/${matchID}/teams/${teamID}/players`,
-        { player_id }
+        { player_id, role }
       );
       CustomToast("Player added to team successfully", "success");
       dispatch(getAllPlayersInMatchTeam({ teamID, matchID }));
@@ -302,11 +300,11 @@ export const getAllCoachsInMatchTeam = createAsyncThunk(
 // create and delete coach
 export const createCoachInMatchTeam = createAsyncThunk(
   "playerTeam/createCoachInMatchTeam",
-  async ({ teamID, matchID, coach_id }, { rejectWithValue, dispatch }) => {
+  async ({ teamID, matchID, coach_id ,role}, { rejectWithValue, dispatch }) => {
     try {
       const response = await axiosInstance.post(
         `/api/matches/${matchID}/teams/${teamID}/coaches`,
-        { coach_id }
+        { coach_id, role }
       );
       CustomToast("Coach added to team successfully", "success");
       dispatch(getAllCoachsInMatchTeam({ teamID, matchID }));

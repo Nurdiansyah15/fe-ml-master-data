@@ -180,7 +180,7 @@ const CustomEditableTable = ({
   selectOptions,
   onSaveRow,
   onDeleteRow,
-  onFieldChange
+  onFieldChange,
 }) => {
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
@@ -198,7 +198,7 @@ const CustomEditableTable = ({
     columns.forEach((col) => {
       if (col.dependsOn) {
         emptyRow[col.field] = col.calculate(emptyRow);
-      } else if (col.field === 'total') {
+      } else if (col.field === "total") {
         emptyRow[col.field] = 0; // Default value for new rows
       } else {
         emptyRow[col.field] =
@@ -233,7 +233,6 @@ const CustomEditableTable = ({
   useEffect(() => {
     setRows(initialData);
   }, [initialData]);
-  
 
   return (
     <div className="w-full p-10">
@@ -269,14 +268,17 @@ const CustomEditableTable = ({
         </tbody>
       </table>
 
-      <div className="mt-4 mx-10 text-right">
-        <button
-          onClick={addRow}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md"
-        >
-          Add Row
-        </button>
-      </div>
+      {editingIndex === null && (
+        <div className="mt-4 mx-10 text-right">
+          <button
+            disabled={editingIndex !== null}
+            onClick={addRow}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
+            Add Row
+          </button>
+        </div>
+      )}
     </div>
   );
 };

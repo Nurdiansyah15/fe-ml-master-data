@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Select, SelectItem } from "@nextui-org/react"; 
 import { getAllPlayersInTeam } from "../../../../redux/thunks/teamThunk";
 
 export default function PlayerTeamForm({ onSubmit, team }) {
@@ -16,6 +16,7 @@ export default function PlayerTeamForm({ onSubmit, team }) {
   } = useForm({
     defaultValues: {
       player_id: "",
+      role: "",
     },
   });
 
@@ -26,12 +27,13 @@ export default function PlayerTeamForm({ onSubmit, team }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {/* Autocomplete untuk memilih pemain */}
       <div className="mb-4">
         <label className="block mb-2">Select Player</label>
         <Controller
           name="player_id"
           control={control}
-          rules={{ required: "Player is required" }} // Validasi tidak boleh kosong
+          rules={{ required: "Player is required" }}
           render={({ field: { onChange, value } }) => (
             <Autocomplete
               placeholder="Search and select player..."
@@ -59,9 +61,35 @@ export default function PlayerTeamForm({ onSubmit, team }) {
           )}
         />
         {errors.player_id && (
-          <span className="text-danger text-sm">
-            {errors.player_id.message}
-          </span>
+          <span className="text-danger text-sm">{errors.player_id.message}</span>
+        )}
+      </div>
+
+      {/* Select untuk memilih role */}
+      <div className="mb-4">
+        <label className="block mb-2">Select Role</label>
+        <Controller
+          name="role"
+          control={control}
+          rules={{ required: "Role is required" }}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              aria-label="Select player role"
+              placeholder="Select role..."
+              value={value}
+              onChange={onChange}
+              className="w-full"
+            >
+              {["goldlaner", "explaner", "roamer", "midlaner", "jungler"].map((role) => (
+                <SelectItem key={role} value={role}>
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </SelectItem>
+              ))}
+            </Select>
+          )}
+        />
+        {errors.role && (
+          <span className="text-danger text-sm">{errors.role.message}</span>
         )}
       </div>
 
@@ -75,7 +103,6 @@ export default function PlayerTeamForm({ onSubmit, team }) {
               className="w-full h-full object-cover rounded-full"
             />
           </div>
-
           <span className="mt-2 text-lg font-semibold">
             {selectedPlayer.name}
           </span>

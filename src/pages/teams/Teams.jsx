@@ -20,6 +20,7 @@ import {
   getAllTeams,
   updateTeam,
 } from "../../redux/thunks/teamThunk";
+import { clearTeam } from "../../redux/features/teamSlice";
 
 export default function Teams() {
   const { updatePage } = useContext(PageContext);
@@ -51,10 +52,15 @@ export default function Teams() {
 
   useEffect(() => {
     dispatch(getAllTeams());
+
+    return () => {
+      dispatch(clearTeam());
+    };
   }, [dispatch]);
 
   const handleFormSubmit = (data) => {
     setLoading(true);
+    console.log("data:", data);
 
     const action =
       editMode && teamToEdit
