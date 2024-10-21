@@ -24,6 +24,7 @@ import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
 import { fromUnixTime, toUnixTime } from "../../utils/timeFormator";
 import MatchForm from "./components/MatchForm";
 import TeamSelect from "../../components/layout/TeamSelect";
+import { div, g, s } from "framer-motion/client";
 
 export default function Tournament() {
   const { updatePage } = useContext(PageContext);
@@ -39,7 +40,7 @@ export default function Tournament() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
-  const [filteredMatches, setFilteredMatches] = useState(matches);
+  const [filteredMatches, setFilteredMatches] = useState([]);
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
   const [matchToDelete, setMatchToDelete] = useState(null);
@@ -57,7 +58,9 @@ export default function Tournament() {
                 match?.team_a_id === team?.team_id ||
                 match?.team_b_id === team?.team_id
             );
-            setFilteredMatches(filter);
+            const groups = groupMatchesByStage(filter);
+            console.log("groups:", groups);
+            setFilteredMatches(groups);
           }
         }
       });
@@ -72,16 +75,87 @@ export default function Tournament() {
             match?.team_a_id === team?.team_id ||
             match?.team_b_id === team?.team_id
         );
-        setFilteredMatches(filter);
+        const groups = groupMatchesByStage(filter);
+        console.log("groups:", groups);
+        setFilteredMatches(groups);
       } else {
-        setFilteredMatches(matches);
+        const groups = groupMatchesByStage(matches);
+        console.log("groups:", groups);
+        setFilteredMatches(groups);
       }
     }
   }, [team, matches]);
 
+  const order = ['season', 'group', 'playoff', 'grandfinal',];
+
+  const groupMatchesByStage = (matches) => {
+    const groupedMatches = matches.reduce((acc, match) => {
+      let groupKey = match.stage.replace(/\s+/g, "").toLowerCase(); // Hilangkan spasi
+
+      // Ubah groupKey menjadi "season" jika mengandung "week" (case-insensitive)
+      if (/week/i.test(groupKey)) {
+        groupKey = "season";
+      }
+
+      // Ubah groupKey menjadi "playoff" jika mengandung "playoff" (case-insensitive)
+      if (/playoff/i.test(groupKey)) {
+        groupKey = "playoff";
+      }
+
+      // Jika key belum ada, inisialisasi dengan array kosong
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+
+      if (!order.includes(groupKey)) {
+        order.splice(2, 0, groupKey);
+      }
+
+      // Masukkan pertandingan ke dalam array group yang sesuai
+      acc[groupKey].push(match);
+      return acc;
+    }, {});
+
+    // Sorting khusus untuk group "season" berdasarkan Week dan Day
+    if (groupedMatches["season"]) {
+      groupedMatches["season"] = groupedMatches["season"].sort((a, b) => {
+        const weekA = parseInt(a.stage.match(/\d+/), 10); // Ambil angka dari "Week"
+        const weekB = parseInt(b.stage.match(/\d+/), 10);
+
+        if (weekA === weekB) {
+          return a.day - b.day; // Sorting berdasarkan hari jika minggu sama
+        }
+        return weekA - weekB; // Sorting berdasarkan minggu
+      });
+    }
+
+    // Sorting untuk group lainnya berdasarkan hari
+    Object.keys(groupedMatches).forEach((key) => {
+      if (key !== "season") {
+        groupedMatches[key] = groupedMatches[key].sort((a, b) => {
+          return a.day - b.day; // Sorting berdasarkan hari di setiap grup selain season
+        });
+      }
+    });
+
+    // Konversi hasil grouping dari objek ke array of objects
+    const filter = Object.keys(groupedMatches).map((stage) => ({
+      stage,           // Nama stage ("season", "playoff", dll.)
+      matches: groupedMatches[stage], // Array pertandingan
+    }));
+
+    return Object.values(filter).sort((a, b) => {
+      return order.indexOf(a.stage.toLowerCase()) - order.indexOf(b.stage.toLowerCase()); // Mengurutkan berdasarkan urutan yang diinginkan
+    });
+
+  };
+
+
+
   const handleFormSubmit = (formData) => {
+
     const data = {
-      week: parseInt(formData.week),
+      stage: formData.stage.charAt(0).toUpperCase() + formData.stage.slice(1),
       day: parseInt(formData.day),
       date: toUnixTime(formData.datetime),
       team_a_id: parseInt(formData.team_a),
@@ -149,51 +223,56 @@ export default function Tournament() {
         setConfirmModalOpen(false);
         setMatchToDelete(null);
         setLoading(false);
-      }); 
+      });
   };
 
   return (
     <div className="text-white flex flex-col justify-start items-start h-full w-full p-4">
-      <div className="flex flex-wrap gap-4 justify-start items-start w-full">
-        {filteredMatches.map((match) => (
-          <div
-            key={match.match_id}
-            onClick={() =>
-              nav(`/tournament/${tournamentID}/match/${match.match_id}`)
-            }
-          >
-            <Card className="hover:bg-[#29292b] cursor-pointer">
-              <div className="flex flex-row justify-between items-center">
-                <div className="text-[12px] text-gray-400">
-                  Week {match.week}, Day {match.day}
-                  {/* {moment(fromUnixTime(match.date)).format(
-                    "MMM Do YYYY, h:mm A"
-                  )} */}
-                </div>
-                <div
-                  className="flex flex-row ml-3"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FontAwesomeIcon
-                    icon={faPen}
-                    className="text-gray-500 hover:text-white text-xs mr-2"
-                    onClick={() => handleEdit(match)}
-                  />
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="text-gray-500 hover:text-white text-xs"
-                    onClick={() => openConfirmModal(match)}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-3 items-center">
-                <TeamInfo team={match.team_a} />
-                <div className="text-xl font-bold">
-                  {match.team_a_score} - {match.team_b_score}
-                </div>
-                <TeamInfo team={match.team_b} />
-              </div>
-            </Card>
+      <div className="flex flex-col flex-wrap gap-2 justify-start items-start w-full">
+        {filteredMatches && filteredMatches.map((group) => (
+          <div key={group.stage} style={{ marginBottom: '20px' }} className="w-full">
+            <h2 className="text-2xl font-semibold mb-4">{group.stage.charAt(0).toUpperCase() + group.stage.slice(1)}</h2>
+
+            {/* Looping melalui matches di dalam setiap stage */}
+            <div className="flex flex-row flex-wrap gap-4 justify-start items-start w-full">
+              {Array.isArray(group.matches) && group.matches.length > 0 ? (
+                group.matches.map((match) => (
+                  <div key={match.match_id} onClick={() => nav(`/tournament/${tournamentID}/match/${match.match_id}`)}>
+                    <Card className="hover:bg-[#29292b] cursor-pointer p-4 mb-4">
+                      <div className="flex flex-row justify-between items-center">
+                        <div className="text-[12px] text-gray-400">
+                          {match.stage}, Day {match.day}
+                        </div>
+                        <div
+                          className="flex flex-row ml-3"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FontAwesomeIcon
+                            icon={faPen}
+                            className="text-gray-500 hover:text-white text-xs mr-2"
+                            onClick={() => handleEdit(match)}
+                          />
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            className="text-gray-500 hover:text-white text-xs"
+                            onClick={() => openConfirmModal(match)}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-row justify-between space-x-3 items-center mt-3">
+                        <TeamInfo team={match.team_a} />
+                        <div className="text-xl font-bold">
+                          {match.team_a_score} - {match.team_b_score}
+                        </div>
+                        <TeamInfo team={match.team_b} />
+                      </div>
+                    </Card>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No matches available for this stage.</p>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -219,7 +298,7 @@ export default function Tournament() {
       </Modal>
 
       {/* Modal Konfirmasi Hapus */}
-      <Modal
+      <Modal Modal
         isOpen={confirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
       >

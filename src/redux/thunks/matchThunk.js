@@ -36,7 +36,7 @@ export const createMatch = createAsyncThunk(
       tournamentID,
       day,
       date,
-      week,
+      stage,
       team_a_id,
       team_a_score,
       team_b_id,
@@ -48,12 +48,15 @@ export const createMatch = createAsyncThunk(
       const data = {
         day,
         date,
-        week,
+        stage,
         team_a_id,
         team_a_score,
         team_b_id,
         team_b_score,
       };
+
+      console.log("Data: ", data);
+      
 
       await axiosInstance.post(
         `/api/tournaments/${tournamentID}/matches`,
@@ -83,7 +86,7 @@ export const updateMatch = createAsyncThunk(
       matchID,
       day,
       date,
-      week,
+      stage,
       team_a_id,
       team_a_score,
       team_b_id,
@@ -95,7 +98,7 @@ export const updateMatch = createAsyncThunk(
       const data = {
         day,
         date,
-        week,
+        stage,
         team_a_id,
         team_a_score,
         team_b_id,
