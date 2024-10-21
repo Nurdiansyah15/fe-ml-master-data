@@ -95,7 +95,7 @@ export default function Turtle({ game, match, team }) {
     const data = {
       gameID: game.game_id,
       matchID: match.match_id,
-      phase: rowData.Phase,
+      phase: rowData.phase,
       setup: rowData.setup,
       initiate: rowData.initiate,
       result: rowData.result,
