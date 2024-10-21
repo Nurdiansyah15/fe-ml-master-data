@@ -80,20 +80,13 @@ export default function MatchForm({ onSubmit, editingMatch }) {
           control={control}
           render={({ field }) => (
             <>
-              <Select
+              <Input
                 {...field}
-                placeholder="Select week..."
-                status={errors.week ? "error" : "default"}
-                aria-label="Select Week"
-                className="w-full"
-                selectedKeys={field.value ? [field.value] : []}
-              >
-                {weeks.map((week) => (
-                  <SelectItem key={week.value} value={week.value}>
-                    {week.label}
-                  </SelectItem>
-                ))}
-              </Select>
+                type="number"
+                placeholder="Week..."
+                fullWidth
+                className="text-gray-600 w-full"
+              />
               {errors.week && (
                 <span className="text-danger text-sm">
                   {errors.week.message}
