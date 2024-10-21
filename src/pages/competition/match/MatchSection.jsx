@@ -5,11 +5,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "@nextui-org/react";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import EditableTable from "../../../archive/EditableTable";
+import EditableTableForGame from "../../../archive/EditableTableForGame";
 import Card from "../../../components/Card";
 import {
   createMatchGame,
@@ -18,9 +19,6 @@ import {
   updateGame,
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
-import GameRoleResultTable from "./components/GameRoleResultTable";
-import CustomEditableTable from "../../../archive/CustomEditableTable";
-import EditableTableForGame from "../../../archive/EditableTableForGame";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -51,7 +49,9 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }));
     setInitialData(data);
 
-    return () => setInitialData([]);
+    return () => {
+      setInitialData([]);
+    };
   }, [games]);
 
   const selectOptions = useMemo(() => {
@@ -120,7 +120,12 @@ export default function MatchSection({ match, handleChooseTeam }) {
     return expected;
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -140,7 +145,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
             <div className="flex flex-row space-x-10 justify-around items-center p-2">
               <div className="flex flex-1 justify-around items-center">
                 <div
-                  className="w-40 h-40 cursor-pointer hover:scale-105 transition"
+                  className="w-40 h-40 hover:scale-105 transition"
                   onClick={() => handleTeamClick(match?.team_a)}
                 >
                   <img
@@ -161,7 +166,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
                   {match?.team_b_score}
                 </p>
                 <div
-                  className="w-40 h-40 cursor-pointer hover:scale-105 transition"
+                  className="w-40 h-40 hover:scale-105 transition"
                   onClick={() => handleTeamClick(match?.team_b)}
                 >
                   <img

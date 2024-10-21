@@ -9,6 +9,8 @@ import {
   getAllHeroPicks,
   updateHeroPick,
 } from "../../../../redux/thunks/matchThunk";
+import { clearHero } from "../../../../redux/features/heroSlice";
+import { clearHeroPick } from "../../../../redux/features/heroPickSlice";
 
 export default function HeroPick({ match, team }) {
   const dispatch = useDispatch();
@@ -30,6 +32,11 @@ export default function HeroPick({ match, team }) {
         getAllHeroPicks({ matchID: match.match_id, teamID: team.team_id })
       );
     }
+
+    return () => {
+      dispatch(clearHero());
+      dispatch(clearHeroPick());
+    };
   }, [dispatch, match]);
 
   console.log("HeroPicks:", heroPicks);
@@ -57,7 +64,7 @@ export default function HeroPick({ match, team }) {
   useEffect(() => {
     if (heroPicks) {
       const parsedData = heroPicks.map((pick) => {
-        const gameFields = pick.hero_pick_game.reduce((acc, game) => {
+        const gameFields = pick.hero_pick_game?.reduce((acc, game) => {
           acc[`game-${game.game_number}-${game.game_id}`] = game.is_picked;
           return acc;
         }, {});

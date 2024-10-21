@@ -5,6 +5,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "@nextui-org/react";
 import { Plus, ShieldHalf, Sword, User, X } from "lucide-react";
 import { useState } from "react";
@@ -114,7 +115,9 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <ul>
             {/* Wrap each item with Link */}
             {loading ? (
-              <p>Loading...</p>
+              <p>
+                <Spinner />
+              </p>
             ) : (
               tournaments.map((item) => (
                 <li key={item.tournament_id}>

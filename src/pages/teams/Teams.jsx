@@ -10,6 +10,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -56,7 +57,11 @@ export default function Teams() {
   }, [updatePage]);
 
   useEffect(() => {
-    dispatch(getAllTeams());
+    setLoading(true);
+    dispatch(getAllTeams())
+      .unwrap()
+      .catch(console.error)
+      .finally(() => setLoading(false));
 
     return () => {
       dispatch(clearTeam());
@@ -115,9 +120,12 @@ export default function Teams() {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading)
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="text-white flex flex-col justify-start h-full w-full">

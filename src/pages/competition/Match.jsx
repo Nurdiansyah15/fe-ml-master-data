@@ -15,9 +15,14 @@ import { clearMatch } from "../../redux/features/matchSlice";
 import { clearTeam } from "../../redux/features/teamSlice";
 import TeamStatsSection from "./match/TeamStatsSection";
 import TeamTitle from "./match/TeamTitle";
+import MatchEditContext from "../../contexts/MatchEditContext";
+import { Eye } from "lucide-react";
+import { Edit } from "lucide-react";
 
 export default function Match() {
   const { updatePage } = useContext(PageContext);
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const { tournamentID, matchID } = useParams();
   const { match } = useSelector((state) => state.match);
   const { tournament } = useSelector((state) => state.tournament);
@@ -30,7 +35,11 @@ export default function Match() {
 
   const [teamID, setTeamID] = useState("");
 
-  console.log("Team sdasda:", team);
+  useEffect(() => {
+    return () => {
+      removeEditing();
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(getMatchByID(matchID));
@@ -64,7 +73,34 @@ export default function Match() {
   useEffect(() => {
     updatePage(
       `${tournament?.name}`,
-      <>
+      <div className="flex flex-row space-x-4 justify-start items-center">
+        <div className="flex space-x-4 justify-center items-center">
+          <Eye
+            className={`${
+              !isEditingMatch ? "opacity-100" : "opacity-50"
+            } hover:opacity-100 ${
+              isEditingMatch ? "cursor-pointer" : "cursor-default"
+            } transition-opacity`}
+            onClick={() => {
+              if (isEditingMatch) {
+                toggleEditing();
+              }
+            }}
+          />
+          <Edit
+            size={22}
+            className={`${
+              isEditingMatch ? "opacity-100" : "opacity-50"
+            } hover:opacity-100 ${
+              !isEditingMatch ? "cursor-pointer" : "cursor-default"
+            } transition-opacity`}
+            onClick={() => {
+              if (!isEditingMatch) {
+                toggleEditing();
+              }
+            }}
+          />
+        </div>
         <div className="w-full flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none">
           {team && (
             <div className="flex items-center">
@@ -79,9 +115,9 @@ export default function Match() {
           {!team && <span>Select Team</span>}
         </div>
         <Button color="secondary">Export</Button>
-      </>
+      </div>
     );
-  }, [updatePage, tournament?.name, team]);
+  }, [updatePage, tournament?.name, team, isEditingMatch, toggleEditing]);
 
   const handleChooseTeam = (team) => {
     console.log("Team Selected:", team);

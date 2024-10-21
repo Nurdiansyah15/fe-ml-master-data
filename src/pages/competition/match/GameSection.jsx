@@ -84,6 +84,11 @@ export default function GameSection({ team, match }) {
                     variant="light"
                     className="w-fit rounded-xl border border-gray-700"
                   >
+                    <Tab key="trio-mid" title="Trio Mid">
+                      <Card className="bg-[#161618] text-white">
+                        <TrioMid game={game} team={team} match={match} />
+                      </Card>
+                    </Tab>
                     <Tab key="goldlaner" title="Goldlaner">
                       <Card className="bg-[#161618] text-white">
                         <Goldlaner game={game} team={team} match={match} />
@@ -92,11 +97,6 @@ export default function GameSection({ team, match }) {
                     <Tab key="explaner" title="Explaner">
                       <Card className="bg-[#161618] text-white">
                         <Explaner game={game} team={team} match={match} />
-                      </Card>
-                    </Tab>
-                    <Tab key="trio-mid" title="Trio Mid">
-                      <Card className="bg-[#161618] text-white">
-                        <TrioMid game={game} team={team} match={match} />
                       </Card>
                     </Tab>
                   </Tabs>

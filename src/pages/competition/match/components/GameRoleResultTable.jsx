@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import GameRoleResultRow from "./GameRoleResultRow";
+import { useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const GameRoleResultTable = ({
   columns,
@@ -7,8 +9,10 @@ const GameRoleResultTable = ({
   selectOptions,
   onSaveRow,
   onDelete,
-  maxRows
+  maxRows,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [rows, setRows] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
 
@@ -83,17 +87,19 @@ const GameRoleResultTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
-        <div className="mt-4 mx-10 text-right">
-          <button
-            disabled={editingIndex !== null}
-            onClick={addRow}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            Add Row
-          </button>
-        </div>
-      )}
+      {editingIndex === null &&
+        (!maxRows || rows.length < maxRows) &&
+        isEditingMatch && (
+          <div className="mt-4 mx-10 text-right">
+            <button
+              disabled={editingIndex !== null}
+              onClick={addRow}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Add Row
+            </button>
+          </div>
+        )}
     </div>
   );
 };

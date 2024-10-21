@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Save, Trash, EditIcon } from "lucide-react";
+import { useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const GameRoleResultRow = ({
   cols,
@@ -12,6 +14,8 @@ const GameRoleResultRow = ({
   selectOptions,
   handleSaveRow,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
   const [localRowData, setLocalRowData] = useState(rowData);
@@ -165,29 +169,31 @@ const GameRoleResultRow = ({
         </td>
       ))}
       <td className="py-2 w-5">
-        <div className="flex items-center justify-center">
-          {!isEditingState ? (
+        {isEditingMatch && (
+          <div className="flex items-center justify-center">
+            {!isEditingState ? (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={startEditing}
+              >
+                <EditIcon />
+              </button>
+            ) : (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={saveRow}
+              >
+                <Save />
+              </button>
+            )}
             <button
               className="text-white px-4 py-2 rounded-md"
-              onClick={startEditing}
+              onClick={handleDelete}
             >
-              <EditIcon />
+              <Trash />
             </button>
-          ) : (
-            <button
-              className="text-white px-4 py-2 rounded-md"
-              onClick={saveRow}
-            >
-              <Save />
-            </button>
-          )}
-          <button
-            className="text-white px-4 py-2 rounded-md"
-            onClick={handleDelete}
-          >
-            <Trash />
-          </button>
-        </div>
+          </div>
+        )}
       </td>
     </tr>
   );

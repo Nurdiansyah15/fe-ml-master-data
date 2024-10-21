@@ -25,7 +25,13 @@ const heroBanSlice = createSlice({
       })
       .addCase(getAllHeroBans.fulfilled, (state, action) => {
         state.loading = false;
-        state.heroBans = action.payload;
+        state.heroBans = action.payload
+          .sort((a, b) => {
+            return a.hero_ban_game.game_number - b.hero_ban_game.game_number;
+          })
+          .sort((a, b) => {
+            return b.first_phase - a.first_phase;
+          });
       })
       .addCase(getAllHeroBans.rejected, (state, action) => {
         state.loading = false;
