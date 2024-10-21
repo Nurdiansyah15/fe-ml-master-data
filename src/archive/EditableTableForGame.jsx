@@ -174,7 +174,11 @@ const EditableRow = ({
             )}
             <button
               className="text-white px-4 py-2 rounded-md"
-              onClick={() => setConfirmModalOpen(true)} // Buka modal saat klik delete
+              onClick={() => {
+                if (rowData.hasOwnProperty("id")) {
+                  setConfirmModalOpen(true);
+                } else onDelete(index, localRowData);
+              }} // Buka modal saat klik delete
             >
               <Trash />
             </button>
@@ -267,7 +271,9 @@ const EditableTableForGame = ({
 
   const handleDeleteRow = (index, rowData) => {
     const rowToDelete = rows[index];
-    onDeleteRow(rowToDelete, rowData);
+    if (rowData.hasOwnProperty("id")) {
+      onDeleteRow(rowToDelete, rowData);
+    }
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
     setEditingIndex(null);
