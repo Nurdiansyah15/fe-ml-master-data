@@ -93,12 +93,12 @@ export default function Tournament() {
       let groupKey = match.stage.replace(/\s+/g, "").toLowerCase(); // Hilangkan spasi
 
       // Ubah groupKey menjadi "season" jika mengandung "week" (case-insensitive)
-      if (/week/i.test(groupKey)) {
+      if (groupKey.includes("week")) {
         groupKey = "season";
       }
 
       // Ubah groupKey menjadi "playoff" jika mengandung "playoff" (case-insensitive)
-      if (/playoff/i.test(groupKey)) {
+      if (groupKey.includes("playoff")) {
         groupKey = "playoff";
       }
 
