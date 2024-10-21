@@ -19,7 +19,6 @@ import {
   updateGame,
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
-import { clearTeam } from "../../../redux/features/teamMatchSlice";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -51,7 +50,6 @@ export default function MatchSection({ match, handleChooseTeam }) {
     setInitialData(data);
 
     return () => {
-      dispatch(clearTeam());
       setInitialData([]);
     };
   }, [games]);
