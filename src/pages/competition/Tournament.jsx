@@ -110,12 +110,12 @@ export default function Tournament() {
       tournament?.name,
       <>
         <TeamSelect />
-        <input
+        {/* <input
           type="text"
           placeholder="Search"
           className="max-w-xs text-white bg-[#141414] px-4 py-2 rounded-xl border border-gray-600 focus:border-gray-500"
           onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        /> */}
         <Button
           className="bg-[#363638] rounded-xl text-white"
           onClick={() => {
