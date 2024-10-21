@@ -5,6 +5,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   Popover,
   PopoverContent,
@@ -17,6 +18,7 @@ import HeroForm from "./components/HeroForm"; // Ganti dengan HeroForm
 import { useNavigate } from "react-router-dom";
 import {
   createHero,
+  deleteHero,
   getAllHeroes,
   updateHero,
 } from "../../redux/thunks/heroThunk";
@@ -30,6 +32,9 @@ export default function Heroes() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false); // Menentukan mode edit atau create
   const [heroToEdit, setHeroToEdit] = useState(null); // Menyimpan data hero yang akan diedit
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [dataToDelete, setDataToDelete] = useState(null);
 
   useEffect(() => {
     updatePage(
@@ -83,6 +88,25 @@ export default function Heroes() {
     setHeroToEdit(hero); // Simpan data hero yang ingin diedit
     setEditMode(true); // Ubah ke mode edit
     setModalOpen(true); // Buka modal untuk mengedit hero
+  };
+
+  const openConfirmModal = (data) => {
+    setDataToDelete(data);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteData = () => {
+    console.log("dataToDelete:", dataToDelete);
+    if (dataToDelete) {
+      dispatch(deleteHero(dataToDelete.hero_id))
+        .unwrap()
+        .catch(console.error)
+        .finally(() => {
+          setConfirmModalOpen(false);
+          setDataToDelete(null);
+          setLoading(false);
+        });
+    }
   };
 
   if (loading) {
@@ -148,7 +172,11 @@ export default function Heroes() {
 
                       {/* Delete Button */}
                       <div className="flex items-center gap-2">
-                        <Button color="danger" size="sm">
+                        <Button
+                          color="danger"
+                          size="sm"
+                          onClick={() => openConfirmModal(hero)}
+                        >
                           Delete
                         </Button>
                       </div>
@@ -172,6 +200,32 @@ export default function Heroes() {
             {/* Ganti dengan HeroForm */}
             {/* Kirim data hero jika edit */}
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal Konfirmasi Hapus */}
+      <Modal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      >
+        <ModalContent className="bg-gray-800 text-white">
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this hero?</p>
+            <p className="text-red-500">
+              This action will{" "}
+              <span className="font-bold">delete all data related</span> to this
+              hero.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteData}>
+              Delete
+            </Button>
+            <Button color="default" onClick={() => setConfirmModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

@@ -4,6 +4,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   Popover,
   PopoverContent,
@@ -15,16 +16,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageContext } from "../../contexts/PageContext";
 
-import MemberForm from "./components/MemberForm";
 import {
   createCoachInTeam,
   createPlayerInTeam,
+  deleteCoachInTeam,
+  deletePlayerInTeam,
   getAllCoachesInTeam,
   getAllPlayersInTeam,
   getTeamByID,
   updateCoachInTeam,
   updatePlayerInTeam,
 } from "../../redux/thunks/teamThunk";
+import MemberForm from "./components/MemberForm";
 
 export default function TeamDetail() {
   const { updatePage } = useContext(PageContext);
@@ -39,6 +42,9 @@ export default function TeamDetail() {
   const [modalRole, setModalRole] = useState(""); // Role for the modal (either 'Player' or 'Coach')
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [dataToDelete, setDataToDelete] = useState(null);
 
   // Fetch all players and coaches in the team on mount
   useEffect(() => {
@@ -95,6 +101,36 @@ export default function TeamDetail() {
     setModalOpen(true);
   };
 
+  const openConfirmModal = (data) => {
+    setDataToDelete(data);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteData = () => {
+    console.log("dataToDelete:", dataToDelete);
+    if (dataToDelete.hasOwnProperty("player_id")) {
+      dispatch(deletePlayerInTeam(dataToDelete.player_id))
+        .unwrap()
+        .catch(console.error)
+        .finally(() => {
+          dispatch(getAllPlayersInTeam(teamID));
+          setConfirmModalOpen(false);
+          setDataToDelete(null);
+          setLoading(false);
+        });
+    } else {
+      dispatch(deleteCoachInTeam(dataToDelete.coach_id))
+        .unwrap()
+        .catch(console.error)
+        .finally(() => {
+          dispatch(getAllCoachesInTeam(teamID));
+          setConfirmModalOpen(false);
+          setDataToDelete(null);
+          setLoading(false);
+        });
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>; // Loading indicator
   }
@@ -147,7 +183,11 @@ export default function TeamDetail() {
                       >
                         Edit
                       </Button>
-                      <Button color="danger" size="sm">
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => openConfirmModal(player)}
+                      >
                         Delete
                       </Button>
                     </div>
@@ -207,7 +247,11 @@ export default function TeamDetail() {
                       >
                         Edit
                       </Button>
-                      <Button color="danger" size="sm">
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => openConfirmModal(coach)}
+                      >
                         Delete
                       </Button>
                     </div>
@@ -230,6 +274,32 @@ export default function TeamDetail() {
           )}
         </div>
       </div>
+
+      {/* Modal Konfirmasi Hapus */}
+      <Modal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      >
+        <ModalContent className="bg-gray-800 text-white">
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this alien?</p>
+            <p className="text-red-500">
+              This action will{" "}
+              <span className="font-bold">delete all data related</span> to this
+              alien.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteData}>
+              Delete
+            </Button>
+            <Button color="default" onClick={() => setConfirmModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Modal for Create/Edit Member */}
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>

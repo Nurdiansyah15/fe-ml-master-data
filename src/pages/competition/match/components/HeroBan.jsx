@@ -39,7 +39,7 @@ export default function HeroBan({ match, team }) {
   const columns = useMemo(() => {
     const gameColumns = games.map((game, index) => ({
       label: `Game ${game.game_number}`,
-      field: `game${index + 1}`,
+      field: `game-${game.game_number}-${game.game_id}`,
       type: "checkbox",
     }));
 
@@ -57,7 +57,7 @@ export default function HeroBan({ match, team }) {
     if (heroBans) {
       const parsedData = heroBans.map((ban) => {
         const gameFields = ban.hero_ban_game.reduce((acc, game) => {
-          acc[`game${game.game_number}`] = game.is_banned;
+          acc[`game-${game.game_number}-${game.game_id}`] = game.is_banned;
           return acc;
         }, {});
 
@@ -74,7 +74,7 @@ export default function HeroBan({ match, team }) {
     }
     return () => {
       setInitialData([]);
-    }
+    };
   }, [heroBans]);
 
   console.log("Initial Data:", initialData);
@@ -95,7 +95,8 @@ export default function HeroBan({ match, team }) {
     const heroBanGame = Object.entries(dataForm)
       .filter(([key]) => key.startsWith("game"))
       .map(([key, value]) => ({
-        game_number: parseInt(key.replace("game", ""), 10),
+        game_id: parseInt(key.split("-")[2], 10),
+        game_number: parseInt(key.split("-")[1], 10),
         is_banned: value,
       }));
 

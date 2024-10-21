@@ -3,6 +3,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
 } from "@nextui-org/react";
 import { Plus, ShieldHalf, Sword, User, X } from "lucide-react";
@@ -15,12 +16,15 @@ import TournamentItem from "./components/TournamentItem";
 import { useEffect } from "react";
 import {
   createTournament,
+  deleteTournament,
   getAllTournaments,
 } from "../../../redux/thunks/tournamentThunk";
 
 export default function Sidebar({ isOpen, closeSidebar }) {
   const nav = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [dataToDelete, setDataToDelete] = useState(null);
   const { tournaments } = useSelector((state) => state.tournament);
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +50,36 @@ export default function Sidebar({ isOpen, closeSidebar }) {
       });
     setModalOpen(false);
   };
+
+  const openConfirmModal = (data) => {
+    setDataToDelete(data);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteData = () => {
+    console.log("dataToDelete:", dataToDelete);
+    dispatch(deleteTournament(dataToDelete.tournament_id))
+      .unwrap()
+      .catch(console.error)
+      .finally(() => {
+        setConfirmModalOpen(false);
+        setDataToDelete(null);
+        setLoading(false);
+      });
+  };
+
+  // const handleDeleteMatch = () => {
+  //   console.log("matchToDelete:", matchToDelete);
+  //   dispatch(deleteMatch(matchToDelete.match_id))
+  //     .unwrap()
+  //     .catch(console.error)
+  //     .finally(() => {
+  //       dispatch(getAllMatches(tournamentID));
+  //       setConfirmModalOpen(false);
+  //       setMatchToDelete(null);
+  //       setLoading(false);
+  //     });
+  // };
 
   return (
     <div
@@ -84,7 +118,10 @@ export default function Sidebar({ isOpen, closeSidebar }) {
             ) : (
               tournaments.map((item) => (
                 <li key={item.tournament_id}>
-                  <TournamentItem tournament={item} />
+                  <TournamentItem
+                    onDelete={() => openConfirmModal(item)}
+                    tournament={item}
+                  />
                 </li>
               ))
             )}
@@ -135,6 +172,32 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <ModalBody>
             <CompetitionForm onSubmit={handleCompetitionSubmit} />
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal Konfirmasi Hapus */}
+      <Modal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      >
+        <ModalContent className="bg-gray-800 text-white">
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this tournament?</p>
+            <p className="text-red-500">
+              This action will{" "}
+              <span className="font-bold">delete all data related</span> to this
+              tournament.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteData}>
+              Delete
+            </Button>
+            <Button color="default" onClick={() => setConfirmModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

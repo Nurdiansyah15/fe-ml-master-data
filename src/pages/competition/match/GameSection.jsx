@@ -37,9 +37,8 @@ export default function GameSection({ team, match }) {
         variant="light"
         className="w-fit rounded-xl border border-gray-700"
       >
-        {games?.map((game) => {
+        {games.map((game) => {
           function handleSaveDraft(rowData) {
-
             setLoading(true);
             const data = {
               matchID: match?.match_id,
@@ -51,7 +50,6 @@ export default function GameSection({ team, match }) {
               videoLink: rowData.videoLink,
               fullDraftImage: rowData.imageFile,
             };
-
 
             dispatch(updateGame(data)).finally(() => setLoading(false));
           }

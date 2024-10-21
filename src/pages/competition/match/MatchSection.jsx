@@ -13,12 +13,14 @@ import EditableTable from "../../../archive/EditableTable";
 import Card from "../../../components/Card";
 import {
   createMatchGame,
+  deleteGame,
   getAllMatchGames,
   updateGame,
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
 import GameRoleResultTable from "./components/GameRoleResultTable";
 import CustomEditableTable from "../../../archive/CustomEditableTable";
+import EditableTableForGame from "../../../archive/EditableTableForGame";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -96,6 +98,28 @@ export default function MatchSection({ match, handleChooseTeam }) {
       .finally(() => setLoading(false));
   };
 
+  const handleDeleteRow = (data) => {
+    console.log("Data yang dihapus (data):", data);
+    setLoading(true);
+    dispatch(deleteGame({ matchID: match?.match_id, gameID: data.id }))
+      .unwrap()
+      .then(() => dispatch(getAllMatchGames(match?.match_id)))
+      .catch((error) => console.error("Error:", error))
+      .finally(() => setLoading(false));
+  };
+
+  function findSmallestMissingNumber(numbers) {
+    const sorted = [...new Set(numbers)].sort((a, b) => a - b);
+    let expected = 1;
+
+    for (let num of sorted) {
+      if (num !== expected) break;
+      expected++;
+    }
+
+    return expected;
+  }
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -149,14 +173,18 @@ export default function MatchSection({ match, handleChooseTeam }) {
               </div>
             </div>
             <div className="flex w-full">
-              <CustomEditableTable
+              <EditableTableForGame
+                maxRows={match?.team_a_score + match?.team_b_score}
+                onDeleteRow={handleDeleteRow}
                 columns={[
                   {
                     label: "Game",
                     field: "game",
                     type: "text",
                     readOnly: true,
-                    defaultValue: games.length + 1,
+                    defaultValue: findSmallestMissingNumber(
+                      ([...games] || []).map((game) => game.game_number)
+                    ),
                   },
                   {
                     label: "First Pick",

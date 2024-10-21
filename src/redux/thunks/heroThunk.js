@@ -7,7 +7,7 @@ export const getAllHeroes = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/heroes");
-      
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -62,6 +62,21 @@ export const updateHero = createAsyncThunk(
       );
 
       CustomToast("Hero updated successfully", "success");
+      dispatch(getAllHeroes());
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteHero = createAsyncThunk(
+  "heroes/deleteHero",
+  async (heroID, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/heroes/${heroID}`);
+      CustomToast("Hero deleted successfully", "success");
       dispatch(getAllHeroes());
       return;
     } catch (error) {

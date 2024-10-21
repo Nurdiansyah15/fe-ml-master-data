@@ -5,6 +5,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   Popover,
   PopoverContent,
@@ -17,6 +18,7 @@ import TeamForm from "./components/TeamForm";
 import { useNavigate } from "react-router-dom";
 import {
   createTeam,
+  deleteTeam,
   getAllTeams,
   updateTeam,
 } from "../../redux/thunks/teamThunk";
@@ -31,6 +33,9 @@ export default function Teams() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false); // Menentukan mode edit atau create
   const [teamToEdit, setTeamToEdit] = useState(null); // Menyimpan data tim yang akan diedit
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [dataToDelete, setDataToDelete] = useState(null);
 
   useEffect(() => {
     updatePage(
@@ -89,6 +94,25 @@ export default function Teams() {
     setTeamToEdit(team); // Simpan data tim yang ingin diedit
     setEditMode(true); // Ubah ke mode edit
     setModalOpen(true); // Buka modal untuk mengedit tim
+  };
+
+  const openConfirmModal = (data) => {
+    setDataToDelete(data);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteData = () => {
+    console.log("dataToDelete:", dataToDelete);
+    if (dataToDelete) {
+      dispatch(deleteTeam(dataToDelete.team_id))
+        .unwrap()
+        .catch(console.error)
+        .finally(() => {
+          setConfirmModalOpen(false);
+          setDataToDelete(null);
+          setLoading(false);
+        });
+    }
   };
 
   if (loading) {
@@ -151,7 +175,11 @@ export default function Teams() {
 
                     {/* Delete Button */}
                     <div className="flex items-center gap-2">
-                      <Button color="danger" size="sm">
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => openConfirmModal(team)}
+                      >
                         Delete
                       </Button>
                     </div>
@@ -172,6 +200,32 @@ export default function Teams() {
             <TeamForm onSubmit={handleFormSubmit} teamData={teamToEdit} />
             {/* Kirim data tim jika edit */}
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal Konfirmasi Hapus */}
+      <Modal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      >
+        <ModalContent className="bg-gray-800 text-white">
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this team?</p>
+            <p className="text-red-500">
+              This action will{" "}
+              <span className="font-bold">delete all data related</span> to this
+              team.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteData}>
+              Delete
+            </Button>
+            <Button color="default" onClick={() => setConfirmModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>
