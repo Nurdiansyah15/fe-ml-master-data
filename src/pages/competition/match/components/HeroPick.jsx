@@ -57,7 +57,7 @@ export default function HeroPick({ match, team }) {
   useEffect(() => {
     if (heroPicks) {
       const parsedData = heroPicks.map((pick) => {
-        const gameFields = pick.hero_pick_game.reduce((acc, game) => {
+        const gameFields = pick.hero_pick_game?.reduce((acc, game) => {
           acc[`game-${game.game_number}-${game.game_id}`] = game.is_picked;
           return acc;
         }, {});

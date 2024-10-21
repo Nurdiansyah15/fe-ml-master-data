@@ -8,6 +8,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/react";
+import { useContext } from "react";
+import MatchEditContext from "../contexts/MatchEditContext";
 
 const EditableRow = ({
   cols,
@@ -21,6 +23,8 @@ const EditableRow = ({
   handleSaveRow,
   onFieldChange,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
   const [localRowData, setLocalRowData] = useState(rowData);
@@ -151,57 +155,59 @@ const EditableRow = ({
         </td>
       ))}
       <td className="py-2 w-5">
-        <div className="flex items-center justify-center">
-          {!isEditingState ? (
+        {isEditingMatch && (
+          <div className="flex items-center justify-center">
+            {!isEditingState ? (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={startEditing}
+              >
+                <EditIcon />
+              </button>
+            ) : (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={saveRow}
+              >
+                <Save />
+              </button>
+            )}
             <button
               className="text-white px-4 py-2 rounded-md"
-              onClick={startEditing}
+              onClick={() => setConfirmModalOpen(true)} // Buka modal saat klik delete
             >
-              <EditIcon />
+              <Trash />
             </button>
-          ) : (
-            <button
-              className="text-white px-4 py-2 rounded-md"
-              onClick={saveRow}
-            >
-              <Save />
-            </button>
-          )}
-          <button
-            className="text-white px-4 py-2 rounded-md"
-            onClick={() => setConfirmModalOpen(true)} // Buka modal saat klik delete
-          >
-            <Trash />
-          </button>
 
-          <Modal
-            isOpen={confirmModalOpen}
-            onClose={() => setConfirmModalOpen(false)}
-          >
-            <ModalContent className="bg-gray-800 text-white">
-              <ModalHeader>Delete Confirmation</ModalHeader>
-              <ModalBody>
-                <p>Are you sure you want to delete this row?</p>
-                <p className="text-red-500">
-                  This action will{" "}
-                  <span className="font-bold">delete all data related</span> to
-                  this row.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" onClick={handleConfirmDelete}>
-                  Delete
-                </Button>
-                <Button
-                  color="default"
-                  onClick={() => setConfirmModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </div>
+            <Modal
+              isOpen={confirmModalOpen}
+              onClose={() => setConfirmModalOpen(false)}
+            >
+              <ModalContent className="bg-gray-800 text-white">
+                <ModalHeader>Delete Confirmation</ModalHeader>
+                <ModalBody>
+                  <p>Are you sure you want to delete this row?</p>
+                  <p className="text-red-500">
+                    This action will{" "}
+                    <span className="font-bold">delete all data related</span>{" "}
+                    to this row.
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" onClick={handleConfirmDelete}>
+                    Delete
+                  </Button>
+                  <Button
+                    color="default"
+                    onClick={() => setConfirmModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </div>
+        )}
       </td>
     </tr>
   );
@@ -216,6 +222,8 @@ const EditableTableForGame = ({
   onFieldChange,
   maxRows,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
   );
@@ -302,17 +310,19 @@ const EditableTableForGame = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
-        <div className="mt-4 mx-10 text-right">
-          <button
-            disabled={editingIndex !== null}
-            onClick={addRow}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            Add Row
-          </button>
-        </div>
-      )}
+      {editingIndex === null &&
+        (!maxRows || rows.length < maxRows) &&
+        isEditingMatch && (
+          <div className="mt-4 mx-10 text-right">
+            <button
+              disabled={editingIndex !== null}
+              onClick={addRow}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Add Row
+            </button>
+          </div>
+        )}
     </div>
   );
 };

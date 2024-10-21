@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Save, Trash, EditIcon } from "lucide-react";
+import { useContext } from "react";
+import MatchEditContext from "../contexts/MatchEditContext";
 
 const EditableRow = ({
   cols,
@@ -13,6 +15,8 @@ const EditableRow = ({
   handleSaveRow,
   onFieldChange,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
   const [localRowData, setLocalRowData] = useState(rowData);
@@ -146,29 +150,31 @@ const EditableRow = ({
         </td>
       ))}
       <td className="py-2 w-5">
-        <div className="flex items-center justify-center">
-          {!isEditingState ? (
+        {isEditingMatch && (
+          <div className="flex items-center justify-center">
+            {!isEditingState ? (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={startEditing}
+              >
+                <EditIcon />
+              </button>
+            ) : (
+              <button
+                className="text-white px-4 py-2 rounded-md"
+                onClick={saveRow}
+              >
+                <Save />
+              </button>
+            )}
             <button
               className="text-white px-4 py-2 rounded-md"
-              onClick={startEditing}
+              onClick={handleDelete}
             >
-              <EditIcon />
+              <Trash />
             </button>
-          ) : (
-            <button
-              className="text-white px-4 py-2 rounded-md"
-              onClick={saveRow}
-            >
-              <Save />
-            </button>
-          )}
-          <button
-            className="text-white px-4 py-2 rounded-md"
-            onClick={handleDelete}
-          >
-            <Trash />
-          </button>
-        </div>
+          </div>
+        )}
       </td>
     </tr>
   );
@@ -183,6 +189,8 @@ const CustomEditableTable = ({
   onFieldChange,
   maxRows,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
   );
@@ -269,17 +277,19 @@ const CustomEditableTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
-        <div className="mt-4 mx-10 text-right">
-          <button
-            disabled={editingIndex !== null}
-            onClick={addRow}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            Add Row
-          </button>
-        </div>
-      )}
+      {editingIndex === null &&
+        (!maxRows || rows.length < maxRows) &&
+        isEditingMatch && (
+          <div className="mt-4 mx-10 text-right">
+            <button
+              disabled={editingIndex !== null}
+              onClick={addRow}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Add Row
+            </button>
+          </div>
+        )}
     </div>
   );
 };

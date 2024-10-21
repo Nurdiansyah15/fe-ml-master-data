@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Edit, Save } from "lucide-react";
 import Card from "../../../../components/Card";
+import { useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
-const DraftLinkForm = ({
-  initialVideoLink = "",
-  initialImageLink = "https://placehold.co/600x400",
-  onSave,
-}) => {
+const DraftLinkForm = ({ initialVideoLink = "", initialImageLink, onSave }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [videoLink, setVideoLink] = useState(initialVideoLink);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(initialImageLink);
   const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
 
   useEffect(() => {
     setVideoLink(initialVideoLink);
@@ -31,6 +32,8 @@ const DraftLinkForm = ({
   };
 
   const handleEdit = () => setIsEditing(true);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen); // Toggle modal
 
   return (
     <Card className="flex flex-col gap-4 p-4 w-full rounded-lg">
@@ -57,18 +60,15 @@ const DraftLinkForm = ({
         )}
       </div>
 
-      {/* Image Preview */}
+      {/* Image Preview Section */}
       <div>
         <label className="block mb-1 text-md font-bold">Image Draft</label>
-        {preview ? (
-          <img
-            src={preview}
-            alt="Draft Preview"
-            className="w-full h-64 object-cover border rounded"
-          />
-        ) : (
-          <p>No image available.</p>
-        )}
+        <img
+          src={preview || "https://placehold.co/600x400"}
+          alt="Draft Preview"
+          className="w-auto h-[200px] object-cover border rounded cursor-pointer"
+          onClick={toggleModal} // Buka modal saat gambar diklik
+        />
       </div>
 
       {/* Image Upload Section */}
@@ -87,19 +87,40 @@ const DraftLinkForm = ({
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-2">
-        {isEditing ? (
-          <Save
-            onClick={handleSave}
-            className="cursor-pointer hover:opacity-80"
-          />
-        ) : (
-          <Edit
-            onClick={handleEdit}
-            className="cursor-pointer hover:opacity-80"
-          />
-        )}
-      </div>
+      {isEditingMatch && (
+        <div className="flex justify-end gap-2">
+          {isEditing ? (
+            <Save
+              onClick={handleSave}
+              className="cursor-pointer hover:opacity-80"
+            />
+          ) : (
+            <Edit
+              onClick={handleEdit}
+              className="cursor-pointer hover:opacity-80"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Modal for Image Preview */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative">
+            <img
+              src={preview || "https://placehold.co/600x400"}
+              alt="Full Image Preview"
+              className="max-w-full max-h-screen object-contain"
+            />
+            <button
+              onClick={toggleModal}
+              className="absolute top-2 right-2 text-white text-xl"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };

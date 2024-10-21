@@ -5,8 +5,12 @@ import { useState } from "react";
 import axiosInstance from "../../../../api/axiosInstance";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 export default function MemberMatchTeam({ match, member, onDelete, type }) {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [memberStats, setMemberStats] = useState(null);
   const { games } = useSelector((state) => state.game);
 
@@ -84,12 +88,14 @@ export default function MemberMatchTeam({ match, member, onDelete, type }) {
       </Card>
 
       {/* Tombol Delete */}
-      <button
-        className="absolute top-0 right-0 bg-red-500 p-1 rounded-full"
-        onClick={() => onDelete(member[type][`${type}_id`])}
-      >
-        <X className="text-white w-5 h-5" />
-      </button>
+      {isEditingMatch && (
+        <button
+          className="absolute top-0 right-0 bg-red-500 p-1 rounded-full"
+          onClick={() => onDelete(member[type][`${type}_id`])}
+        >
+          <X className="text-white w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

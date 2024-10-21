@@ -14,8 +14,12 @@ import CoachTeamForm from "./components/CoachTeamForm"; // Impor CoachTeamForm
 import PlayerTeamForm from "./components/PlayerTeamForm";
 import Card from "../../../components/Card";
 import MemberMatchTeam from "./components/MemberMatchTeam";
+import { useContext } from "react";
+import MatchEditContext from "../../../contexts/MatchEditContext";
 
 export default function MemberSection({ team, match }) {
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const { matchPlayers } = useSelector((state) => state.matchPlayer);
   const { matchCoaches } = useSelector((state) => state.matchCoach);
   const dispatch = useDispatch();
@@ -129,7 +133,7 @@ export default function MemberSection({ team, match }) {
               />
             ))}
 
-            {matchPlayers.length < 5 && (
+            {matchPlayers.length < 5 && isEditingMatch && (
               <div
                 className="flex flex-col cursor-pointer hover:scale-105 transition"
                 onClick={() => setPlayerModalOpen(true)}
@@ -161,7 +165,7 @@ export default function MemberSection({ team, match }) {
               />
             ))}
 
-            {matchCoaches.length < 2 && (
+            {matchCoaches.length < 2 &&  isEditingMatch && (
               <div
                 className="flex flex-col cursor-pointer hover:scale-105 transition"
                 onClick={() => setCoachModalOpen(true)}

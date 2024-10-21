@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import EditableTable from "../../../../components/global/EditableTable";
 import { useDispatch, useSelector } from "react-redux";
 import CustomEditableTable from "../../../../archive/CustomEditableTable";
-import { addLordResult, deleteLordResult, getAllLordResults, updateLordResult } from "../../../../redux/thunks/lordThunk";
+import {
+  addLordResult,
+  deleteLordResult,
+  getAllLordResults,
+  updateLordResult,
+} from "../../../../redux/thunks/lordThunk";
 
 export default function Lord({ game, match, team }) {
   const dispatch = useDispatch();
@@ -14,58 +19,69 @@ export default function Lord({ game, match, team }) {
 
   const columns = [
     {
-      label: "Phase", field: "phase", type: "text"
+      label: "Phase",
+      field: "phase",
+      type: "text",
     },
     {
-      label: "Setup", field: "setup", type: "select", renderCell: (value, options) => {
-        const result = options.find(option => option.value == value);
+      label: "Setup",
+      field: "setup",
+      type: "select",
+      renderCell: (value, options) => {
+        const result = options.find((option) => option.value == value);
         let style = "bg-[#4b3232] text-[#ab6161]";
         if (result?.value === "early") {
           style = "bg-[#324B39] text-[#61AB76]";
         } else if (result?.value === "late") {
           style = "bg-[#494b32] text-[#d4b560]";
         }
-        
+
         return (
           <div className={`${style} px-4 py-2 rounded-full`}>
             <span>{result?.label || "Unknown"}</span>
           </div>
         );
-      }
+      },
     },
     {
-      label: "Initiate", field: "initiate", type: "select", renderCell: (value, options) => {
-        const result = options.find(option => option.value == value);
+      label: "Initiate",
+      field: "initiate",
+      type: "select",
+      renderCell: (value, options) => {
+        const result = options.find((option) => option.value == value);
         let style = "bg-[#4b3232] text-[#ab6161]";
         if (result?.value === "early") {
           style = "bg-[#324B39] text-[#61AB76]";
         } else if (result?.value === "late") {
           style = "bg-[#494b32] text-[#d4b560]";
         }
-        
+
         return (
           <div className={`${style} px-4 py-2 rounded-full`}>
             <span>{result?.label || "Unknown"}</span>
           </div>
         );
-      }
+      },
     },
     {
-      label: "Result", field: "result", type: "select", renderCell: (value, options) => {
-        const result = options.find(option => option.value == value);
+      label: "Result",
+      field: "result",
+      type: "select",
+      renderCell: (value, options) => {
+        const result = options.find((option) => option.value == value);
         let style = "bg-[#4b3232] text-[#ab6161]";
         if (result?.value === "early") {
           style = "bg-[#324B39] text-[#61AB76]";
         } else if (result?.value === "late") {
           style = "bg-[#494b32] text-[#d4b560]";
         }
-        
+
         return (
           <div className={`${style} px-4 py-2 rounded-full`}>
             <span>{result?.label || "Unknown"}</span>
           </div>
         );
-      }
+      },
     },
   ];
 
@@ -95,15 +111,14 @@ export default function Lord({ game, match, team }) {
     const data = {
       gameID: game.game_id,
       matchID: match.match_id,
-      phase: rowData.Phase,
+      phase: rowData.phase,
       setup: rowData.setup,
       initiate: rowData.initiate,
       result: rowData.result,
-      teamID: team.team_id  
+      teamID: team.team_id,
     };
 
     console.log("Data ", data);
-    
 
     const action = rowData.isNew
       ? addLordResult(data)
@@ -146,7 +161,7 @@ export default function Lord({ game, match, team }) {
 
   useEffect(() => {
     if (lords && lords.length > 0) {
-      const initialLordResults = lords.map(lord => ({
+      const initialLordResults = lords.map((lord) => ({
         id: lord.lord_result_id,
         initiate: lord.initiate,
         phase: lord.phase,
@@ -157,12 +172,14 @@ export default function Lord({ game, match, team }) {
     }
     return () => {
       setInitialData([]);
-    }
+    };
   }, [lords, game]);
 
   useEffect(() => {
     if (match && game) {
-      dispatch(getAllLordResults({ matchID: match.match_id, gameID: game.game_id }))
+      dispatch(
+        getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+      )
         .unwrap()
         .then(() => {
           setLoading(false);
@@ -177,7 +194,13 @@ export default function Lord({ game, match, team }) {
 
   return (
     <div className="w-full flex flex-col">
-      <CustomEditableTable columns={columns} initialData={initialData} selectOptions={selectOptions} onSaveRow={handleSaveRow} onDeleteRow={handleDeleteRow} />
+      <CustomEditableTable
+        columns={columns}
+        initialData={initialData}
+        selectOptions={selectOptions}
+        onSaveRow={handleSaveRow}
+        onDeleteRow={handleDeleteRow}
+      />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import HeroPickBanRow from "./HeroPickBanRow";
+import { useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const HeroPickBanTable = ({
   columns,
@@ -10,6 +12,8 @@ const HeroPickBanTable = ({
 }) => {
   const [rows, setRows] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
 
   useEffect(() => {
     const newRows = initialData.map((row) => ({ ...row, isNew: false }));
@@ -82,7 +86,7 @@ const HeroPickBanTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (
+      {editingIndex === null && isEditingMatch && (
         <div className="mt-4 mx-10 text-right">
           <button
             disabled={editingIndex !== null}

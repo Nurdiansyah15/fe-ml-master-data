@@ -56,7 +56,7 @@ export default function HeroBan({ match, team }) {
   useEffect(() => {
     if (heroBans) {
       const parsedData = heroBans.map((ban) => {
-        const gameFields = ban.hero_ban_game.reduce((acc, game) => {
+        const gameFields = ban.hero_ban_game?.reduce((acc, game) => {
           acc[`game-${game.game_number}-${game.game_id}`] = game.is_banned;
           return acc;
         }, {});
