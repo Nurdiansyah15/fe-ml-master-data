@@ -75,31 +75,28 @@ export default function Match() {
       `${tournament?.name}`,
       <div className="flex flex-row space-x-4 justify-start items-center">
         <div className="flex space-x-4 justify-center items-center">
-          <Eye
-            className={`${
-              !isEditingMatch ? "opacity-100" : "opacity-50"
-            } hover:opacity-100 ${
-              isEditingMatch ? "cursor-pointer" : "cursor-default"
-            } transition-opacity`}
-            onClick={() => {
-              if (isEditingMatch) {
-                toggleEditing();
-              }
-            }}
-          />
-          <Edit
-            size={22}
-            className={`${
-              isEditingMatch ? "opacity-100" : "opacity-50"
-            } hover:opacity-100 ${
-              !isEditingMatch ? "cursor-pointer" : "cursor-default"
-            } transition-opacity`}
-            onClick={() => {
-              if (!isEditingMatch) {
-                toggleEditing();
-              }
-            }}
-          />
+          {isEditingMatch && <div className="text-white whitespace-nowrap text-sm px-4 py-2 bg-[#2c7ab6] rounded-full">Editing Mode</div>}
+          {isEditingMatch ? (
+            <Eye
+              className={`opacity-100 cursor-pointer`}
+              onClick={() => {
+                if (isEditingMatch) {
+                  toggleEditing();
+                }
+              }}
+            />)
+            : (
+              <Edit
+                size={22}
+                className={`opacity-100 cursor-pointer`}
+                onClick={() => {
+                  if (!isEditingMatch) {
+                    toggleEditing();
+                  }
+                }}
+              />
+            )
+          }
         </div>
         <div className="w-full flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none">
           {team && (

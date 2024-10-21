@@ -270,6 +270,7 @@ const EditableTableForGame = ({
     onDeleteRow(rowToDelete, rowData);
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+    setEditingIndex(null);
   };
 
   useEffect(() => {

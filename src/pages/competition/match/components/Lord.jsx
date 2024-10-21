@@ -8,6 +8,7 @@ import {
   getAllLordResults,
   updateLordResult,
 } from "../../../../redux/thunks/lordThunk";
+import LordTurtleResultTable from "./LordTurtleResultTable";
 
 export default function Lord({ game, match, team }) {
   const dispatch = useDispatch();
@@ -18,11 +19,6 @@ export default function Lord({ game, match, team }) {
   const { lords } = useSelector((state) => state.lord);
 
   const columns = [
-    {
-      label: "Phase",
-      field: "phase",
-      type: "text",
-    },
     {
       label: "Setup",
       field: "setup",
@@ -50,10 +46,8 @@ export default function Lord({ game, match, team }) {
       renderCell: (value, options) => {
         const result = options.find((option) => option.value == value);
         let style = "bg-[#4b3232] text-[#ab6161]";
-        if (result?.value === "early") {
+        if (result?.value === "yes") {
           style = "bg-[#324B39] text-[#61AB76]";
-        } else if (result?.value === "late") {
-          style = "bg-[#494b32] text-[#d4b560]";
         }
 
         return (
@@ -70,10 +64,8 @@ export default function Lord({ game, match, team }) {
       renderCell: (value, options) => {
         const result = options.find((option) => option.value == value);
         let style = "bg-[#4b3232] text-[#ab6161]";
-        if (result?.value === "early") {
+        if (result?.value === "yes") {
           style = "bg-[#324B39] text-[#61AB76]";
-        } else if (result?.value === "late") {
-          style = "bg-[#494b32] text-[#d4b560]";
         }
 
         return (
@@ -111,7 +103,7 @@ export default function Lord({ game, match, team }) {
     const data = {
       gameID: game.game_id,
       matchID: match.match_id,
-      phase: rowData.phase,
+      phase: "lord_phase",
       setup: rowData.setup,
       initiate: rowData.initiate,
       result: rowData.result,
@@ -140,7 +132,10 @@ export default function Lord({ game, match, team }) {
     console.log("Data yang dihapus:", initialData[index]);
     console.log("Data yang dihapus (rowdata):", rowData);
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
 
     dispatch(
       deleteLordResult({
@@ -164,7 +159,7 @@ export default function Lord({ game, match, team }) {
       const initialLordResults = lords.map((lord) => ({
         id: lord.lord_result_id,
         initiate: lord.initiate,
-        phase: lord.phase,
+        // phase: lord.phase,
         result: lord.result,
         setup: lord.setup,
       }));
@@ -194,7 +189,7 @@ export default function Lord({ game, match, team }) {
 
   return (
     <div className="w-full flex flex-col">
-      <CustomEditableTable
+      <LordTurtleResultTable
         columns={columns}
         initialData={initialData}
         selectOptions={selectOptions}

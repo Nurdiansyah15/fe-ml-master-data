@@ -48,6 +48,7 @@ const HeroPickBanTable = ({
   const handleDeleteRow = (id) => {
     const updatedRows = rows.filter((row) => row.id !== id);
     setRows(updatedRows);
+    setEditingIndex(null);
     if (onDelete) {
       onDelete(id);
     }

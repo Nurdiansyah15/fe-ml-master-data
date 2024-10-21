@@ -135,7 +135,10 @@ export default function HeroPick({ match, team }) {
 
   const handleDeleteRow = (id) => {
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
     dispatch(
       deleteHeroPick({
         matchID: match.match_id,

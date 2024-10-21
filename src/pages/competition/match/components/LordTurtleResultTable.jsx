@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Save, Trash, EditIcon } from "lucide-react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const EditableRow = ({
   cols,
@@ -13,6 +14,7 @@ const EditableRow = ({
   handleSaveRow,
   onFieldChange,
 }) => {
+    const { isEditingMatch, toggleEditing, removeEditing } = useContext(MatchEditContext);
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
   const [localRowData, setLocalRowData] = useState(rowData);
@@ -151,7 +153,7 @@ const EditableRow = ({
         </td>
       ))}
       <td className="py-2 w-5">
-        <div className="flex items-center justify-center">
+        {isEditingMatch && <div className="flex items-center justify-center">
           {!isEditingState ? (
             <button
               className="text-white px-4 py-2 rounded-md"
@@ -173,7 +175,7 @@ const EditableRow = ({
           >
             <Trash />
           </button>
-        </div>
+        </div>}
       </td>
     </tr>
   );
@@ -188,6 +190,9 @@ const LordTurtleResultTable = ({
   onFieldChange,
   maxRows,
 }) => {
+  const { isEditingMatch, toggleEditing, removeEditing } = useContext(
+    MatchEditContext
+  )
   const [rows, setRows] = useState(
     initialData.map((row) => ({ ...row, isNew: false }))
   );
@@ -234,6 +239,7 @@ const LordTurtleResultTable = ({
     onDeleteRow(rowToDelete, rowData);
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+    setEditingIndex(null);
   };
 
   useEffect(() => {
@@ -279,7 +285,7 @@ const LordTurtleResultTable = ({
         </tbody>
       </table>
 
-      {editingIndex === null && (!maxRows || rows.length < maxRows) && (
+      {editingIndex === null && (!maxRows || rows.length < maxRows) && isEditingMatch && (
         <div className="mt-4 mx-10 text-right">
           <button
             disabled={editingIndex !== null}

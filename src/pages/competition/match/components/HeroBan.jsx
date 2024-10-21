@@ -134,7 +134,10 @@ export default function HeroBan({ match, team }) {
 
   const handleDeleteRow = (id) => {
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
     dispatch(
       deleteHeroBan({
         matchID: match.match_id,

@@ -112,7 +112,10 @@ export default function Explaner({ game, team, match }) {
 
   const handleDeleteRow = (id) => {
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
 
     dispatch(
       deleteExplaner({

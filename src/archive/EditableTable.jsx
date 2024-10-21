@@ -36,6 +36,7 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
   const handleDeleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+    setEditingIndex(null);
   };
 
   return (

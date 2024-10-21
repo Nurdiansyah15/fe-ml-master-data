@@ -113,7 +113,10 @@ export default function Goldlaner({ game, team, match }) {
 
   const handleDeleteRow = (id) => {
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
 
     dispatch(
       deleteGoldLaner({

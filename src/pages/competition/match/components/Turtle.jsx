@@ -130,7 +130,10 @@ export default function Turtle({ game, match, team }) {
     console.log("Data yang dihapus:", initialData[index]);
     console.log("Data yang dihapus (rowdata):", rowData);
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
 
     dispatch(
       deleteTurtleResult({

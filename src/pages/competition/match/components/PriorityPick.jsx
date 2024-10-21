@@ -143,7 +143,10 @@ export default function PriorityPick({ team, match }) {
     console.log("Data yang dihapus (id):", id);
     console.log("Data yang dihapus (rowdata):", rowData);
     setLoading(true);
-    if (id === undefined) return;
+    if (id === undefined) {
+      setLoading(false);
+      return;
+    };
 
     dispatch(
       deletePriorityPick({
