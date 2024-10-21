@@ -10,6 +10,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
 } from "@nextui-org/react";
 import { Ellipsis } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,6 +23,7 @@ import {
   getAllHeroes,
   updateHero,
 } from "../../redux/thunks/heroThunk";
+import { clearHero } from "../../redux/features/heroSlice";
 
 export default function Heroes() {
   const { updatePage } = useContext(PageContext);
@@ -55,7 +57,14 @@ export default function Heroes() {
   }, [updatePage]);
 
   useEffect(() => {
-    dispatch(getAllHeroes());
+    setLoading(true);
+    dispatch(getAllHeroes())
+      .unwrap()
+      .finally(() => setLoading(false));
+
+    return () => {
+      dispatch(clearHero());
+    };
   }, [dispatch]);
 
   const handleFormSubmit = (data) => {
@@ -109,9 +118,12 @@ export default function Heroes() {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading)
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="text-white flex flex-col justify-start h-full w-full">

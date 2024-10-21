@@ -5,11 +5,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "@nextui-org/react";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import EditableTable from "../../../archive/EditableTable";
+import EditableTableForGame from "../../../archive/EditableTableForGame";
 import Card from "../../../components/Card";
 import {
   createMatchGame,
@@ -18,9 +19,7 @@ import {
   updateGame,
 } from "../../../redux/thunks/gameThunk";
 import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
-import GameRoleResultTable from "./components/GameRoleResultTable";
-import CustomEditableTable from "../../../archive/CustomEditableTable";
-import EditableTableForGame from "../../../archive/EditableTableForGame";
+import { clearTeam } from "../../../redux/features/teamMatchSlice";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -51,7 +50,10 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }));
     setInitialData(data);
 
-    return () => setInitialData([]);
+    return () => {
+      dispatch(clearTeam());
+      setInitialData([]);
+    };
   }, [games]);
 
   const selectOptions = useMemo(() => {
@@ -120,7 +122,12 @@ export default function MatchSection({ match, handleChooseTeam }) {
     return expected;
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="w-full">

@@ -165,7 +165,7 @@ export default function MemberSection({ team, match }) {
               />
             ))}
 
-            {matchCoaches.length < 2 &&  isEditingMatch && (
+            {matchCoaches.length < 2 && isEditingMatch && (
               <div
                 className="flex flex-col cursor-pointer hover:scale-105 transition"
                 onClick={() => setCoachModalOpen(true)}

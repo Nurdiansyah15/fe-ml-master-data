@@ -9,6 +9,8 @@ import {
   getAllHeroBans,
   updateHeroBan,
 } from "../../../../redux/thunks/matchThunk";
+import { clearHero } from "../../../../redux/features/heroSlice";
+import { clearHeroBans } from "../../../../redux/features/heroBanSlice";
 
 export default function HeroBan({ match, team }) {
   const dispatch = useDispatch();
@@ -29,6 +31,11 @@ export default function HeroBan({ match, team }) {
         getAllHeroBans({ matchID: match.match_id, teamID: team.team_id })
       );
     }
+
+    return () => {
+      dispatch(clearHero());
+      dispatch(clearHeroBans());
+    };
   }, [dispatch, match]);
 
   console.log("HeroBans:", heroBans);
