@@ -25,7 +25,9 @@ const heroPickSlice = createSlice({
       })
       .addCase(getAllHeroPicks.fulfilled, (state, action) => {
         state.loading = false;
-        state.heroPicks = action.payload;
+        state.heroPicks = action.payload.sort((a, b) => {
+          return a.hero_pick_game.game_number - b.hero_pick_game.game_number;
+        })
       })
       .addCase(getAllHeroPicks.rejected, (state, action) => {
         state.loading = false;

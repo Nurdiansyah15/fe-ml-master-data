@@ -104,6 +104,21 @@ export const updateGame = createAsyncThunk(
   }
 );
 
+export const deleteGame = createAsyncThunk(
+  "games/deleteGame",
+  async ({ matchID, gameID }, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/matches/${matchID}/games/${gameID}`);
+      CustomToast("Game deleted successfully", "success");
+      dispatch(getAllMatchGames(matchID));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
 export const getAllGoldlaners = createAsyncThunk(
   "games/getAllGoldlaners",
   async ({ gameID, teamID }, { rejectWithValue }) => {

@@ -5,7 +5,8 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalHeader
+  ModalFooter,
+  ModalHeader,
 } from "@nextui-org/react";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import Card from "../../components/Card";
 import { PageContext } from "../../contexts/PageContext";
 import {
   createMatch,
+  deleteMatch,
   getAllMatches,
   updateMatch,
 } from "../../redux/thunks/matchThunk";
@@ -39,9 +41,10 @@ export default function Tournament() {
   const [editingMatch, setEditingMatch] = useState(null);
   const [filteredMatches, setFilteredMatches] = useState(matches);
 
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [matchToDelete, setMatchToDelete] = useState(null);
+
   useEffect(() => {
-    console.log("cccccc");
-    
     dispatch(getAllMatches(tournamentID))
       .unwrap()
       .then((value) => {
@@ -49,8 +52,12 @@ export default function Tournament() {
           setFilteredMatches([]);
         } else {
           if (filteredMatches.length === 0) {
-            const filter = value.filter((match) => match.team_a_id === team.team_id || match.team_b_id === team.team_id);
-            setFilteredMatches(filter)
+            const filter = value.filter(
+              (match) =>
+                match?.team_a_id === team?.team_id ||
+                match?.team_b_id === team?.team_id
+            );
+            setFilteredMatches(filter);
           }
         }
       });
@@ -59,12 +66,12 @@ export default function Tournament() {
 
   useEffect(() => {
     if (matches && matches.length > 0) {
-      console.log("matchessdsdsd: ", matches);
-      console.log("team again: ", team);
-      
-      
       if (team) {
-        const filter = matches.filter((match) => match.team_a_id === team.team_id || match.team_b_id === team.team_id);
+        const filter = matches.filter(
+          (match) =>
+            match?.team_a_id === team?.team_id ||
+            match?.team_b_id === team?.team_id
+        );
         setFilteredMatches(filter);
       } else {
         setFilteredMatches(matches);
@@ -127,7 +134,23 @@ export default function Tournament() {
     setModalOpen(true);
   };
 
-  console.log("matches", matches);
+  const openConfirmModal = (match) => {
+    setMatchToDelete(match);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteMatch = () => {
+    console.log("matchToDelete:", matchToDelete);
+    dispatch(deleteMatch(matchToDelete.match_id))
+      .unwrap()
+      .catch(console.error)
+      .finally(() => {
+        dispatch(getAllMatches(tournamentID));
+        setConfirmModalOpen(false);
+        setMatchToDelete(null);
+        setLoading(false);
+      }); 
+  };
 
   return (
     <div className="text-white flex flex-col justify-start items-start h-full w-full p-4">
@@ -159,6 +182,7 @@ export default function Tournament() {
                   <FontAwesomeIcon
                     icon={faTrash}
                     className="text-gray-500 hover:text-white text-xs"
+                    onClick={() => openConfirmModal(match)}
                   />
                 </div>
               </div>
@@ -191,6 +215,32 @@ export default function Tournament() {
               editingMatch={editingMatch}
             />
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal Konfirmasi Hapus */}
+      <Modal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      >
+        <ModalContent className="bg-gray-800 text-white">
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this match?</p>
+            <p className="text-red-500">
+              This action will{" "}
+              <span className="font-bold">delete all data related</span> to this
+              match.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteMatch}>
+              Delete
+            </Button>
+            <Button color="default" onClick={() => setConfirmModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

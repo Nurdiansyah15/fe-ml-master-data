@@ -123,6 +123,20 @@ export const updateMatch = createAsyncThunk(
   }
 );
 
+export const deleteMatch = createAsyncThunk(
+  "matches/deleteMatch",
+  async (matchID, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(`/api/matches/${matchID}`);
+      CustomToast("Match deleted successfully", "success");
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
 export const getAllHeroPicks = createAsyncThunk(
   "matches/getAllHeroPicks",
   async ({ matchID, teamID }, { rejectWithValue }) => {

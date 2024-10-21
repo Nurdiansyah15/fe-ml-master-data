@@ -40,7 +40,7 @@ export default function HeroPick({ match, team }) {
   const columns = useMemo(() => {
     const gameColumns = games.map((game, index) => ({
       label: `Game ${game.game_number}`,
-      field: `game${index + 1}`,
+      field: `game-${game.game_number}-${game.game_id}`,
       type: "checkbox",
     }));
 
@@ -58,7 +58,7 @@ export default function HeroPick({ match, team }) {
     if (heroPicks) {
       const parsedData = heroPicks.map((pick) => {
         const gameFields = pick.hero_pick_game.reduce((acc, game) => {
-          acc[`game${game.game_number}`] = game.is_picked;
+          acc[`game-${game.game_number}-${game.game_id}`] = game.is_picked;
           return acc;
         }, {});
 
@@ -75,7 +75,7 @@ export default function HeroPick({ match, team }) {
     }
     return () => {
       setInitialData([]);
-    }
+    };
   }, [heroPicks]);
 
   console.log("Initial Data:", initialData);
@@ -96,7 +96,8 @@ export default function HeroPick({ match, team }) {
     const heroPickGame = Object.entries(dataForm)
       .filter(([key]) => key.startsWith("game"))
       .map(([key, value]) => ({
-        game_number: parseInt(key.replace("game", ""), 10),
+        game_id: parseInt(key.split("-")[2], 10),
+        game_number: parseInt(key.split("-")[1], 10),
         is_picked: value,
       }));
 

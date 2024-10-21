@@ -32,7 +32,6 @@ export default function Match() {
 
   console.log("Team sdasda:", team);
 
-
   useEffect(() => {
     dispatch(getMatchByID(matchID));
     dispatch(getTournamentByID(tournamentID));
@@ -46,37 +45,37 @@ export default function Match() {
   }, [dispatch]);
 
   useEffect(() => {
-    const gms = games?.filter((game) => game?.first_team.team_id === team?.team_id || game?.second_team.team_id === team?.team_id);
+    const gms = games?.filter(
+      (game) =>
+        game?.first_team.team_id === team?.team_id ||
+        game?.second_team.team_id === team?.team_id
+    );
     setGameLength(gms.length);
-    const cek = gms.length > 0 && (match?.team_a_id === team?.team_id || match?.team_b_id === team?.team_id);
+    const cek =
+      gms.length > 0 &&
+      (match?.team_a_id === team?.team_id ||
+        match?.team_b_id === team?.team_id);
     console.log("cek: ", cek);
     console.log("games: ", gms);
 
-
     setShowDetailMatch(cek);
   }, [games, team]);
-
-  // useEffect(() => {
-  //   if (teamID) {
-  //     dispatch(getTeamByID(teamID));
-  //   }
-
-  //   return () => {
-  //     dispatch(clearTeam());
-  //   };
-  // }, [dispatch, teamID]);
 
   useEffect(() => {
     updatePage(
       `${tournament?.name}`,
       <>
-        <div
-          className="w-full flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none"
-        >
-          {team && <div className="flex items-center">
-            <img src={team?.image} alt={team?.name} className="w-6 h-6 mr-2" />
-            <span>{team?.name}</span>
-          </div>}
+        <div className="w-full flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none">
+          {team && (
+            <div className="flex items-center">
+              <img
+                src={team?.image}
+                alt={team?.name}
+                className="w-6 h-6 mr-2"
+              />
+              <span>{team?.name}</span>
+            </div>
+          )}
           {!team && <span>Select Team</span>}
         </div>
         <Button color="secondary">Export</Button>
@@ -93,10 +92,14 @@ export default function Match() {
     <div className="text-white flex flex-col justify-start items-start w-full p-4 gap-10">
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
       {team && isShowDetailMatch && <TeamTitle team={team} />}
-      {team && isShowDetailMatch && <TeamStatsSection team={team} match={match} />}
+      {team && isShowDetailMatch && (
+        <TeamStatsSection team={team} match={match} />
+      )}
       {team && isShowDetailMatch && <MemberSection team={team} match={match} />}
       {team && isShowDetailMatch && <HeroSection team={team} match={match} />}
-      {team && isShowDetailMatch && <PrioritySection team={team} match={match} />}
+      {team && isShowDetailMatch && (
+        <PrioritySection team={team} match={match} />
+      )}
       {team && isShowDetailMatch && <GameSection team={team} match={match} />}
     </div>
   );

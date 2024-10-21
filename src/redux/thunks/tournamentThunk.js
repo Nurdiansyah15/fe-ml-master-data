@@ -79,3 +79,18 @@ export const updateTournament = createAsyncThunk(
     }
   }
 );
+
+export const deleteTournament = createAsyncThunk(
+  "tournaments/deleteTournament",
+  async (tournamentID, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/tournaments/${tournamentID}`);
+      CustomToast("Tournament deleted successfully", "success");
+      dispatch(getAllTournaments());
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
