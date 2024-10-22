@@ -10,6 +10,7 @@ import Home from "../pages/home/Home";
 import Teams from "../pages/teams/Teams";
 import TeamDetail from "../pages/teams/TeamDetail";
 import Match from "../pages/competition/Match";
+import Sheet from "../pages/experiment/Sheet";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -46,6 +47,7 @@ const routes = [
       { path: "team", element: <Teams /> },
       { path: "team/:teamID", element: <TeamDetail /> },
       { path: "hero", element: <Heroes /> },
+      { path: "sheets", element: <Sheet /> },
     ],
   },
 ];

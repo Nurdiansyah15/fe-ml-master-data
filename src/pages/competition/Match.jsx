@@ -1,23 +1,22 @@
 import { Button } from "@nextui-org/react";
+import { Edit, Eye } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import ExcelExport from "../../components/export/ExcelExport";
+import MatchEditContext from "../../contexts/MatchEditContext";
 import { PageContext } from "../../contexts/PageContext";
+import { clearMatch } from "../../redux/features/matchSlice";
+import { getMatchByID } from "../../redux/thunks/matchThunk";
 import { getTeamByID } from "../../redux/thunks/teamThunk";
+import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
 import GameSection from "./match/GameSection";
 import HeroSection from "./match/HeroSection";
 import MatchSection from "./match/MatchSection";
 import MemberSection from "./match/MemberSection";
 import PrioritySection from "./match/PrioritySection";
-import { getMatchByID } from "../../redux/thunks/matchThunk";
-import { getTournamentByID } from "../../redux/thunks/tournamentThunk";
-import { clearMatch } from "../../redux/features/matchSlice";
-import { clearTeam } from "../../redux/features/teamSlice";
 import TeamStatsSection from "./match/TeamStatsSection";
 import TeamTitle from "./match/TeamTitle";
-import MatchEditContext from "../../contexts/MatchEditContext";
-import { Eye } from "lucide-react";
-import { Edit } from "lucide-react";
 
 export default function Match() {
   const { updatePage } = useContext(PageContext);
@@ -75,7 +74,11 @@ export default function Match() {
       `${tournament?.name}`,
       <div className="flex flex-row space-x-4 justify-start items-center">
         <div className="flex space-x-4 justify-center items-center">
-          {isEditingMatch && <div className="text-white whitespace-nowrap text-sm px-4 py-2 bg-[#2c7ab6] rounded-full">Editing Mode</div>}
+          {isEditingMatch && (
+            <div className="text-white whitespace-nowrap text-sm px-4 py-2 bg-[#2c7ab6] rounded-full">
+              Editing Mode
+            </div>
+          )}
           {isEditingMatch ? (
             <Eye
               className={`opacity-100 cursor-pointer`}
@@ -84,19 +87,18 @@ export default function Match() {
                   toggleEditing();
                 }
               }}
-            />)
-            : (
-              <Edit
-                size={22}
-                className={`opacity-100 cursor-pointer`}
-                onClick={() => {
-                  if (!isEditingMatch) {
-                    toggleEditing();
-                  }
-                }}
-              />
-            )
-          }
+            />
+          ) : (
+            <Edit
+              size={22}
+              className={`opacity-100 cursor-pointer`}
+              onClick={() => {
+                if (!isEditingMatch) {
+                  toggleEditing();
+                }
+              }}
+            />
+          )}
         </div>
         <div className="w-full flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none">
           {team && (
@@ -112,6 +114,7 @@ export default function Match() {
           {!team && <span>Select Team</span>}
         </div>
         <Button color="secondary">Export</Button>
+        <ExcelExport />
       </div>
     );
   }, [updatePage, tournament?.name, team, isEditingMatch, toggleEditing]);

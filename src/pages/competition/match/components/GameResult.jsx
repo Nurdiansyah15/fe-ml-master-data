@@ -1,9 +1,7 @@
-import React from "react";
-import Card from "../../../../components/Card";
-import { useEffect } from "react";
-import { useState } from "react";
-import axiosInstance from "../../../../api/axiosInstance";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import axiosInstance from "../../../../api/axiosInstance";
+import Card from "../../../../components/Card";
 
 export default function GameResult({ game, team }) {
   const [gameResult, setGameResult] = useState(null);

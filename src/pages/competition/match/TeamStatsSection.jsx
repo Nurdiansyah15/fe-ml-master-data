@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Card from "../../../components/Card";
-import axiosInstance from "../../../api/axiosInstance"; // Sesuaikan path axiosInstance
 import { useSelector } from "react-redux";
+import axiosInstance from "../../../api/axiosInstance"; // Sesuaikan path axiosInstance
+import Card from "../../../components/Card";
 
 export default function TeamStatsSection({ team, match }) {
   const [teamStats, setTeamStats] = useState(null);

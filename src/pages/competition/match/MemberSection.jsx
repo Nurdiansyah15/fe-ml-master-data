@@ -1,7 +1,8 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
-import { Plus, X } from "lucide-react"; // Tambahkan ikon X
-import React, { useEffect, useState } from "react";
+import { Plus } from "lucide-react"; // Tambahkan ikon X
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import MatchEditContext from "../../../contexts/MatchEditContext";
 import {
   createCoachInMatchTeam,
   createPlayerInMatchTeam,
@@ -11,11 +12,8 @@ import {
   getAllPlayersInMatchTeam,
 } from "../../../redux/thunks/teamThunk";
 import CoachTeamForm from "./components/CoachTeamForm"; // Impor CoachTeamForm
-import PlayerTeamForm from "./components/PlayerTeamForm";
-import Card from "../../../components/Card";
 import MemberMatchTeam from "./components/MemberMatchTeam";
-import { useContext } from "react";
-import MatchEditContext from "../../../contexts/MatchEditContext";
+import PlayerTeamForm from "./components/PlayerTeamForm";
 
 export default function MemberSection({ team, match }) {
   const { isEditingMatch, toggleEditing, removeEditing } =
