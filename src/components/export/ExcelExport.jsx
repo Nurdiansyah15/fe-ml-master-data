@@ -17,7 +17,7 @@ export default function ExcelExport() {
   const getData = async () => {
     if (!match?.match_id || !team?.team_id || !tournament?.tournament_id) {
       console.warn("Missing required IDs for data fetching");
-      return null; // Return null if IDs are missing
+      return null; 
     }
 
     try {
@@ -129,21 +129,41 @@ export default function ExcelExport() {
     right: { style: "thin" },
   });
 
-  // Fungsi membuat satu sel dengan border dan nilai
-  const createOneCell = (worksheet, value, row, col, isTitle = false) => {
-    const cell = worksheet.getCell(row, col);
-    cell.border = setCellBorder();
-    cell.value = value;
-    cell.alignment = { horizontal: "center", vertical: "middle" };
-
-    // Set gaya font jika ini adalah judul
-    if (isTitle) {
-      cell.font = {
-        bold: true, // Mengatur font menjadi tebal
-        size: 12, // Mengubah ukuran font (misalnya 14)
-        color: { argb: "000000" }, // Mengatur warna font (optional, misalnya hitam)
-      };
+  const setAllColumnWidths = (worksheet, numColumns, width) => {
+    for (let i = 1; i <= numColumns; i++) {
+      worksheet.getColumn(i).width = width;
     }
+  };
+
+  // Fungsi membuat satu sel dengan border dan nilai
+  const createOneCell = (worksheet, value, row, col) => {
+    const cell = worksheet.getCell(row, col);
+
+    // Mengatur nilai sel
+    cell.value = value;
+
+    // Mengatur border, alignment, dan font
+    cell.border = setCellBorder();
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+    cell.font = { bold: false, size: 11, color: { argb: "000000" } };
+  };
+
+  const createSectionTitle = (
+    worksheet,
+    value,
+    row,
+    col,
+    size = 11,
+    bold = false
+  ) => {
+    const cell = worksheet.getCell(row, col);
+    cell.value = value;
+    cell.alignment = { vertical: "middle" };
+    cell.font = {
+      bold: bold,
+      size: size,
+      color: { argb: "000000" }, // Warna font hitam
+    };
   };
 
   // Fungsi untuk mengambil nilai berdasarkan field yang mungkin nested (contoh: "stats.winRate")
@@ -167,7 +187,7 @@ export default function ExcelExport() {
       startRow,
       startCol + headers.length - 1
     ); // Merge sel untuk judul
-    createOneCell(worksheet, title, startRow, startCol, true);
+    createOneCell(worksheet, title, startRow, startCol);
     startRow++;
 
     // Set header
@@ -251,32 +271,56 @@ export default function ExcelExport() {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Match Data");
 
+    // setAllColumnWidths(worksheet, 10, 12);
+
     let startCol = 2;
     let startRow = 2;
 
     console.log("Exporting data to Excel...", exportData);
 
     const titleSection = (worksheet, startRow, startCol) => {
-      worksheet.mergeCells(startRow + 1, startCol, startRow + 2, startCol);
       worksheet.mergeCells(
         startRow + 1,
-        startCol + 2,
+        startCol + 6,
         startRow + 2,
-        startCol + 2
+        startCol + 6
       );
 
-      createOneCell(worksheet, match.team_a.name, startRow, startCol, true);
-      createOneCell(worksheet, match.team_b.name, startRow, startCol + 2, true);
-      createOneCell(worksheet, match.team_a_score, startRow + 1, startCol);
-      createOneCell(worksheet, "VS", startRow + 1, startCol + 1);
-      createOneCell(worksheet, match.team_b_score, startRow + 1, startCol + 2);
-      createOneCell(worksheet, tournament.name, startRow, startCol + 6, true);
-      createOneCell(worksheet, match.stage, startRow + 1, startCol + 6);
+      createOneCell(worksheet, match.team_a.name, startRow + 1, startCol + 5);
       createOneCell(
+        worksheet,
+        match.team_b.name,
+        startRow + 1,
+        startCol + 5 + 2
+      );
+      createOneCell(
+        worksheet,
+        match.team_a_score,
+        startRow + 1 + 1,
+        startCol + 5
+      );
+      createOneCell(worksheet, "VS", startRow + 1 + 1, startCol + 5 + 1);
+      createOneCell(
+        worksheet,
+        match.team_b_score,
+        startRow + 1 + 1,
+        startCol + 5 + 2
+      );
+
+      createSectionTitle(
+        worksheet,
+        tournament.name,
+        startRow,
+        startCol,
+        14,
+        true
+      );
+      createSectionTitle(worksheet, match.stage, startRow + 1, startCol, 12);
+      createSectionTitle(
         worksheet,
         moment(match.date).format("MMMM dd, YYYY - HH:mm a"),
         startRow + 2,
-        startCol + 6
+        startCol
       );
     };
 
@@ -299,8 +343,25 @@ export default function ExcelExport() {
     generateExcelReport(worksheet, sections, startRow, startCol);
     startRow = startRow + exportData.games.length + 3;
 
-    worksheet.getCell(startRow, startCol).value = team.name + " Statistics";
+    createSectionTitle(
+      worksheet,
+      team.name + " Statistics",
+      startRow,
+      startCol,
+      14,
+      true
+    );
     startRow++;
+    startRow++;
+
+    createSectionTitle(
+      worksheet,
+      "Team Statistics",
+      startRow,
+      startCol,
+      12,
+      true
+    );
     startRow++;
 
     sections = [
@@ -396,6 +457,8 @@ export default function ExcelExport() {
     generateExcelReport(worksheet, sections, startRow, startCol);
     startRow = startRow + 1 + 3;
 
+    createSectionTitle(worksheet, "Member Team", startRow, startCol, 12, true);
+    startRow++;
     // Membuat sections untuk Players dan Coaches
     sections = [
       {
@@ -481,6 +544,9 @@ export default function ExcelExport() {
         : exportData.matchCoaches.length) +
       3;
 
+    createSectionTitle(worksheet, "Heroes", startRow, startCol, 12, true);
+    startRow++;
+
     sections = [
       {
         title: "Hero Bans",
@@ -551,6 +617,16 @@ export default function ExcelExport() {
         : exportData.heroPicks.length) +
       3;
 
+    createSectionTitle(
+      worksheet,
+      "Hero Priority",
+      startRow,
+      startCol,
+      12,
+      true
+    );
+    startRow++;
+
     sections = [
       {
         title: "Flex Picks",
@@ -608,8 +684,180 @@ export default function ExcelExport() {
         : exportData.priorityPicks.length) +
       3;
 
-    console.log("startRow", startRow);
-    console.log("startCol", startCol);
+    createSectionTitle(worksheet, "Game Details", startRow, startCol, 12, true);
+    startRow++;
+    startRow++;
+
+    exportData.games.map((game, index) => {
+      createSectionTitle(
+        worksheet,
+        `Game ${game.game_number} :`,
+        startRow,
+        startCol,
+        11,
+        true
+      );
+      createSectionTitle(
+        worksheet,
+        game.winner_team_id === team.team_id ? "Win" : "Lose",
+        startRow,
+        startCol + 1
+      );
+      startRow++;
+
+      createSectionTitle(worksheet, "Video Link :", startRow, startCol);
+      createSectionTitle(
+        worksheet,
+        {
+          text: `${game.video_link}`,
+          hyperlink: game.video_link,
+        },
+        startRow,
+        startCol + 1
+      );
+      startRow++;
+
+      createSectionTitle(worksheet, "Draft Link :", startRow, startCol);
+      createSectionTitle(
+        worksheet,
+        {
+          text: `${game.full_draft_image}`,
+          hyperlink: game.full_draft_image,
+        },
+        startRow,
+        startCol + 1
+      );
+      startRow++;
+      startRow++;
+
+      const indexGameDetail = exportData.gameDetails.findIndex(
+        (item) => item.gameId === game.game_id
+      );
+
+      let gameSections = [
+        {
+          title: "Trio Mids",
+          headers: [
+            { label: "Hero", field: "hero.name" },
+            { label: "Role", field: "role" },
+            { label: "Early Result", field: "early_result" },
+          ],
+          data: exportData.gameDetails[indexGameDetail].trioMids.map((mid) => ({
+            hero: mid.hero,
+            role: mid.role,
+            early_result: mid.early_result,
+          })),
+        },
+        {
+          title: "Goldlaners",
+          headers: [
+            { label: "Hero", field: "hero.name" },
+            { label: "Early Result", field: "early_result" },
+          ],
+          data: exportData.gameDetails[indexGameDetail].goldlaners.map(
+            (goldlaner) => ({
+              hero: goldlaner.hero,
+              early_result: goldlaner.early_result,
+            })
+          ),
+        },
+        {
+          title: "Explaners",
+          headers: [
+            { label: "Hero", field: "hero.name" },
+            { label: "Early Result", field: "early_result" },
+          ],
+          data: exportData.gameDetails[indexGameDetail].explaners.map(
+            (explaner) => ({
+              hero: explaner.hero,
+              early_result: explaner.early_result,
+            })
+          ),
+        },
+      ];
+
+      // Generate Excel report
+      generateExcelReport(worksheet, gameSections, startRow, startCol);
+      startRow =
+        startRow + exportData.gameDetails[indexGameDetail].trioMids.length + 3;
+
+      gameSections = [
+        {
+          title: "Turtle Result",
+          headers: [
+            { label: "Phase", field: "phase" },
+            { label: "Initiate", field: "initiate" },
+            { label: "Setup", field: "setup" },
+            { label: "Result", field: "result" },
+          ],
+          data: exportData.gameDetails[indexGameDetail].turtles.map(
+            (turtle, index) => ({
+              phase: index + 1,
+              initiate: turtle.initiate,
+              setup: turtle.setup,
+              result: turtle.result,
+            })
+          ),
+        },
+        {
+          title: "Lord Result",
+          headers: [
+            { label: "Phase", field: "phase" },
+            { label: "Initiate", field: "initiate" },
+            { label: "Setup", field: "setup" },
+            { label: "Result", field: "result" },
+          ],
+          data: exportData.gameDetails[indexGameDetail].lords.map(
+            (lord, index) => ({
+              phase: index + 1,
+              initiate: lord.initiate,
+              setup: lord.setup,
+              result: lord.result,
+            })
+          ),
+        },
+      ];
+
+      // Generate Excel report
+      generateExcelReport(worksheet, gameSections, startRow, startCol);
+
+      startRow =
+        startRow +
+        (exportData.gameDetails[indexGameDetail].lords.length >
+        exportData.gameDetails[indexGameDetail].turtles.length
+          ? exportData.gameDetails[indexGameDetail].lords.length
+          : exportData.gameDetails[indexGameDetail].turtles.length) +
+        3;
+
+      gameSections = [
+        {
+          title: "Game Results",
+          headers: [
+            { label: "Win", field: "win" },
+            { label: "Draw", field: "draw" },
+            { label: "Lose", field: "lose" },
+            { label: "Result", field: "result" },
+          ],
+          data: [
+            {
+              win: exportData.gameDetails[indexGameDetail].gameResults.win,
+              draw: exportData.gameDetails[indexGameDetail].gameResults.draw,
+              lose: exportData.gameDetails[indexGameDetail].gameResults.lose,
+              result:
+                exportData.gameDetails[indexGameDetail].gameResults.result,
+            },
+          ],
+        },
+      ];
+
+      // Generate Excel report
+      generateExcelReport(worksheet, gameSections, startRow, startCol);
+
+      startRow++;
+      startRow++;
+      startRow++;
+      startRow++;
+    });
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
