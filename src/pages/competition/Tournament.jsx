@@ -86,37 +86,58 @@ export default function Tournament() {
     }
   }, [team, matches]);
 
-  const order = ["season", "group", "playoff", "grandfinal"];
+  const order = ['season', 'groupstage', 'playoff', 'grandfinal'];
 
   const groupMatchesByStage = (matches) => {
     const groupedMatches = matches.reduce((acc, match) => {
-      let groupKey = match.stage?.replace(/\s+/g, "").toLowerCase(); // Hilangkan spasi
+      let groupKey = match.stage.replace(/\s+/g, "").toLowerCase(); // Hilangkan spasi dan lowercase
 
-      // Ubah groupKey menjadi "season" jika mengandung "week" (case-insensitive)
+      // Jika groupKey mengandung "week", masukkan ke "season"
       if (groupKey.includes("week")) {
         groupKey = "season";
       }
 
-      // Ubah groupKey menjadi "playoff" jika mengandung "playoff" (case-insensitive)
-      if (groupKey.includes("playoff")) {
-        groupKey = "playoff";
+      // Jika groupKey mengandung "group", masukkan ke "groupstage"
+      if (groupKey.includes("group")) {
+        groupKey = "groupstage";
       }
 
-      // Jika key belum ada, inisialisasi dengan array kosong
+      // Cari key yang berhubungan di 'order' (yang lebih pendek atau lebih panjang)
+      const existingKey = order.find(item => groupKey.includes(item) || item.includes(groupKey));
+
+      // Jika key yang lebih pendek ditemukan di 'order', dan groupKey lebih panjang, gantikan
+      if (existingKey && groupKey.length > existingKey.length) {
+        const index = order.indexOf(existingKey);
+        order.splice(index, 1, groupKey); // Ganti key yang lebih pendek dengan yang lebih panjang
+
+        // Update juga accumulator dengan key baru
+        if (acc[existingKey]) {
+          acc[groupKey] = acc[existingKey];
+          delete acc[existingKey]; // Hapus key lama
+        }
+      }
+      // Jika key yang cocok belum ada, tambahkan groupKey baru
+      else if (!existingKey) {
+        order.splice(2, 0, groupKey); // Tambahkan di index ke-2
+      }
+
+      // Gunakan groupKey yang sudah ada di 'order' (pastikan ini key yang benar)
+      const matchedGroup = order.find(item => groupKey.includes(item) || item.includes(groupKey));
+      if (matchedGroup) {
+        groupKey = matchedGroup; // Pakai key dari 'order'
+      }
+
+      // Jika key belum ada di accumulator, inisialisasi dengan array kosong
       if (!acc[groupKey]) {
         acc[groupKey] = [];
       }
 
-      if (!order.includes(groupKey)) {
-        order.splice(2, 0, groupKey);
-      }
-
-      // Masukkan pertandingan ke dalam array group yang sesuai
+      // Masukkan pertandingan ke dalam grup yang sesuai
       acc[groupKey].push(match);
       return acc;
     }, {});
 
-    // Sorting khusus untuk group "season" berdasarkan Week dan Day
+    // Sorting khusus untuk "season" berdasarkan Week dan Day
     if (groupedMatches["season"]) {
       groupedMatches["season"] = groupedMatches["season"].sort((a, b) => {
         const weekA = parseInt(a.stage.match(/\d+/), 10); // Ambil angka dari "Week"
@@ -129,11 +150,11 @@ export default function Tournament() {
       });
     }
 
-    // Sorting untuk group lainnya berdasarkan hari
+    // Sorting untuk grup lainnya berdasarkan hari
     Object.keys(groupedMatches).forEach((key) => {
       if (key !== "season") {
         groupedMatches[key] = groupedMatches[key].sort((a, b) => {
-          return a.day - b.day; // Sorting berdasarkan hari di setiap grup selain season
+          return a.day - b.day; // Sorting berdasarkan hari
         });
       }
     });
@@ -144,13 +165,15 @@ export default function Tournament() {
       matches: groupedMatches[stage], // Array pertandingan
     }));
 
+    // Sorting berdasarkan urutan yang ada di 'order'
     return Object.values(filter).sort((a, b) => {
-      return (
-        order.indexOf(a.stage.toLowerCase()) -
-        order.indexOf(b.stage.toLowerCase())
-      ); // Mengurutkan berdasarkan urutan yang diinginkan
+      return order.indexOf(a.stage.toLowerCase()) - order.indexOf(b.stage.toLowerCase());
     });
   };
+
+
+
+
 
   const handleFormSubmit = (formData) => {
     const data = {

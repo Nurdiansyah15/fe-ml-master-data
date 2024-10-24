@@ -11,6 +11,7 @@ import Teams from "../pages/teams/Teams";
 import TeamDetail from "../pages/teams/TeamDetail";
 import Match from "../pages/competition/Match";
 import Sheet from "../pages/experiment/Sheet";
+import ExportMatch from "../pages/competition/ExportMatch";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -39,6 +40,10 @@ const routes = [
       {
         path: "tournament/:tournamentID/match/:matchID",
         element: <Match />,
+      },
+      {
+        path: "export/:turnamentID/match/:matchID",
+        element: <ExportMatch />,
       },
       // {
       //   path: "tournament/:tournamentID/match/:matchID/team/:teamID",
