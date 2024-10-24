@@ -27,6 +27,9 @@ export default function TrioMid({ headerClassName, cellClassName, game, team, ma
 
   const [earlyResult, setEarlyResult] = useState(null);
 
+  console.log("tt: ", team);
+  
+
   // Ambil data heroes dan trioMids berdasarkan game dan team ID
   useEffect(() => {
     if (game && team) {

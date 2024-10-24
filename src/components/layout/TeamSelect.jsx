@@ -53,6 +53,7 @@ const TeamSelect = () => {
         setSelectedTeam(team);
         setTeamID(team?.team_id);
         setIsOpen(false);
+        dispatch(getTeamByID(team?.team_id))
         localStorage.setItem("teamID", team?.team_id);
     };
 

@@ -4,10 +4,10 @@ import CustomToast from "../../components/global/CustomToast";
 
 export const getAllTurtleResults = createAsyncThunk(
     "matches/getAllTurtleResults",
-    async ({ matchID, gameID }, { rejectWithValue }) => {
+    async ({ teamID, gameID }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get(
-                `/api/matches/${matchID}/games/${gameID}/turtle-results`
+                `/api/games/${gameID}/teams/${teamID}/turtle-results`
             );
             return response.data;
         } catch (error) {

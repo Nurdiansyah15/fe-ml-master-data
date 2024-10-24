@@ -120,7 +120,7 @@ export default function Lord({ game, match, team }) {
       .catch((error) => console.error("Error:", error))
       .finally(() => {
         dispatch(
-          getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+          getAllLordResults({ teamID: team?.team_id, gameID: game.game_id })
         );
         setLoading(false);
       });
@@ -147,7 +147,7 @@ export default function Lord({ game, match, team }) {
       .catch((error) => console.error("Error:", error))
       .finally(() => {
         dispatch(
-          getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+          getAllLordResults({ teamID: team?.team_id, gameID: game.game_id })
         );
         setLoading(false);
       });
@@ -170,9 +170,9 @@ export default function Lord({ game, match, team }) {
   }, [lords, game]);
 
   useEffect(() => {
-    if (match && game) {
+    if (team && game) {
       dispatch(
-        getAllLordResults({ matchID: match.match_id, gameID: game.game_id })
+        getAllLordResults({ teamID: team?.team_id, gameID: game.game_id })
       )
         .unwrap()
         .then(() => {

@@ -21,6 +21,10 @@ export const getTeamByID = createAsyncThunk(
   async (teamID, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/api/teams/${teamID}`);
+      console.log("team: ", teamID);
+      
+      console.log("cek ", response.data);
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

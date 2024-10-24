@@ -13,6 +13,9 @@ export default function Turtle({ game, match, team }) {
 
   const { turtles } = useSelector((state) => state.turtle);
 
+  console.log("team lord: ", team);
+  
+
   const columns = [
     {
       label: "Setup",
@@ -116,7 +119,7 @@ export default function Turtle({ game, match, team }) {
       .catch((error) => console.error("Error:", error))
       .finally(() => {
         dispatch(
-          getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id })
+          getAllTurtleResults({ teamID: team?.team_id, gameID: game.game_id })
         );
         setLoading(false);
       });
@@ -143,7 +146,7 @@ export default function Turtle({ game, match, team }) {
       .catch((error) => console.error("Error:", error))
       .finally(() => {
         dispatch(
-          getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id })
+          getAllTurtleResults({ teamID: team?.team_id, gameID: game.game_id })
         );
         setLoading(false);
       });
@@ -170,7 +173,7 @@ export default function Turtle({ game, match, team }) {
   useEffect(() => {
     if (match && game) {
       dispatch(
-        getAllTurtleResults({ matchID: match.match_id, gameID: game.game_id })
+        getAllTurtleResults({ teamID: team?.team_id, gameID: game.game_id })
       )
         .unwrap()
         .then(() => {

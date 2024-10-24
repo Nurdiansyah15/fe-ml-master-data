@@ -360,6 +360,12 @@ export const getAllTrioMids = createAsyncThunk(
         `/api/games/${gameID}/teams/${teamID}/trio-mids`
       );
 
+      console.log("ff: ", teamID);
+      
+
+      console.log("sdsada: ", response.data);
+      
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

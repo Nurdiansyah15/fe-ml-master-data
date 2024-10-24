@@ -196,20 +196,15 @@ export default function GameDataExport({ match, game, team, handleSaveDraft }) {
             .then((response) => {
                 setExplanerData(response)
             })
-        dispatch(getAllTurtleResults({ matchID: matchID, gameID: game?.game_id }))
+        dispatch(getAllTurtleResults({ teamID: team?.team_id, gameID: game?.game_id }))
             .unwrap()
             .then((response) => {
-                console.log("game ", game?.game_number);
-                console.log("response tutel: ", response);
 
                 setTurtleData(response)
             })
-        dispatch(getAllLordResults({ matchID: matchID, gameID: game?.game_id }))
+        dispatch(getAllLordResults({ teamID: team?.team_id, gameID: game?.game_id }))
             .unwrap()
             .then((response) => {
-                console.log("game ", game?.game_number);
-
-                console.log("response lord: ", response);
 
                 setLordData(response)
             })
