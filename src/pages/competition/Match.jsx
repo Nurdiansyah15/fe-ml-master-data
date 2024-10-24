@@ -1,4 +1,11 @@
-import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import {
+  Button,
+  ButtonGroup,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 import { ChevronDownIcon, Edit, Eye } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,7 +43,7 @@ export default function Match() {
 
   const [teamID, setTeamID] = useState("");
 
-  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
 
   useEffect(() => {
     return () => {
@@ -72,15 +79,13 @@ export default function Match() {
   }, [games, team]);
 
   const handleExport = (key) => {
-    
     if (key === "pdf") {
-      
-      return navigation(`/export/tournament/${tournamentID}/match/${matchID}`)
+      return navigation(`/export/tournament/${tournamentID}/match/${matchID}`);
     }
     if (key === "excel") {
-      return (<ExcelExport />)
+      return <ExcelExport />;
     }
-  }
+  };
 
   useEffect(() => {
     updatePage(
@@ -144,12 +149,12 @@ export default function Match() {
             >
               <DropdownItem key="pdf">
                 {/* <Button isIconOnly onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)} color="transparent"> */}
-                  PDF
+                PDF
                 {/* </Button> */}
               </DropdownItem>
               <DropdownItem key="excel">
                 {/* <ExcelExport /> */}
-                Excel
+                <ExcelExport />
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -164,7 +169,10 @@ export default function Match() {
   };
 
   return (
-    <div ref={targetRef} className="text-white flex bg-[#161618] flex-col justify-start items-start w-full p-4 gap-10">
+    <div
+      ref={targetRef}
+      className="text-white flex bg-[#161618] flex-col justify-start items-start w-full p-4 gap-10"
+    >
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
       {team && isShowDetailMatch && <TeamTitle team={team} />}
       {team && isShowDetailMatch && (
