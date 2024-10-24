@@ -4,6 +4,8 @@ import { useContext } from "react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const GameRoleResultTable = ({
+  headerClassName,
+  cellClassName,
   columns,
   initialData,
   selectOptions,
@@ -62,7 +64,7 @@ const GameRoleResultTable = ({
           <tr>
             {columns.map((col, index) => (
               <th className="py-2" key={index}>
-                <div className="bg-[#363638] rounded-xl p-2 mx-1">
+                <div className={`bg-[#363638] rounded-xl p-2 mx-1 ${headerClassName}`}>
                   {col.label}
                 </div>
               </th>
@@ -73,6 +75,7 @@ const GameRoleResultTable = ({
         <tbody>
           {rows.map((row, index) => (
             <GameRoleResultRow
+              cellClassName={cellClassName}
               key={index}
               cols={columns}
               rowData={row}

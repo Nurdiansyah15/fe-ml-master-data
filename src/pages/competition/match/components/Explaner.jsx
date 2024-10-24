@@ -11,7 +11,7 @@ import GameRoleResultTable from "./GameRoleResultTable";
 import { clearExplaner } from "../../../../redux/features/explanerSlice";
 import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function Explaner({ game, team, match }) {
+export default function Explaner({ headerClassName, cellClassName, game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
@@ -37,9 +37,6 @@ export default function Explaner({ game, team, match }) {
     };
   }, [dispatch, game, team]);
 
-  console.log("Explainers:", explaners);
-  console.log("Heroes:", heroes);
-
   // Parsing kolom untuk tabel
   const columns = useMemo(
     () => [
@@ -63,8 +60,6 @@ export default function Explaner({ game, team, match }) {
       setInitialData([]);
     }
   }, [explaners]);
-
-  console.log("Initial Data:", initialData);
 
   // Opsi select untuk heroes
   const heroOptions = useMemo(
@@ -137,6 +132,8 @@ export default function Explaner({ game, team, match }) {
   return (
     <div className="w-full flex">
       <GameRoleResultTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={{

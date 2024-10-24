@@ -54,8 +54,6 @@ export const createMatch = createAsyncThunk(
         team_b_id,
         team_b_score,
       };
-
-      console.log("Data: ", data);
       
 
       await axiosInstance.post(

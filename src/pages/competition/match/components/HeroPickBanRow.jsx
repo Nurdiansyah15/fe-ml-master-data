@@ -4,6 +4,7 @@ import { useContext } from "react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const HeroPickBanRow = ({
+  cellClassName,
   cols,
   rowData,
   onChange,
@@ -83,7 +84,7 @@ const HeroPickBanRow = ({
       case "checkbox":
         return (
           <div
-            className={`flex items-center justify-center p-1 rounded-md bg-[#1f1f1f] ${
+            className={`flex items-center justify-center p-1 rounded-md bg-[#1f1f1f] ${cellClassName} ${
               isEditingState ? "border-b-1 border-gray-600" : ""
             }`}
           >
@@ -128,7 +129,7 @@ const HeroPickBanRow = ({
                       className="w-8 h-8 rounded-full"
                     />
                   )}
-                  <span className="text-center block">
+                  <span className={`text-center block ${cellClassName}`}>
                     {selectedOption?.label || "Unknown"}
                   </span>
                 </>
@@ -156,7 +157,7 @@ const HeroPickBanRow = ({
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
-          <span className="text-center w-full block">{displayValue}</span>
+          <span className={`text-center w-full block ${cellClassName}`}>{displayValue}</span>
         );
     }
   };

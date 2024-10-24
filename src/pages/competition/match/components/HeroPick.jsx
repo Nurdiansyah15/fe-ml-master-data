@@ -12,7 +12,7 @@ import {
 import { clearHero } from "../../../../redux/features/heroSlice";
 import { clearHeroPick } from "../../../../redux/features/heroPickSlice";
 
-export default function HeroPick({ match, team }) {
+export default function HeroPick({ headerClassName, cellClassName, match, team }) {
   const dispatch = useDispatch();
 
   const { games } = useSelector((state) => state.game);
@@ -38,10 +38,6 @@ export default function HeroPick({ match, team }) {
       dispatch(clearHeroPick());
     };
   }, [dispatch, match]);
-
-  console.log("HeroPicks:", heroPicks);
-  console.log("Games:", games);
-  console.log("Heroes:", heroes);
 
   // Parsing kolom game secara dinamis berdasarkan jumlah games
   const columns = useMemo(() => {
@@ -84,8 +80,6 @@ export default function HeroPick({ match, team }) {
       setInitialData([]);
     };
   }, [heroPicks]);
-
-  console.log("Initial Data:", initialData);
 
   // Opsi select untuk memilih hero
   const selectOptions = useMemo(() => {
@@ -159,6 +153,8 @@ export default function HeroPick({ match, team }) {
   return (
     <div className="w-full flex">
       <HeroPickBanTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={{ hero: selectOptions }}

@@ -82,8 +82,6 @@ export const updateGame = createAsyncThunk(
         formData.append("full_draft_image", fullDraftImage);
       }
 
-      console.log("formData: ", formData);
-
       await axiosInstance.put(
         `/api/matches/${matchID}/games/${gameID}`,
         formData,

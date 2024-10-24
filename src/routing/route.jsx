@@ -41,10 +41,10 @@ const routes = [
         path: "tournament/:tournamentID/match/:matchID",
         element: <Match />,
       },
-      {
-        path: "export/:turnamentID/match/:matchID",
-        element: <ExportMatch />,
-      },
+      // {
+      //   path: "tournament/:tournamentID/match/:matchID/export",
+      //   element: <ExportMatch />,
+      // },
       // {
       //   path: "tournament/:tournamentID/match/:matchID/team/:teamID",
       //   element: <MatchDetail />,
@@ -54,6 +54,10 @@ const routes = [
       { path: "hero", element: <Heroes /> },
       { path: "sheets", element: <Sheet /> },
     ],
+  },
+  {
+    path: "export/tournament/:tournamentID/match/:matchID",
+    element: <ExportMatch />,
   },
 ];
 export default routes;

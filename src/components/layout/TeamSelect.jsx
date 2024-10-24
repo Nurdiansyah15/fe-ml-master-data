@@ -12,10 +12,6 @@ const TeamSelect = () => {
     const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch();
-
-    console.log("teams idddd: ", team?.team_id);
-
-    console.log("teams xxxx: ", teams);
     
     
 
@@ -23,7 +19,6 @@ const TeamSelect = () => {
 
     useEffect(() => {
         setLoading(true);
-        console.log("cek dulu sini");
         
         dispatch(getAllTeams())
             .unwrap()
@@ -48,7 +43,6 @@ const TeamSelect = () => {
     }, [dispatch, teamID]);
 
     useEffect(() => {
-        console.log("djskhdkjsda");
         const id = localStorage.getItem("teamID");
         if (id) {
             dispatch(getTeamByID(id));

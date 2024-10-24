@@ -12,7 +12,7 @@ import {
 import { clearHero } from "../../../../redux/features/heroSlice";
 import { clearHeroBans } from "../../../../redux/features/heroBanSlice";
 
-export default function HeroBan({ match, team }) {
+export default function HeroBan({ headerClassName, cellClassName, match, team }) {
   const dispatch = useDispatch();
 
   const { games } = useSelector((state) => state.game);
@@ -37,10 +37,6 @@ export default function HeroBan({ match, team }) {
       dispatch(clearHeroBans());
     };
   }, [dispatch, match]);
-
-  console.log("HeroBans:", heroBans);
-  console.log("Games:", games);
-  console.log("Heroes:", heroes);
 
   // Parsing columns dynamically based on the number of games
   const columns = useMemo(() => {
@@ -83,8 +79,6 @@ export default function HeroBan({ match, team }) {
       setInitialData([]);
     };
   }, [heroBans]);
-
-  console.log("Initial Data:", initialData);
 
   // Options for selecting heroes
   const selectOptions = useMemo(() => {
@@ -158,6 +152,8 @@ export default function HeroBan({ match, team }) {
   return (
     <div className="w-full flex">
       <HeroPickBanTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={{ hero: selectOptions }}

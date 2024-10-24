@@ -11,7 +11,7 @@ import {
 } from "../../../../redux/thunks/priorityPickThunk";
 import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function PriorityPick({ team, match }) {
+export default function PriorityPick({ headerClassName, cellClassName, team, match }) {
   const dispatch = useDispatch();
 
   const { heroPicks } = useSelector((state) => state.heroPick);
@@ -225,6 +225,8 @@ export default function PriorityPick({ team, match }) {
   return (
     <div className="w-full flex">
       <CustomEditableTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={selectOptions}

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { useContext } from "react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
-export default function MemberMatchTeam({ match, member, onDelete, type }) {
+export default function MemberMatchTeam({ cardClassName, cardTextClassName, match, member, onDelete, type }) {
   const { isEditingMatch, toggleEditing, removeEditing } =
     useContext(MatchEditContext);
   const [memberStats, setMemberStats] = useState(null);
@@ -32,9 +32,6 @@ export default function MemberMatchTeam({ match, member, onDelete, type }) {
       getMemberStats();
     }
   }, [member, match, games]);
-
-  console.log("Member:", member);
-  console.log("Stats:", memberStats);
 
   const calculateWinRate = (wins, total) =>
     total > 0 ? Math.round((wins / total) * 100) : 0;
@@ -69,17 +66,17 @@ export default function MemberMatchTeam({ match, member, onDelete, type }) {
           className="w-full h-56 object-cover rounded-lg"
         />
       </div>
-      <Card className="w-40 text-white px-3 py-1 mt-4">
-        <h3 className="font-semibold text-lg">{member[type].name}</h3>
+      <Card className={`w-40 text-white px-3 py-1 mt-4 ${cardClassName}`}>
+        <h3 className={`font-semibold text-lg ${cardTextClassName}`}>{member[type].name}</h3>
         <div className="flex gap-2">
           <div>
-            <p className="text-[10px]">Match Rate:</p>
+            <p className={`text-[10px] ${cardTextClassName}`}>Match Rate:</p>
             <p className={`text-lg`} style={{ color: matchWinRateColor }}>
               {matchWinRate}%
             </p>
           </div>
           <div>
-            <p className="text-[10px]">Game Rate:</p>
+            <p className={`text-[10px] ${cardTextClassName}`}>Game Rate:</p>
             <p className="text-lg" style={{ color: gameWinRateColor }}>
               {gameWinRate}%
             </p>

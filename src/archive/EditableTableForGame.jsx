@@ -12,6 +12,7 @@ import { useContext } from "react";
 import MatchEditContext from "../contexts/MatchEditContext";
 
 const EditableRow = ({
+  cellClassName,
   cols,
   rowData,
   onChange,
@@ -113,7 +114,7 @@ const EditableRow = ({
             {col.renderCell ? (
               col.renderCell(localRowData[col.field], options)
             ) : (
-              <span className="text-center block">
+              <span className={`text-center block ${cellClassName}`}>
                 {options.find(
                   (option) => option.value == localRowData[col.field]
                 )?.label ||
@@ -132,15 +133,14 @@ const EditableRow = ({
             value={localRowData[col.field]}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${
-              hasError && !localRowData[col.field]?.toString().trim()
+            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${hasError && !localRowData[col.field]?.toString().trim()
                 ? "border border-red-500"
                 : ""
-            } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
-          <span className="text-center w-full block">
+          <span className={`text-center w-full block ${cellClassName}`}>
             {localRowData[col.field]}
           </span>
         );
@@ -218,6 +218,8 @@ const EditableRow = ({
 };
 
 const EditableTableForGame = ({
+  headerClassName,
+  cellClassName,
   columns,
   initialData,
   selectOptions,
@@ -251,8 +253,8 @@ const EditableTableForGame = ({
           col.defaultValue !== undefined
             ? col.defaultValue
             : col.type === "checkbox"
-            ? false
-            : "";
+              ? false
+              : "";
       }
     });
     setRows([...rows, emptyRow]);
@@ -290,7 +292,7 @@ const EditableTableForGame = ({
           <tr>
             {columns.map((col, index) => (
               <th className="py-2" key={index}>
-                <div className="bg-[#363638] rounded-xl p-2 mx-1">
+                <div className={`bg-[#363638] rounded-xl p-2 mx-1 ${headerClassName}`}>
                   {col.label}
                 </div>
               </th>
@@ -301,6 +303,7 @@ const EditableTableForGame = ({
         <tbody>
           {rows.map((row, index) => (
             <EditableRow
+              cellClassName={cellClassName}
               key={index}
               cols={columns}
               rowData={row}

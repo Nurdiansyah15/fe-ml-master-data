@@ -11,7 +11,7 @@ import GameRoleResultTable from "./GameRoleResultTable";
 import { clearGoldlaner } from "../../../../redux/features/goldlanerSlice";
 import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function Goldlaner({ game, team, match }) {
+export default function Goldlaner({ headerClassName, cellClassName, game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
@@ -38,9 +38,6 @@ export default function Goldlaner({ game, team, match }) {
     }
   }, [dispatch, game, team]);
 
-  console.log("Goldlaners:", goldlaners);
-  console.log("Heroes:", heroes);
-
   // Parsing kolom untuk tabel
   const columns = useMemo(
     () => [
@@ -64,8 +61,6 @@ export default function Goldlaner({ game, team, match }) {
       setInitialData([]);
     }
   }, [goldlaners]);
-
-  console.log("Initial Data:", initialData);
 
   // Opsi select untuk heroes
   const heroOptions = useMemo(
@@ -138,6 +133,8 @@ export default function Goldlaner({ game, team, match }) {
   return (
     <div className="w-full flex">
       <GameRoleResultTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={{

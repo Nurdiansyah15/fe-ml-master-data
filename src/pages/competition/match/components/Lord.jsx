@@ -110,7 +110,6 @@ export default function Lord({ game, match, team }) {
       teamID: team.team_id,
     };
 
-    console.log("Data ", data);
 
     const action = rowData.isNew
       ? addLordResult(data)

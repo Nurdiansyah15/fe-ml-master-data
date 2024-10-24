@@ -27,8 +27,6 @@ export default function GameSection({ team, match }) {
     }
   }, [dispatch, match]);
 
-  console.log("gamessss", games);
-
   return (
     <div className="flex w-full flex-col">
       <Tabs

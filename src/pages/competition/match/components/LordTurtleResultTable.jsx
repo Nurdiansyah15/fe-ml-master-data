@@ -3,6 +3,7 @@ import { Save, Trash, EditIcon } from "lucide-react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const EditableRow = ({
+  cellClassName,
   cols,
   rowData,
   onChange,
@@ -14,7 +15,7 @@ const EditableRow = ({
   handleSaveRow,
   onFieldChange,
 }) => {
-    const { isEditingMatch, toggleEditing, removeEditing } = useContext(MatchEditContext);
+  const { isEditingMatch, toggleEditing, removeEditing } = useContext(MatchEditContext);
   const [isEditingState, setIsEditingState] = useState(isEditing);
   const [hasError, setHasError] = useState(false);
   const [localRowData, setLocalRowData] = useState(rowData);
@@ -106,7 +107,7 @@ const EditableRow = ({
             {col.renderCell ? (
               col.renderCell(localRowData[col.field], options)
             ) : (
-              <span className="text-center block">
+              <span className={`text-center block ${cellClassName}`}>
                 {options.find(
                   (option) => option.value == localRowData[col.field]
                 )?.label ||
@@ -125,15 +126,14 @@ const EditableRow = ({
             value={localRowData[col.field]}
             onChange={(e) => handleInputChange(col.field, e.target.value)}
             disabled={isDisabled}
-            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${
-              hasError && !localRowData[col.field]?.toString().trim()
+            className={`border-b-1 border-gray-600 bg-transparent text-white rounded-md p-1 w-full text-center ${hasError && !localRowData[col.field]?.toString().trim()
                 ? "border border-red-500"
                 : ""
-            } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
-          <span className="text-center w-full block">
+          <span className={`text-center w-full block ${cellClassName}`}>
             {localRowData[col.field]}
           </span>
         );
@@ -142,11 +142,13 @@ const EditableRow = ({
 
   return (
     <tr>
-        <td className="py-2 w-32 p-2 rounded-md">
-            <div className="flex items-center gap-2 justify-center">
-                {index + 1}
-            </div>
-        </td>
+      <td className="py-2 w-32 p-2 rounded-md">
+        <div className="flex items-center gap-2 justify-center">
+          <div className={`${cellClassName}`}>
+            {index + 1}
+          </div>
+        </div>
+      </td>
       {cols.map((col, colIndex) => (
         <td className="py-2 w-32 p-2 rounded-md" key={colIndex}>
           {renderInput(col)}
@@ -182,6 +184,8 @@ const EditableRow = ({
 };
 
 const LordTurtleResultTable = ({
+  headerClassName,
+  cellClassName,
   columns,
   initialData,
   selectOptions,
@@ -216,8 +220,8 @@ const LordTurtleResultTable = ({
           col.defaultValue !== undefined
             ? col.defaultValue
             : col.type === "checkbox"
-            ? false
-            : "";
+              ? false
+              : "";
       }
     });
     setRows([...rows, emptyRow]);
@@ -252,13 +256,13 @@ const LordTurtleResultTable = ({
         <thead className="">
           <tr>
             <th className="py-2">
-                <div className="bg-[#363638] rounded-xl p-2 mx-1">
-                    Phase
-                </div>
+              <div className={`bg-[#363638] rounded-xl p-2 mx-1 ${headerClassName}`}>
+                Phase
+              </div>
             </th>
             {columns.map((col, index) => (
               <th className="py-2" key={index}>
-                <div className="bg-[#363638] rounded-xl p-2 mx-1">
+                <div className={`bg-[#363638] rounded-xl p-2 mx-1 ${headerClassName}`}>
                   {col.label}
                 </div>
               </th>
@@ -270,6 +274,7 @@ const LordTurtleResultTable = ({
           {rows.map((row, index) => (
             <EditableRow
               key={index}
+              cellClassName={cellClassName}
               cols={columns}
               rowData={row}
               onChange={handleChange}

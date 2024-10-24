@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/react";
 import { Edit, Eye } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ExcelExport from "../../components/export/ExcelExport";
 import MatchEditContext from "../../contexts/MatchEditContext";
 import { PageContext } from "../../contexts/PageContext";
@@ -17,12 +17,14 @@ import MemberSection from "./match/MemberSection";
 import PrioritySection from "./match/PrioritySection";
 import TeamStatsSection from "./match/TeamStatsSection";
 import TeamTitle from "./match/TeamTitle";
+import { usePDF } from "react-to-pdf";
 
 export default function Match() {
   const { updatePage } = useContext(PageContext);
   const { isEditingMatch, toggleEditing, removeEditing } =
     useContext(MatchEditContext);
   const { tournamentID, matchID } = useParams();
+  const navigation = useNavigate();
   const { match } = useSelector((state) => state.match);
   const { tournament } = useSelector((state) => state.tournament);
   const { games } = useSelector((state) => state.game);
@@ -33,6 +35,8 @@ export default function Match() {
   const [loading, setLoading] = useState(false);
 
   const [teamID, setTeamID] = useState("");
+
+  const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
 
   useEffect(() => {
     return () => {
@@ -63,8 +67,6 @@ export default function Match() {
       gms.length > 0 &&
       (match?.team_a_id === team?.team_id ||
         match?.team_b_id === team?.team_id);
-    console.log("cek: ", cek);
-    console.log("games: ", gms);
 
     setShowDetailMatch(cek);
   }, [games, team]);
@@ -113,7 +115,7 @@ export default function Match() {
           )}
           {!team && <span>Select Team</span>}
         </div>
-        <Button color="secondary">Export</Button>
+        <Button onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)} color="secondary">Export</Button>
         <ExcelExport />
       </div>
     );
@@ -125,7 +127,7 @@ export default function Match() {
   };
 
   return (
-    <div className="text-white flex flex-col justify-start items-start w-full p-4 gap-10">
+    <div ref={targetRef} className="text-white flex bg-[#161618] flex-col justify-start items-start w-full p-4 gap-10">
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
       {team && isShowDetailMatch && <TeamTitle team={team} />}
       {team && isShowDetailMatch && (

@@ -14,9 +14,6 @@ export default function Turtle({ game, match, team }) {
   const { turtles } = useSelector((state) => state.turtle);
 
   const columns = [
-    // {
-    //   label: "Phase", field: "phase", type: "text"
-    // },
     {
       label: "Setup",
       field: "setup",

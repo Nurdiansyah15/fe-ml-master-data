@@ -29,7 +29,6 @@ export const addFlexPick = createAsyncThunk(
                 role: role,
                 total: total
             };
-            console.log(data);
             
             const response = await axiosInstance.post(
                 `/api/matches/${matchID}/teams/${teamID}/flex-picks`,

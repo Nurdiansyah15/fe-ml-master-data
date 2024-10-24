@@ -14,7 +14,7 @@ import GameRoleResultTable from "./GameRoleResultTable";
 import EarlyResultForm from "./EarlyResultForm";
 import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function TrioMid({ game, team, match }) {
+export default function TrioMid({ headerClassName, cellClassName, game, team, match }) {
   const dispatch = useDispatch();
 
   const { heroes } = useSelector((state) => state.hero);
@@ -54,10 +54,6 @@ export default function TrioMid({ game, team, match }) {
     }
   }, [dispatch, game, team, trioMids]);
 
-  console.log("TriosMid:", trioMids);
-  console.log("Heroes:", heroes);
-  console.log("TrioMid Result:", trioMidResult);
-
   // Parsing kolom untuk tabel
   const columns = useMemo(
     () => [
@@ -83,8 +79,6 @@ export default function TrioMid({ game, team, match }) {
       setInitialData([]);
     }
   }, [trioMids]);
-
-  console.log("Initial Data:", initialData);
 
   // Opsi select untuk heroes
   const heroOptions = useMemo(
@@ -185,6 +179,8 @@ export default function TrioMid({ game, team, match }) {
   return (
     <div className="w-full flex flex-col">
       <GameRoleResultTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={{

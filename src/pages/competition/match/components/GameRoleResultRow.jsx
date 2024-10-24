@@ -4,6 +4,7 @@ import { useContext } from "react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const GameRoleResultRow = ({
+  cellClassName,
   cols,
   rowData,
   onChange,
@@ -128,7 +129,7 @@ const GameRoleResultRow = ({
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   )}
-                  <span className="text-center block">
+                  <span className={`text-center block ${cellClassName}`}>
                     {selectedOption?.label || "Unknown"}
                   </span>
                 </>
@@ -156,7 +157,7 @@ const GameRoleResultRow = ({
             onKeyDown={(e) => e.key === "Enter" && saveRow()}
           />
         ) : (
-          <span className="text-center w-full block">{displayValue}</span>
+          <span className={`text-center w-full block ${cellClassName}`}>{displayValue}</span>
         );
     }
   };

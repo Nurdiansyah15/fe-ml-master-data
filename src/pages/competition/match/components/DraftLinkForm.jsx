@@ -4,7 +4,7 @@ import Card from "../../../../components/Card";
 import { useContext } from "react";
 import MatchEditContext from "../../../../contexts/MatchEditContext";
 
-const DraftLinkForm = ({ initialVideoLink = "", initialImageLink, onSave }) => {
+const DraftLinkForm = ({ className, initialVideoLink = "", initialImageLink, onSave }) => {
   const { isEditingMatch, toggleEditing, removeEditing } =
     useContext(MatchEditContext);
   const [videoLink, setVideoLink] = useState(initialVideoLink);
@@ -36,7 +36,7 @@ const DraftLinkForm = ({ initialVideoLink = "", initialImageLink, onSave }) => {
   const toggleModal = () => setIsModalOpen(!isModalOpen); // Toggle modal
 
   return (
-    <Card className="flex flex-col gap-4 p-4 w-full rounded-lg">
+    <Card className={`flex flex-col gap-4 p-4 w-full rounded-lg ${className}`}>
       {/* Video Link Section */}
       <div>
         <label className="block mb-1 text-md font-bold">Video Link</label>
@@ -66,7 +66,7 @@ const DraftLinkForm = ({ initialVideoLink = "", initialImageLink, onSave }) => {
         <img
           src={preview || "https://placehold.co/600x400"}
           alt="Draft Preview"
-          className="w-auto h-[200px] object-cover border rounded cursor-pointer"
+          className="w-full h-[350px] object-contain border rounded cursor-pointer"
           onClick={toggleModal} // Buka modal saat gambar diklik
         />
       </div>

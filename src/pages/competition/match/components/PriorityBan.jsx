@@ -11,7 +11,7 @@ import {
 } from "../../../../redux/thunks/priorityBanThunk";
 import { getAllHeroBans } from "../../../../redux/thunks/matchThunk";
 
-export default function PriorityBan({ team, match }) {
+export default function PriorityBan({ headerClassName, cellClassName, team, match }) {
   const dispatch = useDispatch();
 
   const { heroBans } = useSelector((state) => state.heroBan);
@@ -225,6 +225,8 @@ export default function PriorityBan({ team, match }) {
   return (
     <div className="w-full flex">
       <CustomEditableTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={selectOptions}

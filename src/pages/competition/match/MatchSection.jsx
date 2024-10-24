@@ -145,13 +145,13 @@ export default function MatchSection({ match, handleChooseTeam }) {
             <div className="flex flex-row space-x-10 justify-around items-center p-2">
               <div className="flex flex-1 justify-around items-center">
                 <div
-                  className="w-40 h-40 hover:scale-105 transition"
+                  className="w-44 h-44 hover:scale-105 transition rounded-full items-center justify-center flex"
                   onClick={() => handleTeamClick(match?.team_a)}
                 >
                   <img
                     src={match?.team_a?.image}
                     alt={match?.team_a?.name}
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-32 h-32 object-contain bg-center"
                   />
                 </div>
                 <p className="text-center font-bold text-5xl">
@@ -166,13 +166,13 @@ export default function MatchSection({ match, handleChooseTeam }) {
                   {match?.team_b_score}
                 </p>
                 <div
-                  className="w-40 h-40 hover:scale-105 transition"
+                  className="w-40 h-40 hover:scale-105 transition rounded-full items-center justify-center flex"
                   onClick={() => handleTeamClick(match?.team_b)}
                 >
                   <img
                     src={match?.team_b?.image}
                     alt={match?.team_b?.name}
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-28 h-28 object-contain bg-center"
                   />
                 </div>
               </div>
@@ -201,11 +201,13 @@ export default function MatchSection({ match, handleChooseTeam }) {
                       );
                       return (
                         <div className="flex items-center gap-2 justify-center">
-                          <img
-                            src={hero?.image}
-                            alt="Hero"
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
                           <span>{hero?.label || "Unknown"}</span>
                         </div>
                       );
@@ -221,17 +223,38 @@ export default function MatchSection({ match, handleChooseTeam }) {
                       );
                       return (
                         <div className="flex items-center gap-2 justify-center">
-                          <img
-                            src={hero?.image}
-                            alt="Hero"
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
                           <span>{hero?.label || "Unknown"}</span>
                         </div>
                       );
                     },
                   },
-                  { label: "Win", field: "win", type: "select" },
+                  {
+                    label: "Win", field: "win", type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
                 ]}
                 initialData={initialData}
                 selectOptions={selectOptions}

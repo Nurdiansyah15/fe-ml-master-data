@@ -11,7 +11,7 @@ import {
 } from "../../../../redux/thunks/flexPickThunk";
 import { getAllHeroPicks } from "../../../../redux/thunks/matchThunk";
 
-export default function FlexPick({ team, match }) {
+export default function FlexPick({ headerClassName, cellClassName, team, match }) {
   const dispatch = useDispatch();
 
   const { heroPicks } = useSelector((state) => state.heroPick);
@@ -71,12 +71,6 @@ export default function FlexPick({ team, match }) {
       dependsOn: ["total"],
       readOnly: true,
       calculate: (rowData) => {
-        console.log("rowData: ", rowData);
-
-        console.log(
-          "total: ",
-          ((rowData.total / games?.length) * 100).toFixed(2)
-        );
 
         const selectedHeroPick = heroPicks.filter(
           (heroPick) => heroPick.hero.hero_id === parseInt(rowData.hero, 10)
@@ -225,6 +219,8 @@ export default function FlexPick({ team, match }) {
   return (
     <div className="w-full flex">
       <CustomEditableTable
+        headerClassName={headerClassName}
+        cellClassName={cellClassName}
         columns={columns}
         initialData={initialData}
         selectOptions={selectOptions}

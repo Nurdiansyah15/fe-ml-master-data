@@ -59,7 +59,6 @@ export default function Tournament() {
                 match?.team_b_id === team?.team_id
             );
             const groups = groupMatchesByStage(filter);
-            console.log("groups:", groups);
             setFilteredMatches(groups);
           }
         }
@@ -76,11 +75,9 @@ export default function Tournament() {
             match?.team_b_id === team?.team_id
         );
         const groups = groupMatchesByStage(filter);
-        console.log("groups:", groups);
         setFilteredMatches(groups);
       } else {
         const groups = groupMatchesByStage(matches);
-        console.log("groups:", groups);
         setFilteredMatches(groups);
       }
     }
