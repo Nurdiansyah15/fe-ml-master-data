@@ -7,7 +7,6 @@ import {
   ModalHeader,
   Spinner,
 } from "@nextui-org/react";
-import { Plus, ShieldHalf, Sword, User, X } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -21,10 +20,12 @@ import {
   getAllTournaments,
 } from "../../../redux/thunks/tournamentThunk";
 
+import { Plus, ShieldHalf, Sword, User, X, Home } from "lucide-react"; // Tambah Home
+
 export default function Sidebar({ isOpen, closeSidebar }) {
   const nav = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // Modal konfirmasi
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [dataToDelete, setDataToDelete] = useState(null);
   const { tournaments } = useSelector((state) => state.tournament);
   const [loading, setLoading] = useState(false);
@@ -69,31 +70,24 @@ export default function Sidebar({ isOpen, closeSidebar }) {
       });
   };
 
-  // const handleDeleteMatch = () => {
-  //   console.log("matchToDelete:", matchToDelete);
-  //   dispatch(deleteMatch(matchToDelete.match_id))
-  //     .unwrap()
-  //     .catch(console.error)
-  //     .finally(() => {
-  //       dispatch(getAllMatches(tournamentID));
-  //       setConfirmModalOpen(false);
-  //       setMatchToDelete(null);
-  //       setLoading(false);
-  //     });
-  // };
-
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-50 w-52 bg-[#1F1F21]  text-white transform transition-transform duration-300 ease-in-out ${
+      className={`fixed inset-y-0 left-0 z-50 w-52 bg-[#1F1F21] text-white transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } md:relative md:translate-x-0 mr-5`}
     >
-      <div
-        className="flex items-center justify-between p-4 cursor-pointer"
-        onClick={() => nav("/")}
-      >
-        <div className="flex items-center space-x-2">
-          <User color="blue" className="h-8 w-8" />
+      <div className="flex items-center p-4 cursor-pointer">
+        {/* Home Icon */}
+        <Home
+          color="white"
+          className="h-6 w-6 mr-2"
+          onClick={() => nav("/")} // Navigasi ke home
+        />
+        <div
+          className="flex items-center space-x-2"
+          onClick={() => nav("/profile")} // Log di console saat avatar diklik
+        >
+          <User color="blue" className="h-7 w-7" />
           <div>
             <h1 className="text-xl font-bold">{user?.username || "missing"}</h1>
           </div>
@@ -105,7 +99,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
 
       <div className="p-4">
         <Button
-          onClick={() => setModalOpen(true)} // Open the modal when clicked
+          onClick={() => setModalOpen(true)}
           className="flex items-center justify-center w-full bg-[#1F1F21] border border-[#7E7E7E] text-white py-2 rounded-xl px-3"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -113,7 +107,6 @@ export default function Sidebar({ isOpen, closeSidebar }) {
         </Button>
         <nav className="mt-4 max-h-[500px] overflow-y-scroll">
           <ul>
-            {/* Wrap each item with Link */}
             {loading ? (
               <p>
                 <Spinner />
