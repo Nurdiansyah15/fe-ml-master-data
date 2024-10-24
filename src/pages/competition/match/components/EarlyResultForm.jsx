@@ -1,9 +1,12 @@
 import { Edit } from "lucide-react";
 import { Save } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import MatchEditContext from "../../../../contexts/MatchEditContext";
 
 const EarlyResultForm = ({ onSelect, onSave, initialResult = "" }) => {
   const [earlyResult, setEarlyResult] = useState(initialResult);
+  const { isEditingMatch, toggleEditing, removeEditing } =
+    useContext(MatchEditContext);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
 
@@ -48,7 +51,7 @@ const EarlyResultForm = ({ onSelect, onSave, initialResult = "" }) => {
           </select>
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
-        <div>
+        {isEditingMatch && <div>
           {isEditing ? (
             <Save
               onClick={handleSave}
@@ -60,7 +63,7 @@ const EarlyResultForm = ({ onSelect, onSave, initialResult = "" }) => {
               className="cursor-pointer hover:opacity-80"
             />
           )}
-        </div>
+        </div>}
       </div>
     </div>
   );

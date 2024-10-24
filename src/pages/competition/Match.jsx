@@ -1,5 +1,5 @@
-import { Button } from "@nextui-org/react";
-import { Edit, Eye } from "lucide-react";
+import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { ChevronDownIcon, Edit, Eye } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,7 +36,7 @@ export default function Match() {
 
   const [teamID, setTeamID] = useState("");
 
-  const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
+  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
 
   useEffect(() => {
     return () => {
@@ -70,6 +70,17 @@ export default function Match() {
 
     setShowDetailMatch(cek);
   }, [games, team]);
+
+  const handleExport = (key) => {
+    
+    if (key === "pdf") {
+      
+      return navigation(`/export/tournament/${tournamentID}/match/${matchID}`)
+    }
+    if (key === "excel") {
+      return (<ExcelExport />)
+    }
+  }
 
   useEffect(() => {
     updatePage(
@@ -115,8 +126,34 @@ export default function Match() {
           )}
           {!team && <span>Select Team</span>}
         </div>
-        <Button onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)} color="secondary">Export</Button>
-        <ExcelExport />
+        <ButtonGroup>
+          <Dropdown placement="bottom-end">
+            <DropdownTrigger>
+              <Button color="secondary">
+                Export
+                <ChevronDownIcon />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Export"
+              selectedKeys={["PDF", "EXCEL"]}
+              selectionMode="single"
+              onSelectionChange={(val) => handleExport(val.anchorKey)}
+              className="max-w-[300px]"
+            >
+              <DropdownItem key="pdf">
+                {/* <Button isIconOnly onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)} color="transparent"> */}
+                  PDF
+                {/* </Button> */}
+              </DropdownItem>
+              <DropdownItem key="excel">
+                {/* <ExcelExport /> */}
+                Excel
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </ButtonGroup>
       </div>
     );
   }, [updatePage, tournament?.name, team, isEditingMatch, toggleEditing]);

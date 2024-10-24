@@ -13,7 +13,6 @@ export default function Turtle({ game, match, team }) {
 
   const { turtles } = useSelector((state) => state.turtle);
 
-  console.log("team lord: ", team);
   
 
   const columns = [
@@ -154,7 +153,6 @@ export default function Turtle({ game, match, team }) {
 
   useEffect(() => {
     if (turtles && turtles.length > 0) {
-      console.log("Turtles:", turtles);
 
       const initialTurtleResults = turtles.map((turtle) => ({
         id: turtle.turtle_result_id,

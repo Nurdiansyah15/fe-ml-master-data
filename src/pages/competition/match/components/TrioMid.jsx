@@ -27,17 +27,14 @@ export default function TrioMid({ headerClassName, cellClassName, game, team, ma
 
   const [earlyResult, setEarlyResult] = useState(null);
 
-  console.log("tt: ", team);
-  
-
   // Ambil data heroes dan trioMids berdasarkan game dan team ID
   useEffect(() => {
     if (game && team) {
       dispatch(getAllHeroes());
       dispatch(
-        getAllHeroPicks({ matchID: match.match_id, teamID: team.team_id })
+        getAllHeroPicks({ matchID: match?.match_id, teamID: team?.team_id })
       );
-      dispatch(getAllTrioMids({ gameID: game.game_id, teamID: team.team_id }));
+      dispatch(getAllTrioMids({ gameID: game?.game_id, teamID: team?.team_id }));
     }
 
     return () => {
@@ -46,11 +43,11 @@ export default function TrioMid({ headerClassName, cellClassName, game, team, ma
   }, [dispatch, game, team]);
 
   useEffect(() => {
-    if (trioMids.length > 0) {
+    if (trioMids?.length > 0) {
       dispatch(
         getTrioMidResult({
-          gameID: game.game_id,
-          teamID: team.team_id,
+          gameID: game?.game_id,
+          teamID: team?.team_id,
           trioMidID: trioMids[0]?.trio_mid_id,
         })
       );

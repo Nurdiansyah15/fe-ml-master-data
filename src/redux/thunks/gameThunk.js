@@ -359,11 +359,6 @@ export const getAllTrioMids = createAsyncThunk(
       const response = await axiosInstance.get(
         `/api/games/${gameID}/teams/${teamID}/trio-mids`
       );
-
-      console.log("ff: ", teamID);
-      
-
-      console.log("sdsada: ", response.data);
       
 
       return response.data;

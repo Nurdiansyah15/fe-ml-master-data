@@ -82,10 +82,10 @@ export default function ExcelExport() {
               `/api/games/${gameId}/teams/${team.team_id}/explaners`
             ),
             axiosInstance.get(
-              `/api/matches/${match.match_id}/games/${gameId}/turtle-results`
+              `/api/games/${gameId}/teams/${team.team_id}/turtle-results`
             ),
             axiosInstance.get(
-              `/api/matches/${match.match_id}/games/${gameId}/lord-results`
+              `/api/games/${gameId}/teams/${team.team_id}/lord-results`
             ),
           ]);
 
@@ -870,13 +870,13 @@ export default function ExcelExport() {
 
   return (  
     <Button
-      color="success"
+      color="transparent"
       onClick={exportToExcel}
       isLoading={isLoading}
       disabled={isLoading}
       isIconOnly
     >
-      <CircleArrowOutUpRight color="white" />
+      Excel
     </Button>
   );
 }
