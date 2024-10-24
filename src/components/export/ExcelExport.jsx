@@ -17,7 +17,7 @@ export default function ExcelExport() {
   const getData = async () => {
     if (!match?.match_id || !team?.team_id || !tournament?.tournament_id) {
       console.warn("Missing required IDs for data fetching");
-      return null; 
+      return null;
     }
 
     try {
@@ -269,7 +269,7 @@ export default function ExcelExport() {
     }
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Match Data");
+    const worksheet = workbook.addWorksheet(`${match?.stage}`);
 
     // setAllColumnWidths(worksheet, 10, 12);
 
@@ -863,12 +863,12 @@ export default function ExcelExport() {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "Games.xlsx");
+    saveAs(blob, `${tournament.name} - ${team.name}.xlsx`);
 
     setIsLoading(false);
   };
 
-  return (
+  return (  
     <Button
       color="success"
       onClick={exportToExcel}

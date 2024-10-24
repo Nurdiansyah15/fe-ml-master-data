@@ -11,6 +11,7 @@ import Teams from "../pages/teams/Teams";
 import TeamDetail from "../pages/teams/TeamDetail";
 import Match from "../pages/competition/Match";
 import Sheet from "../pages/experiment/Sheet";
+import Profile from "../pages/auth/Profile";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -27,6 +28,10 @@ const routes = [
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "tournament/:tournamentID",
