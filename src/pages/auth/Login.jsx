@@ -7,6 +7,7 @@ import { z } from "zod";
 import LoadingPage from "../../components/global/LoadingPage";
 import { loginUser } from "../../redux/thunks/authThunk";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -18,6 +19,7 @@ const Login = () => {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isSecure, setSecure] = useState(true)
   const [error, setError] = useState(null);
   const location = useLocation();
   const { token } = useSelector((state) => state.auth);
@@ -59,8 +61,8 @@ const Login = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-800 text-white p-5 justify-center items-center">
-      <div className="w-full max-w-md p-8 bg-gray-700 rounded-lg shadow-lg">
+    <div className="flex h-screen bg-gray-800 text-white p-5 justify-center items-center bg-[url('bg.jpg')] bg-cover bg-center">
+      <div className="w-full max-w-md p-8 bg-[#161618] rounded-xl shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">Login</h1>
 
         {error && (
@@ -82,7 +84,7 @@ const Login = () => {
                   id="username"
                   label="Username"
                   type="text"
-                  className="bg-gray-800 text-white"
+                  className="bg-gray-800 text-white rounded-xl"
                   aria-label="Username"
                   aria-invalid={!!errors.username}
                 />
@@ -105,11 +107,21 @@ const Login = () => {
                 <Input
                   {...field}
                   label="Password"
-                  type="password"
+                  type={isSecure ? "password" : "text"}
                   fullWidth
-                  className="bg-gray-800 text-white"
+                  className="bg-gray-800 text-white rounded-xl"
                   aria-label="Password"
                   aria-invalid={!!errors.password}
+                  endContent={
+                    <button className="focus:outline-none" type="button" onClick={() => setSecure(!isSecure)} aria-label="toggle password visibility">
+                      {isSecure ? (
+                        <FaEye className="text-2xl text-default-400 pointer-events-none" />
+                      ) : (
+                        <FaEyeSlash className="text-2xl text-default-400 pointer-events-none" />
+                      )}
+                    </button>
+                  }
+
                 />
               )}
             />

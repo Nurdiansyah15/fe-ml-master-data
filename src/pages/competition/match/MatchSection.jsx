@@ -146,7 +146,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
               <div className="flex flex-1 justify-around items-center">
                 <div
                   className="w-44 h-44 hover:scale-105 transition rounded-full items-center justify-center flex"
-                  onClick={() => handleTeamClick(match?.team_a)}
+                  // onClick={() => handleTeamClick(match?.team_a)}
                 >
                   <img
                     src={match?.team_a?.image}
@@ -167,7 +167,7 @@ export default function MatchSection({ match, handleChooseTeam }) {
                 </p>
                 <div
                   className="w-40 h-40 hover:scale-105 transition rounded-full items-center justify-center flex"
-                  onClick={() => handleTeamClick(match?.team_b)}
+                  // onClick={() => handleTeamClick(match?.team_b)}
                 >
                   <img
                     src={match?.team_b?.image}

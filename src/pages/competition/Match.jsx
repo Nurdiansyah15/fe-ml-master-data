@@ -1,11 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/react";
+import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 import { ChevronDownIcon, Edit, Eye } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,15 +71,6 @@ export default function Match() {
     setShowDetailMatch(cek);
   }, [games, team]);
 
-  const handleExport = (key) => {
-    if (key === "pdf") {
-      return navigation(`/export/tournament/${tournamentID}/match/${matchID}`);
-    }
-    if (key === "excel") {
-      return <ExcelExport />;
-    }
-  };
-
   useEffect(() => {
     updatePage(
       `${tournament?.name}`,
@@ -131,34 +115,36 @@ export default function Match() {
           )}
           {!team && <span>Select Team</span>}
         </div>
-        <ButtonGroup>
-          <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-              <Button color="secondary">
-                Export
-                <ChevronDownIcon />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Export"
-              selectedKeys={["PDF", "EXCEL"]}
-              selectionMode="single"
-              onSelectionChange={(val) => handleExport(val.anchorKey)}
-              className="max-w-[300px]"
-            >
-              <DropdownItem key="pdf">
-                {/* <Button isIconOnly onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)} color="transparent"> */}
-                PDF
-                {/* </Button> */}
-              </DropdownItem>
-              <DropdownItem key="excel">
-                {/* <ExcelExport /> */}
-                <ExcelExport />
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </ButtonGroup>
+        <Popover placement="bottom" offset={20} showArrow>
+          <PopoverTrigger>
+            <Button color="secondary">
+              Export
+              <ChevronDownIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="">
+            <div className="p-2 flex flex-col gap-2">
+              {/* Edit Button */}
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => navigation(`/export/tournament/${tournamentID}/match/${matchID}`)}
+                >
+                  PDF
+                </Button>
+              </div>
+
+              {/* Delete Button */}
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                >
+                  <ExcelExport />
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     );
   }, [updatePage, tournament?.name, team, isEditingMatch, toggleEditing]);
