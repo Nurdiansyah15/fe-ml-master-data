@@ -36,7 +36,7 @@ export default function Match() {
 
   const [teamID, setTeamID] = useState("");
 
-  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
 
   useEffect(() => {
     return () => {
@@ -78,9 +78,9 @@ export default function Match() {
       return navigation(`/export/tournament/${tournamentID}/match/${matchID}`)
     }
     if (key === "excel") {
-      return (<ExcelExport />)
+      return <ExcelExport />;
     }
-  }
+  };
 
   useEffect(() => {
     updatePage(
@@ -167,7 +167,10 @@ export default function Match() {
   };
 
   return (
-    <div ref={targetRef} className="text-white flex bg-[#161618] flex-col justify-start items-start w-full p-4 gap-10">
+    <div
+      ref={targetRef}
+      className="text-white flex bg-[#161618] flex-col justify-start items-start w-full p-4 gap-10"
+    >
       <MatchSection handleChooseTeam={handleChooseTeam} match={match} />
       {team && isShowDetailMatch && <TeamTitle team={team} />}
       {team && isShowDetailMatch && (

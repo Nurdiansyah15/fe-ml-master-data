@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button, Spinner } from "@nextui-org/react";
 import { CircleArrowOutUpRight } from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -91,12 +91,12 @@ export default function ExcelExport() {
 
           return {
             gameId,
-            gameResults: gameResultsRes.data,
-            trioMids: trioMidsRes.data,
-            goldlaners: goldlanersRes.data,
-            explaners: explanersRes.data,
-            turtles: turtlesRes.data,
-            lords: lordsRes.data,
+            gameResults: gameResultsRes.data || [],
+            trioMids: trioMidsRes.data || [],
+            goldlaners: goldlanersRes.data || [],
+            explaners: explanersRes.data || [],
+            turtles: turtlesRes.data || [],
+            lords: lordsRes.data || [],
           };
         })
       );
@@ -708,10 +708,12 @@ export default function ExcelExport() {
       createSectionTitle(worksheet, "Video Link :", startRow, startCol);
       createSectionTitle(
         worksheet,
-        {
-          text: `${game.video_link}`,
-          hyperlink: game.video_link,
-        },
+        game.video_link
+          ? {
+              text: `${game.video_link}`,
+              hyperlink: game.video_link,
+            }
+          : "",
         startRow,
         startCol + 1
       );
@@ -720,10 +722,12 @@ export default function ExcelExport() {
       createSectionTitle(worksheet, "Draft Link :", startRow, startCol);
       createSectionTitle(
         worksheet,
-        {
-          text: `${game.full_draft_image}`,
-          hyperlink: game.full_draft_image,
-        },
+        game.full_draft_image
+          ? {
+              text: `${game.full_draft_image}`,
+              hyperlink: game.full_draft_image,
+            }
+          : "",
         startRow,
         startCol + 1
       );
@@ -868,15 +872,9 @@ export default function ExcelExport() {
     setIsLoading(false);
   };
 
-  return (  
-    <Button
-      color="transparent"
-      onClick={exportToExcel}
-      isLoading={isLoading}
-      disabled={isLoading}
-      isIconOnly
-    >
-      Excel
-    </Button>
+  return (
+    <button onClick={exportToExcel}>
+      {isLoading ? <Spinner /> : "Export"}
+    </button>
   );
 }
