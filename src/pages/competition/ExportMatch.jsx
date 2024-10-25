@@ -133,7 +133,7 @@ export default function ExportMatch() {
         <div ref={targetRef} className="flex flex-col justify-start items-start min-w-[1080px] w-full p-4 px-8 gap-10">
           <div className="flex flex-row justify-between items-center w-full">
             <div className="flex flex-col space-y-1">
-              <div className="text-2xl font-semibold">MPL S14</div>
+              <div className="text-2xl font-semibold">{tournament?.name}</div>
               <div className="text-4xl font-bold">{match?.stage} - Day {match?.day}</div>
               <div className="text-lg">{moment(match?.datetime).format("MMM Do, YYYY h:mm A")}</div>
             </div>
