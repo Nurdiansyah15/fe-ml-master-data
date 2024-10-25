@@ -25,7 +25,9 @@ const heroSlice = createSlice({
       })
       .addCase(getAllHeroes.fulfilled, (state, action) => {
         state.loading = false;
-        state.heroes = action.payload;
+        state.heroes = action.payload.sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        });
       })
       .addCase(getAllHeroes.rejected, (state, action) => {
         state.loading = false;

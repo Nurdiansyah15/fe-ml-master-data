@@ -15,7 +15,7 @@ import {
 import { fromUnixTime } from "../../../utils/timeFormator";
 
 const matchSchema = z.object({
-  week: z.string().min(1, "Week is required"),
+  stage: z.string().min(1, "Stage is required"),
   day: z.string().min(1, "Day is required"),
   datetime: z.string().min(1, "Datetime is required"),
   team_a: z.number().min(1, "Team is required"),
@@ -35,7 +35,7 @@ export default function MatchForm({ onSubmit, editingMatch }) {
   } = useForm({
     resolver: zodResolver(matchSchema),
     defaultValues: {
-      week: "",
+      stage: "",
       day: "",
       datetime: "",
       team_a: "",
@@ -51,7 +51,7 @@ export default function MatchForm({ onSubmit, editingMatch }) {
 
   useEffect(() => {
     if (editingMatch) {
-      setValue("week", editingMatch.week.toString());
+      setValue("stage", editingMatch.stage);
       setValue("day", editingMatch.day.toString());
       setValue("datetime", fromUnixTime(editingMatch.date)); // Format waktu lokal
       setValue("team_a", editingMatch.team_a_id);
@@ -74,29 +74,22 @@ export default function MatchForm({ onSubmit, editingMatch }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
       <div className="mb-1">
-        <label className="block mb-2">Week</label>
+        <label className="block mb-2">Stage/Round</label>
         <Controller
-          name="week"
+          name="stage"
           control={control}
           render={({ field }) => (
             <>
-              <Select
+              <Input
                 {...field}
-                placeholder="Select week..."
-                status={errors.week ? "error" : "default"}
-                aria-label="Select Week"
-                className="w-full"
-                selectedKeys={field.value ? [field.value] : []}
-              >
-                {weeks.map((week) => (
-                  <SelectItem key={week.value} value={week.value}>
-                    {week.label}
-                  </SelectItem>
-                ))}
-              </Select>
-              {errors.week && (
+                type="text"
+                placeholder="Input stage/round name"
+                fullWidth
+                className="text-gray-600 w-full"
+              />
+              {errors.stage && (
                 <span className="text-danger text-sm">
-                  {errors.week.message}
+                  {errors.stage.message}
                 </span>
               )}
             </>
@@ -111,20 +104,14 @@ export default function MatchForm({ onSubmit, editingMatch }) {
           control={control}
           render={({ field }) => (
             <>
-              <Select
+              <Input
                 {...field}
-                placeholder="Select day..."
-                status={errors.day ? "error" : "default"}
-                aria-label="Select Day"
-                className="w-full"
-                selectedKeys={field.value ? [field.value] : []}
-              >
-                {days.map((day) => (
-                  <SelectItem key={day.value} value={day.value}>
-                    {day.label}
-                  </SelectItem>
-                ))}
-              </Select>
+                type="number"
+                min={1}
+                placeholder="input day"
+                fullWidth
+                className="text-gray-600 w-full"
+              />
               {errors.day && (
                 <span className="text-danger text-sm">
                   {errors.day.message}

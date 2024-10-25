@@ -29,7 +29,9 @@ const gameSlice = createSlice({
       })
       .addCase(getAllMatchGames.fulfilled, (state, action) => {
         state.loading = false;
-        state.games = action.payload;
+        state.games = action.payload.sort((a, b) => {
+          return a.game_number - b.game_number;
+        });
       })
       .addCase(getAllMatchGames.rejected, (state, action) => {
         state.loading = false;

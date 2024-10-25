@@ -5,6 +5,7 @@ import { PageContext } from "../../contexts/PageContext";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
+import TeamSelect from "./TeamSelect";
 
 export default function Header({ toggleSidebar }) {
   const loc = useLocation();
@@ -38,9 +39,8 @@ export default function Header({ toggleSidebar }) {
               isIconOnly
               disabled={loc.pathname === "/"}
               variant="light"
-              className={`text-white ${
-                loc.pathname === "/" ? "opacity-50" : ""
-              }`}
+              className={`text-white ${loc.pathname === "/" ? "opacity-50" : ""
+                }`}
               onClick={onPrevPage}
             >
               <ChevronLeft className="h-5 w-5" />

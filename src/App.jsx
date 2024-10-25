@@ -7,6 +7,7 @@ import setupInterceptors from "./api/setupInterceptors";
 import { createBrowserRouter } from "react-router-dom";
 import routes from "./routing/route";
 import { Toaster } from "sonner";
+import { MatchEditProvider } from "./contexts/MatchEditContext";
 
 const router = createBrowserRouter(routes);
 setupInterceptors(store);
@@ -16,7 +17,9 @@ function App() {
     <Provider store={store}>
       <Toaster />
       <NextUIProvider>
-        <RouterProvider router={router} />
+        <MatchEditProvider>
+          <RouterProvider router={router} />
+        </MatchEditProvider>
       </NextUIProvider>
     </Provider>
   );

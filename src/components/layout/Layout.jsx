@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { MatchEditProvider } from "../../contexts/MatchEditContext";
 import { PageProvider } from "../../contexts/PageContext";
-import Sidebar from "./sidebar/Sidebar";
 import Header from "./Header";
+import Sidebar from "./sidebar/Sidebar";
 
 export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -10,7 +11,9 @@ export default function Layout({ children }) {
 
   return (
     <PageProvider>
-      <div className={`flex h-screen bg-[#1F1F21] text-white p-5 pb-0 pr-0`}>
+      <div
+        className={`flex h-screen bg-[#1F1F21] text-white p-5 pb-0 pr-0`}
+      >
         {/* Sidebar */}
         <Sidebar
           isOpen={isSidebarOpen}

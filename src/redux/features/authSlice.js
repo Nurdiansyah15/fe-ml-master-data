@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserInfo, loginUser } from "../thunks/authThunk";
+import { getUserInfo, loginUser, updateUser } from "../thunks/authThunk";
 
 const authSlice = createSlice({
   name: "auth",
@@ -13,7 +13,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem("token");
+      localStorage.clear()
     },
   },
   extraReducers: (builder) => {
@@ -40,6 +40,18 @@ const authSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(getUserInfo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

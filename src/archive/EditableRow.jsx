@@ -62,7 +62,7 @@ const EditableRow = ({
                 checked={rowData[col.field]}
                 onChange={(e) => handleInputChange(col.field, e.target.checked)}
                 disabled={!isEditingState}
-                className="w-5 h-6 cursor-pointer"
+                className="w-5 h-6 cursor-pointer bg-[#1f1f1f]"
               />
             </div>
           ) : col.type === "select" ? (
@@ -70,9 +70,9 @@ const EditableRow = ({
               <select
                 value={rowData[col.field] || ""}
                 onChange={(e) => handleInputChange(col.field, e.target.value)}
-                className="bg-slate-800 text-white rounded-md p-1 w-full text-center"
+                className="bg-[#1f1f1f] text-white rounded-md p-1 w-full text-center"
               >
-                <option value="">Pilih Team</option>
+                <option value="">Pilih {col.label}</option>
                 {selectOptions[col.field].map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}

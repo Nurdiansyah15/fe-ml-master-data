@@ -70,3 +70,18 @@ export const updateHero = createAsyncThunk(
     }
   }
 );
+
+export const deleteHero = createAsyncThunk(
+  "heroes/deleteHero",
+  async (heroID, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/heroes/${heroID}`);
+      CustomToast("Hero deleted successfully", "success");
+      dispatch(getAllHeroes());
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);

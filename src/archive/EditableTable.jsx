@@ -36,6 +36,7 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
   const handleDeleteRow = (index) => {
     const updatedRows = rows.filter((_, rowIndex) => rowIndex !== index);
     setRows(updatedRows);
+    setEditingIndex(null);
   };
 
   return (
@@ -50,7 +51,7 @@ const EditableTable = ({ columns, initialData, selectOptions, onSaveRow }) => {
             ))}
             <th className="py-2"></th>
           </tr>
-        </thead>
+        </thead>  
         <tbody>
           {rows.map((row, index) => (
             <EditableRow

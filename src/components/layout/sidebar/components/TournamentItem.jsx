@@ -9,14 +9,14 @@ import { useEffect, useState, useRef } from "react";
 import { Controller, set, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateTournament } from "../../../../redux/thunks/tournamentThunk"; 
+import { updateTournament } from "../../../../redux/thunks/tournamentThunk";
 import { Save } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaPen } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const TournamentItem = ({ tournament }) => {
+const TournamentItem = ({ tournament, onDelete }) => {
   const nav = useNavigate();
   const loc = useLocation();
   const [isEditing, setIsEditing] = useState(false);
@@ -147,7 +147,10 @@ const TournamentItem = ({ tournament }) => {
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button className="text-gray-500 hover:text-white text-xs p-0 m-0">
+              <button
+                onClick={onDelete}
+                className="text-gray-500 hover:text-white text-xs p-0 m-0"
+              >
                 <FontAwesomeIcon icon={faTrash} />
               </button>
             </div>

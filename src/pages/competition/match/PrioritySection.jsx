@@ -1,12 +1,13 @@
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import { CardBody, Tab, Tabs } from "@nextui-org/react";
 import React from "react";
 import PriorityPick from "./components/PriorityPick";
 import PriorityBan from "./components/PriorityBan";
 import FlexPick from "./components/FlexPick";
+import Card from "../../../components/Card";
 
-export default function PrioritySection() {
+export default function PrioritySection({ team, match }) {
   return (
-    <div className="flex w-full flex-col mt-10">
+    <div className="flex w-full flex-col">
       <Tabs
         aria-label="Options"
         color="primary"
@@ -14,24 +15,24 @@ export default function PrioritySection() {
         className="w-fit rounded-xl border border-gray-700"
       >
         <Tab key="pick" title="Priority Pick">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
-              <PriorityPick />
-            </CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
+            <PriorityPick team={team} match={match} />
+            {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="ban" title="Priority Ban">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
-              <PriorityBan />
-            </CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
+            <PriorityBan team={team} match={match} />
+            {/* </CardBody> */}
           </Card>
         </Tab>
         <Tab key="flex" title="Flex Pick">
-          <Card className="bg-gray-800 text-white">
-            <CardBody>
-              <FlexPick />
-            </CardBody>
+          <Card className="text-white">
+            {/* <CardBody> */}
+            <FlexPick team={team} match={match} />
+            {/* </CardBody> */}
           </Card>
         </Tab>
       </Tabs>

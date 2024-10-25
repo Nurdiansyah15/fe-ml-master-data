@@ -1,14 +1,24 @@
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+} from "@nextui-org/react";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import EditableTable from "../../../archive/EditableTable";
-import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
+import EditableTableForGame from "../../../archive/EditableTableForGame";
+import Card from "../../../components/Card";
 import {
   createMatchGame,
-  updateGame,
+  deleteGame,
   getAllMatchGames,
+  updateGame,
 } from "../../../redux/thunks/gameThunk";
-import Card from "../../../components/Card";
+import { getAllTeamsInMatch } from "../../../redux/thunks/teamThunk";
 
 export default function MatchSection({ match, handleChooseTeam }) {
   const dispatch = useDispatch();
@@ -17,10 +27,8 @@ export default function MatchSection({ match, handleChooseTeam }) {
 
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
+  const [isAlertVisible, setAlertVisible] = useState(false); // State for alert
 
-  // console.log("matchlalalalal", match);
-
-  // Fetch teams and games when match_id is available
   useEffect(() => {
     if (match) {
       setLoading(true);
@@ -31,7 +39,6 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }
   }, [dispatch, match]);
 
-  // Populate initial data for the editable table
   useEffect(() => {
     const data = games.map((game) => ({
       id: game.game_id,
@@ -42,13 +49,13 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }));
     setInitialData(data);
 
-    return () => setInitialData([]); // Clean up on unmount
+    return () => {
+      setInitialData([]);
+    };
   }, [games]);
 
-  // Memoize select options for performance optimization
   const selectOptions = useMemo(() => {
     if (!teams) return {};
-
     return ["first", "second", "win"].reduce((options, key) => {
       options[key] = teams.map((team) => ({
         value: team.team_id,
@@ -59,8 +66,16 @@ export default function MatchSection({ match, handleChooseTeam }) {
     }, {});
   }, [teams]);
 
-  // Handle saving a row (create or update game)
+  const handleTeamClick = (team) => {
+    if (games.length === 0) {
+      setAlertVisible(true); // Show alert if no game details
+      return;
+    }
+    handleChooseTeam(team); // Proceed if there are games
+  };
+
   const handleSaveRow = (rowData) => {
+    console.log(rowData);
     setLoading(true);
     const data = {
       matchID: match?.match_id,
@@ -78,28 +93,168 @@ export default function MatchSection({ match, handleChooseTeam }) {
 
     dispatch(action)
       .unwrap()
+      .then(() => dispatch(getAllMatchGames(match?.match_id)))
       .catch((error) => console.error("Error:", error))
       .finally(() => setLoading(false));
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleDeleteRow = (data) => {
+    console.log("Data yang dihapus (data):", data);
+    setLoading(true);
+    dispatch(deleteGame({ matchID: match?.match_id, gameID: data.id }))
+      .unwrap()
+      .then(() => dispatch(getAllMatchGames(match?.match_id)))
+      .catch((error) => console.error("Error:", error))
+      .finally(() => setLoading(false));
+  };
+
+  function findSmallestMissingNumber(numbers) {
+    const sorted = [...new Set(numbers)].sort((a, b) => a - b);
+    let expected = 1;
+
+    for (let num of sorted) {
+      if (num !== expected) break;
+      expected++;
+    }
+
+    return expected;
+  }
+
+  if (loading)
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
-    <div className="mb-10 w-full">
+    <div className="w-full">
       <p className="text-xl font-bold mb-4">
         {match?.team_a?.name} VS {match?.team_b?.name}
       </p>
-      <div className="flex flex-row space-x-5 w-full">
-        <Card className="text-white flex flex-1 max-w-[60%]">
+      <div className="flex flex-col w-full space-y-5">
+        <Card className="text-white flex flex-1 w-full">
           <div className="flex flex-col space-y-6 pb-10">
-            <MatchDetails match={match} handleChooseTeam={handleChooseTeam} />
+            <div>
+              <p className="text-sm text-gray-400">
+                Week {match?.week} -{" "}
+                {moment(match?.datetime).format("MMM Do, YYYY h:mm A")}
+              </p>
+              <p className="text-3xl text-white font-bold">Day {match?.day}</p>
+            </div>
+            <div className="flex flex-row space-x-10 justify-around items-center p-2">
+              <div className="flex flex-1 justify-around items-center">
+                <div
+                  className="w-44 h-44 hover:scale-105 transition rounded-full items-center justify-center flex"
+                  // onClick={() => handleTeamClick(match?.team_a)}
+                >
+                  <img
+                    src={match?.team_a?.image}
+                    alt={match?.team_a?.name}
+                    className="w-32 h-32 object-contain bg-center"
+                  />
+                </div>
+                <p className="text-center font-bold text-5xl">
+                  {match?.team_a_score}
+                </p>
+              </div>
+
+              <div className="text-3xl text-white font-bold">VS</div>
+
+              <div className="flex flex-1 justify-around items-center">
+                <p className="text-center font-bold text-5xl">
+                  {match?.team_b_score}
+                </p>
+                <div
+                  className="w-40 h-40 hover:scale-105 transition rounded-full items-center justify-center flex"
+                  // onClick={() => handleTeamClick(match?.team_b)}
+                >
+                  <img
+                    src={match?.team_b?.image}
+                    alt={match?.team_b?.name}
+                    className="w-28 h-28 object-contain bg-center"
+                  />
+                </div>
+              </div>
+            </div>
             <div className="flex w-full">
-              <EditableTable
+              <EditableTableForGame
+                maxRows={match?.team_a_score + match?.team_b_score}
+                onDeleteRow={handleDeleteRow}
                 columns={[
-                  { label: "Game", field: "game", type: "text" },
-                  { label: "First Pick", field: "first", type: "select" },
-                  { label: "Second Pick", field: "second", type: "select" },
-                  { label: "Win", field: "win", type: "select" },
+                  {
+                    label: "Game",
+                    field: "game",
+                    type: "text",
+                    readOnly: true,
+                    defaultValue: findSmallestMissingNumber(
+                      ([...games] || []).map((game) => game.game_number)
+                    ),
+                  },
+                  {
+                    label: "First Pick",
+                    field: "first",
+                    type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    label: "Second Pick",
+                    field: "second",
+                    type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    label: "Win", field: "win", type: "select",
+                    renderCell: (value, options) => {
+                      const hero = options.find(
+                        (option) => option.value == value
+                      );
+                      return (
+                        <div className="flex items-center gap-2 justify-center">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <img
+                              src={hero?.image}
+                              alt="Hero"
+                              className="w-8 h-8 object-contain bg-center"
+                            />
+                          </div>
+                          <span>{hero?.label || "Unknown"}</span>
+                        </div>
+                      );
+                    },
+                  },
                 ]}
                 initialData={initialData}
                 selectOptions={selectOptions}
@@ -108,60 +263,17 @@ export default function MatchSection({ match, handleChooseTeam }) {
             </div>
           </div>
         </Card>
-        <Card className="flex flex-1 w-[40%] mb-6 p-8">
-          <div>Additional Content</div>
-        </Card>
       </div>
-    </div>
-  );
-}
 
-// Component to display match details
-function MatchDetails({ match, handleChooseTeam }) {
-  return (
-    <>
-      <div>
-        <p className="text-sm text-gray-400">
-          Week {match?.week} -{" "}
-          {moment(match?.datetime).format("MMM Do, YYYY h:mm A")}
-        </p>
-        <p className="text-3xl text-white font-bold">Day {match?.day}</p>
-      </div>
-      <div className="flex flex-row space-x-10 justify-center items-center p-2">
-        <TeamCard
-          team={match?.team_a}
-          score={match?.team_a_score}
-          handleChooseTeam={handleChooseTeam}
-        />
-        <div className="text-3xl text-white font-bold">VS</div>
-
-        <TeamCard
-          team={match?.team_b}
-          score={match?.team_b_score}
-          handleChooseTeam={handleChooseTeam}
-        />
-      </div>
-    </>
-  );
-}
-
-// Component to display individual team card
-function TeamCard({ team, score, handleChooseTeam }) {
-  return (
-    <div className="flex flex-col space-y-3">
-      <div
-        className="w-40 h-40 cursor-pointer hover:scale-105 transition"
-        onClick={() => handleChooseTeam(team)}
-      >
-        <img
-          src={team?.image}
-          alt={team?.name}
-          className="w-full h-full object-cover rounded-full"
-        />
-      </div>
-      <div className="px-5 py-2 bg-[#61AB76] rounded-full">
-        <p className="text-center font-bold text-xl">{score}</p>
-      </div>
+      <Modal isOpen={isAlertVisible} onClose={() => setAlertVisible(false)}>
+        <ModalContent className="bg-gray-800 text-white pb-4">
+          <ModalHeader>No Game Details</ModalHeader>
+          <ModalBody>Please add game details</ModalBody>
+          <ModalFooter>
+            <Button onClick={() => setAlertVisible(false)}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

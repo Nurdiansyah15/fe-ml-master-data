@@ -21,6 +21,7 @@ export const getTeamByID = createAsyncThunk(
   async (teamID, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/api/teams/${teamID}`);
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -75,6 +76,21 @@ export const updateTeam = createAsyncThunk(
       );
 
       CustomToast("Team updated successfully", "success");
+      dispatch(getAllTeams());
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deleteTeam = createAsyncThunk(
+  "teams/deleteTeam",
+  async (teamID, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axiosInstance.delete(`/api/teams/${teamID}`);
+      CustomToast("Team deleted successfully", "success");
       dispatch(getAllTeams());
       return;
     } catch (error) {
@@ -166,6 +182,20 @@ export const updateCoachInTeam = createAsyncThunk(
   }
 );
 
+export const deleteCoachInTeam = createAsyncThunk(
+  "coachTeam/deleteCoachInTeam",
+  async (coachID, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/coaches/${coachID}`);
+      CustomToast("Coach deleted successfully", "success");
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
 // player
 export const getAllPlayersInTeam = createAsyncThunk(
   "playerTeam/getAllPlayersInTeam",
@@ -181,11 +211,10 @@ export const getAllPlayersInTeam = createAsyncThunk(
 
 export const createPlayerInTeam = createAsyncThunk(
   "playerTeam/createPlayerInTeam",
-  async ({ teamID, name, role, image }, { rejectWithValue, dispatch }) => {
+  async ({ teamID, name, image }, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("role", role);
       if (image) {
         formData.append("image", image);
       }
@@ -212,11 +241,10 @@ export const createPlayerInTeam = createAsyncThunk(
 
 export const updatePlayerInTeam = createAsyncThunk(
   "playerTeam/updatePlayerInTeam",
-  async ({ id, name, role, image }, { rejectWithValue, dispatch }) => {
+  async ({ id, name, image }, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("role", role);
       if (image) {
         formData.append("image", image);
       }
@@ -228,6 +256,20 @@ export const updatePlayerInTeam = createAsyncThunk(
       });
       CustomToast("Player updated successfully", "success");
       dispatch(getAllPlayersInTeam(response.data.team_id));
+      return;
+    } catch (error) {
+      CustomToast(error.response.data.error, "error");
+      return rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const deletePlayerInTeam = createAsyncThunk(
+  "playerTeam/deletePlayerInTeam",
+  async (playerID, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/players/${playerID}`);
+      CustomToast("Player deleted successfully", "success");
       return;
     } catch (error) {
       CustomToast(error.response.data.error, "error");
@@ -252,11 +294,14 @@ export const getAllPlayersInMatchTeam = createAsyncThunk(
 
 export const createPlayerInMatchTeam = createAsyncThunk(
   "playerTeam/createPlayerInMatchTeam",
-  async ({ teamID, matchID, player_id }, { rejectWithValue, dispatch }) => {
+  async (
+    { teamID, matchID, player_id, role },
+    { rejectWithValue, dispatch }
+  ) => {
     try {
       const response = await axiosInstance.post(
         `/api/matches/${matchID}/teams/${teamID}/players`,
-        { player_id }
+        { player_id, role }
       );
       CustomToast("Player added to team successfully", "success");
       dispatch(getAllPlayersInMatchTeam({ teamID, matchID }));
@@ -302,11 +347,14 @@ export const getAllCoachsInMatchTeam = createAsyncThunk(
 // create and delete coach
 export const createCoachInMatchTeam = createAsyncThunk(
   "playerTeam/createCoachInMatchTeam",
-  async ({ teamID, matchID, coach_id }, { rejectWithValue, dispatch }) => {
+  async (
+    { teamID, matchID, coach_id, role },
+    { rejectWithValue, dispatch }
+  ) => {
     try {
       const response = await axiosInstance.post(
         `/api/matches/${matchID}/teams/${teamID}/coaches`,
-        { coach_id }
+        { coach_id, role }
       );
       CustomToast("Coach added to team successfully", "success");
       dispatch(getAllCoachsInMatchTeam({ teamID, matchID }));

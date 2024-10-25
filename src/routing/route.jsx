@@ -10,6 +10,9 @@ import Home from "../pages/home/Home";
 import Teams from "../pages/teams/Teams";
 import TeamDetail from "../pages/teams/TeamDetail";
 import Match from "../pages/competition/Match";
+import Sheet from "../pages/experiment/Sheet";
+import Profile from "../pages/auth/Profile";
+import ExportMatch from "../pages/competition/ExportMatch";
 
 const routes = [
   { path: "/login", element: <Login /> },
@@ -28,6 +31,10 @@ const routes = [
         element: <Home />,
       },
       {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
         path: "tournament/:tournamentID",
         element: <Competition />,
       },
@@ -40,13 +47,22 @@ const routes = [
         element: <Match />,
       },
       // {
+      //   path: "tournament/:tournamentID/match/:matchID/export",
+      //   element: <ExportMatch />,
+      // },
+      // {
       //   path: "tournament/:tournamentID/match/:matchID/team/:teamID",
       //   element: <MatchDetail />,
       // },
       { path: "team", element: <Teams /> },
       { path: "team/:teamID", element: <TeamDetail /> },
       { path: "hero", element: <Heroes /> },
+      { path: "sheets", element: <Sheet /> },
     ],
+  },
+  {
+    path: "export/tournament/:tournamentID/match/:matchID",
+    element: <ExportMatch />,
   },
 ];
 export default routes;
