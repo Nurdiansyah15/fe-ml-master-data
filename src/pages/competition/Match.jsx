@@ -71,17 +71,6 @@ export default function Match() {
     setShowDetailMatch(cek);
   }, [games, team]);
 
-  const handleExport = (key) => {
-
-    if (key === "pdf") {
-
-      return navigation(`/export/tournament/${tournamentID}/match/${matchID}`)
-    }
-    if (key === "excel") {
-      return <ExcelExport />;
-    }
-  };
-
   useEffect(() => {
     updatePage(
       `${tournament?.name}`,
@@ -149,9 +138,8 @@ export default function Match() {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
-                  onClick={() => {}}
                 >
-                  Excel
+                  <ExcelExport />
                 </Button>
               </div>
             </div>
